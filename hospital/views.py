@@ -7,7 +7,8 @@ from django.core.mail import send_mail
 from django.contrib.auth.decorators import login_required,user_passes_test
 from datetime import datetime,timedelta,date
 from django.conf import settings
-
+from django.utils import timezone
+from datetime import datetime
 
 # Create your views here.
 def home_view(request):
