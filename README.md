@@ -1,39 +1,42 @@
-# patient-information-management-system
-A data management system that facilitates processing of patient information. Made by Django and SQLite Environment
+# Patient Information Management System
 
-Note: This is an adapted version of the project, and all rights belong to the original developer. It is utilized solely for educational purposes. All credits goes to developer:Sumit Kumar
+A data management system that facilitates the processing of patient information. Developed using Django and SQLite environment.
 
-# Feature Added:
+**Note**: This project is an adapted version, and all rights belong to the original developer. It is utilized solely for educational purposes. All credits go to the original developer, Sumit Kumar.
+
+## Features Added:
+
 - Date & Scheduling Appointment (Staff-Admin)
-- Authentication for Staffs, Doctor and The Patient
+- Authentication for Staffs, Doctor, and The Patient
 
-# Bug Fix and Improvements
+## Bug Fixes and Improvements:
+
 - Cards are now clickable instead of a text.
 
-# Planning to Add:
-- Verification thru Email (Both Login & Register)
+## Planning to Add:
+
+- Email Verification (Both Login & Register)
 - Chat Plugin from Messager
-- Appointment Notifical on Both Doctor and Patient Email
+- Appointment Notification on Both Doctor and Patient Email
 - Message Notification
 
+## Setting Up and Running the Local Server:
 
-# To Setup and Run
-Type this on the Terminal as Following:
+Assuming you have VSCode, type the following commands in the terminal:
 
--pip install -r requirements.txt
-
-python manage.py makemigration
+```bash
+pip install -r requirements.txt
+python manage.py makemigrations
 python manage.py migrate
-
 python manage.py runserver
+```
 
-- if you want a superuser can acess django databate.
+### Superuser Access to Django Database:
+
+To create a superuser and access the Django admin site:
+
+```bash
 python manage.py createsuperuser
+```
 
-#Note:
-Original Project: https://github.com/sumitkumar1503/hospitalmanagement
-Project Name:	Hospital Management System Django
-Language/s Used:	Python with Django Web Framework
-Database:	SQLite
-Type:	Web Application
-Developer:	Sumit Kumar
+**Note**: Original Project: [Hospital Management System Django](https://github.com/sumitkumar1503/hospitalmanagement) by Sumit Kumar. The project uses Python with Django Web Framework, SQLite as the database, and is developed as a web application.
