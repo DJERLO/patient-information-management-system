@@ -27,10 +27,10 @@ python manage.py migrate
 
 python manage.py runserver
 
-# if you want a superuser can acess django databate.
+- if you want a superuser can acess django databate.
 python manage.py createsuperuser
 
-Note:
+#Note:
 Original Project: https://github.com/sumitkumar1503/hospitalmanagement
 Project Name:	Hospital Management System Django
 Language/s Used:	Python with Django Web Framework
