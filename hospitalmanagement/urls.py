@@ -4,6 +4,8 @@ from django.conf import settings
 from django.conf.urls.static import static
 from hospital import views
 from django.contrib.auth.views import LoginView,LogoutView
+from django.urls import path
+
 
 
 #-------------FOR ADMIN RELATED URLS
@@ -14,6 +16,7 @@ urlpatterns = [
 
     path('aboutus', views.aboutus_view),
     path('contactus', views.contactus_view),
+    path('contactusSuccess', views.contactussuccess, name='contactussuccess'),  # Adjusted name
 
 
     path('adminclick', views.adminclick_view),
@@ -24,8 +27,13 @@ urlpatterns = [
     path('doctorsignup', views.doctor_signup_view,name='doctorsignup'),
     path('patientsignup', views.patient_signup_view),
     
+    path('adminlogin', views.adminlogin_view, name='adminlogin'),
     path('adminlogin', LoginView.as_view(template_name='hospital/adminlogin.html')),
+    
+    path('doctorlogin', views.doctorlogin_view, name='doctorlogin'),
     path('doctorlogin', LoginView.as_view(template_name='hospital/doctorlogin.html')),
+    
+    path('patientlogin', views.patientlogin_view, name='patientlogin'),
     path('patientlogin', LoginView.as_view(template_name='hospital/patientlogin.html')),
 
 

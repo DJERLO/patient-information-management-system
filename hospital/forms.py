@@ -1,8 +1,32 @@
 from django import forms
+from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from . import models
 
+#Login Forms
+class AdminLoginForm(forms.ModelForm):
+    class Meta:
+        model=User
+        fields=['username', 'password']
+        widgets = {
+        'password': forms.PasswordInput()
+        }
 
+class DoctorLoginForm(forms.ModelForm):
+    class Meta:
+        model=User
+        fields=['username', 'password']
+        widgets = {
+        'password': forms.PasswordInput()
+        }
+
+class PatientLoginForm(forms.ModelForm):
+    class Meta:
+        model=User
+        fields=['username', 'password']
+        widgets = {
+        'password': forms.PasswordInput()
+        }
 
 #for admin signup
 class AdminSigupForm(forms.ModelForm):
@@ -22,6 +46,7 @@ class DoctorUserForm(forms.ModelForm):
         widgets = {
         'password': forms.PasswordInput()
         }
+
 class DoctorForm(forms.ModelForm):
     class Meta:
         model=models.Doctor
@@ -37,6 +62,7 @@ class PatientUserForm(forms.ModelForm):
         widgets = {
         'password': forms.PasswordInput()
         }
+        
 class PatientForm(forms.ModelForm):
     #this is the extrafield for linking patient and their assigend doctor
     #this will show dropdown __str__ method doctor model is shown on html so override it
@@ -70,6 +96,7 @@ class PatientAppointmentForm(forms.ModelForm):
 class ContactusForm(forms.Form):
     Name = forms.CharField(max_length=30)
     Email = forms.EmailField()
+    Subject = forms.CharField(max_length=30)
     Message = forms.CharField(max_length=500,widget=forms.Textarea(attrs={'rows': 3, 'cols': 30}))
 
 

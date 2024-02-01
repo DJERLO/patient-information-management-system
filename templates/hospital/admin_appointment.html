@@ -13,36 +13,35 @@
     a:link {
       text-decoration: none;
     }
-
+  
     .menu {
       top: 50px;
     }
-
+  
     h6 {
       color: white;
     }
-
+  
     .order-card {
       color: #fff;
     }
-
+  
     .bg-c-blue {
       background: linear-gradient(45deg, #4099ff, #73b4ff);
     }
-
+  
     .bg-c-green {
       background: linear-gradient(45deg, #2ed8b6, #59e0c5);
     }
-
+  
     .bg-c-yellow {
       background: linear-gradient(45deg, #FFB64D, #ffcb80);
     }
-
+  
     .bg-c-pink {
       background: linear-gradient(45deg, #FF5370, #ff869a);
     }
-
-
+  
     .card {
       border-radius: 5px;
       -webkit-box-shadow: 0 1px 2.94px 0.06px rgba(4, 26, 55, 0.16);
@@ -52,19 +51,24 @@
       -webkit-transition: all 0.3s ease-in-out;
       transition: all 0.3s ease-in-out;
     }
-
+  
     .card .card-block {
       padding: 25px;
+      cursor: pointer;
     }
-
+  
+    .card-block:hover {
+      background-color: #1f88de; /* Optional: Change background color on hover */
+    }
+  
     .order-card i {
       font-size: 26px;
     }
-
+  
     .f-left {
       float: left;
     }
-
+  
     .f-right {
       float: right;
     }
@@ -76,23 +80,18 @@
   <div class="row">
     <div class="col-md-4 col-xl-4">
       <div class="card bg-c-blue order-card">
-        <div class="card-block">
-          <a href="/admin-view-appointment">
-            <h6 class="m-b-20">View Appointment</h6>
-          </a>
+        <div class="card-block" id="appointmentView">
+          <h6 class="m-b-20">View Appointment</h6>
           <br>
           <h2 class="text-right"><i class="fas fa-calendar f-left"></i></h2>
-
         </div>
       </div>
     </div>
 
     <div class="col-md-4 col-xl-4">
       <div class="card bg-c-green order-card">
-        <div class="card-block">
-          <a href="/admin-add-appointment">
-            <h6 class="m-b-20">Book Appointment</h6>
-          </a>
+        <div class="card-block" id="appointmentBook">
+          <h6 class="m-b-20">Book Appointment</h6>
           <br>
           <h2 class="text-right"><i class="fas fa-book-medical f-left"></i></h2>
         </div>
@@ -101,10 +100,8 @@
 
     <div class="col-md-4 col-xl-4">
       <div class="card bg-c-yellow order-card">
-        <div class="card-block">
-          <a href="/admin-approve-appointment">
-            <h6 class="m-b-20">Approve Appointment</h6>
-          </a>
+        <div class="card-block" id="appointmentApprove">
+          <h6 class="m-b-20">Approve Appointment</h6>
           <br>
           <h2 class="text-right"><i class="fas fa-check-circle f-left"></i></h2>
         </div>
@@ -114,6 +111,24 @@
 
   </div>
 </div>
+<script>
+  let appointmentView = document.getElementById("appointmentView")
+  let appointmentBook = document.getElementById("appointmentBook")
+  let appointmentApprove = document.getElementById("appointmentApprove")
+  
+  //EventListener
+    appointmentView.addEventListener("click", function() {
+      window.location.href = "/admin-view-appointment";
+  });
+
+  appointmentBook.addEventListener("click", function() {
+      window.location.href = "/admin-add-appointment";
+  });
+
+  appointmentApprove.addEventListener("click", function() {
+      window.location.href = "/admin-approve-appointment";
+  });
+</script>
 
   <br><br><br><br><br><br><br>
 {% endblock content %}

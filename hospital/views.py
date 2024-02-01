@@ -1,14 +1,23 @@
-from django.shortcuts import render,redirect,reverse
+from django.contrib.auth.forms import AuthenticationForm
+from django.shortcuts import render,redirect
+from django.urls import reverse
 from . import forms,models
 from django.db.models import Sum
+from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import Group
 from django.http import HttpResponseRedirect
 from django.core.mail import send_mail
 from django.contrib.auth.decorators import login_required,user_passes_test
 from datetime import datetime,timedelta,date
 from django.conf import settings
+from django.contrib import messages
 from django.utils import timezone
 from datetime import datetime
+from . import forms
+
+
+
+
 
 # Create your views here.
 def home_view(request):
@@ -37,8 +46,81 @@ def patientclick_view(request):
         return HttpResponseRedirect('afterlogin')
     return render(request,'hospital/patientclick.html')
 
+#Login Forms
+from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth import authenticate, login
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from .forms import AdminLoginForm, DoctorLoginForm, PatientLoginForm
 
+def adminlogin_view(request):
+    form = AdminLoginForm()
+    if request.method == 'POST':
+        form = AdminLoginForm(request.POST)
 
+        if form.is_valid():
+            username = form.cleaned_data['username']
+            password = form.cleaned_data['password']
+            user = authenticate(request, username=username, password=password)
+
+            if user is not None and is_admin(user):
+                login(request, user)
+                return redirect('admin-dashboard')
+            else:
+                # Authentication failed
+                messages.error(request, "Invalid username or password.")
+        else:
+            
+            messages.error(request, "Invalid form submission. Please check the fields.")
+
+    return render(request, 'hospital/adminlogin.html', {'form': form})
+    
+def doctorlogin_view(request):
+    form = DoctorLoginForm()
+    if request.method == 'POST':
+        form = DoctorLoginForm(request.POST)
+
+        if form.is_valid():
+            username = form.cleaned_data['username']
+            password = form.cleaned_data['password']
+            user = authenticate(request, username=username, password=password)
+
+            if user is not None and is_doctor(user):
+                login(request, user)
+                return redirect('doctor-dashboard')
+            else:
+                # Authentication failed
+                messages.error(request, "Invalid username or password.")
+        else:
+            
+            messages.error(request, "Invalid form submission. Please check the fields.")
+
+    return render(request, 'hospital/doctorlogin.html', {'form': form})
+
+def patientlogin_view(request):
+    form = PatientLoginForm()
+    if request.method == 'POST':
+        form = PatientLoginForm(request.POST)
+
+        if form.is_valid():
+            username = form.cleaned_data['username']
+            password = form.cleaned_data['password']
+            user = authenticate(request, username=username, password=password)
+
+            if user is not None and is_patient(user):
+                login(request, user)
+                return redirect('patient-dashboard')
+            else:
+                # Authentication failed
+                messages.error(request, "Invalid username or password.")
+        else:
+            
+            messages.error(request, "Invalid form submission. Please check the fields.")
+
+    return render(request, 'hospital/patientlogin.html', {'form': form})
+    
+        
+#SignUp Views
 
 def admin_signup_view(request):
     form=forms.AdminSigupForm()
@@ -52,8 +134,6 @@ def admin_signup_view(request):
             my_admin_group[0].user_set.add(user)
             return HttpResponseRedirect('adminlogin')
     return render(request,'hospital/adminsignup.html',{'form':form})
-
-
 
 
 def doctor_signup_view(request):
@@ -98,9 +178,6 @@ def patient_signup_view(request):
 
 
 
-
-
-
 #-----------for checking user is doctor , patient or admin(by sumit)
 def is_admin(user):
     return user.groups.filter(name='ADMIN').exists()
@@ -111,24 +188,40 @@ def is_patient(user):
 
 
 #---------AFTER ENTERING CREDENTIALS WE CHECK WHETHER USERNAME AND PASSWORD IS OF ADMIN,DOCTOR OR PATIENT
+
+from django.urls import reverse
+from django.http import HttpResponseRedirect
+
 def afterlogin_view(request):
     if is_admin(request.user):
         return redirect('admin-dashboard')
     elif is_doctor(request.user):
-        accountapproval = models.Doctor.objects.all().filter(user_id=request.user.id, status=True)
-        if accountapproval:
+        account_approval = models.Doctor.objects.filter(user_id=request.user.id, status=True).exists()
+        if account_approval:
             return redirect('doctor-dashboard')
         else:
             return render(request, 'hospital/doctor_wait_for_approval.html')
     elif is_patient(request.user):
-        accountapproval = models.Patient.objects.all().filter(user_id=request.user.id, status=True)
-        if accountapproval:
+        account_approval = models.Patient.objects.filter(user_id=request.user.id, status=True).exists()
+        if account_approval:
             return redirect('patient-dashboard')
         else:
             return render(request, 'hospital/patient_wait_for_approval.html')
     else:
-        # Default case: Redirect to a generic page or return an error response.
-        return HttpResponse("Unauthorized", status=401)
+        # Use the existing functions to determine the login type
+        if is_patient(request.user):
+            messages.error(request, "Invalid User or Password")
+            return HttpResponseRedirect(reverse('patientlogin'))
+        elif is_doctor(request.user):
+            messages.error(request, "Invalid User or Password")
+            return HttpResponseRedirect(reverse('doctorlogin'))
+        elif is_admin(request.user):
+            messages.error(request, "Invalid User or Password")
+            return HttpResponseRedirect(reverse('adminlogin'))
+        else:
+            # Handle the case when the login type is unknown or not defined
+            return HttpResponse("Unknown user type")
+        
 
 
 
@@ -334,9 +427,6 @@ def update_patient_view(request,pk):
     return render(request,'hospital/admin_update_patient.html',context=mydict)
 
 
-
-
-
 @login_required(login_url='adminlogin')
 @user_passes_test(is_admin)
 def admin_add_patient_view(request):
@@ -372,7 +462,6 @@ def admin_approve_patient_view(request):
     #those whose approval are needed
     patients=models.Patient.objects.all().filter(status=False)
     return render(request,'hospital/admin_approve_patient.html',{'patients':patients})
-
 
 
 @login_required(login_url='adminlogin')
@@ -854,16 +943,40 @@ def aboutus_view(request):
     return render(request,'hospital/aboutus.html')
 
 def contactus_view(request):
-    sub = forms.ContactusForm()
+    form = forms.ContactusForm()
+
     if request.method == 'POST':
-        sub = forms.ContactusForm(request.POST)
-        if sub.is_valid():
-            email = sub.cleaned_data['Email']
-            name=sub.cleaned_data['Name']
-            message = sub.cleaned_data['Message']
-            send_mail(str(name)+' || '+str(email),message,settings.EMAIL_HOST_USER, settings.EMAIL_RECEIVING_USER, fail_silently = False)
-            return render(request, 'hospital/contactussuccess.html')
-    return render(request, 'hospital/contactus.html', {'form':sub})
+        form = forms.ContactusForm(request.POST)
+
+        if form.is_valid():
+            # Inside the 'if form.is_valid()' block
+            user_name = form.cleaned_data['Name']
+            user_email = form.cleaned_data['Email']
+            subject = form.cleaned_data['Subject']
+            message = form.cleaned_data['Message']
+
+            try:
+                # Inside the 'try' block
+                send_mail(
+                    f"{user_name} || {user_email} - {subject}",
+                    message,
+                    settings.EMAIL_HOST_USER,
+                    [settings.EMAIL_RECEIVING_USER],
+                    fail_silently=False,
+                )
+                messages.success(request, 'Your feedback has been sent successfully.')
+                return redirect('contactussuccess')
+            except Exception as e:
+                # Inside the 'except' block
+                messages.error(request, 'An error occurred while sending your feedback. Please try again later.')
+                # Log the error or handle it as needed
+
+    # Outside the 'if request.method == 'POST':' block
+    return render(request, 'hospital/contactus.html', {'form': form})
+
+def contactussuccess(request):
+    return render(request,'hospital/contactussuccess.html')
+
 
 
 #---------------------------------------------------------------------------------

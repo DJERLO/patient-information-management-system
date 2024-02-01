@@ -13,41 +13,39 @@
   <link href="http://netdna.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" rel="stylesheet">
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css">
-
   <style type="text/css">
     a:link {
       text-decoration: none;
     }
-
+  
     .menu {
       top: 50px;
     }
-
+  
     h6 {
       color: white;
     }
-
+  
     .order-card {
       color: #fff;
     }
-
+  
     .bg-c-blue {
       background: linear-gradient(45deg, #4099ff, #73b4ff);
     }
-
+  
     .bg-c-green {
       background: linear-gradient(45deg, #2ed8b6, #59e0c5);
     }
-
+  
     .bg-c-yellow {
       background: linear-gradient(45deg, #FFB64D, #ffcb80);
     }
-
+  
     .bg-c-pink {
       background: linear-gradient(45deg, #FF5370, #ff869a);
     }
-
-
+  
     .card {
       border-radius: 5px;
       -webkit-box-shadow: 0 1px 2.94px 0.06px rgba(4, 26, 55, 0.16);
@@ -57,19 +55,24 @@
       -webkit-transition: all 0.3s ease-in-out;
       transition: all 0.3s ease-in-out;
     }
-
+  
     .card .card-block {
       padding: 25px;
+      cursor: pointer;
     }
-
+  
+    .card-block:hover {
+      background-color: #1f88de; /* Optional: Change background color on hover */
+    }
+  
     .order-card i {
       font-size: 26px;
     }
-
+  
     .f-left {
       float: left;
     }
-
+  
     .f-right {
       float: right;
     }
@@ -79,15 +82,13 @@
 <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
 <div class="container">
   <div class="row">
+    
     <div class="col-md-4 col-xl-6">
       <div class="card bg-c-blue order-card">
-        <div class="card-block">
-          <a href="/doctor-view-patient">
-            <h6 class="m-b-20">Your Patient Record</h6>
-          </a>
+        <div class="card-block" id="doctorRecordPatients">
+          <h6 class="m-b-20">Your Patient Record</h6>
           <br>
           <h2 class="text-right"><i class="fas fa-user-injured f-left"></i></h2>
-
         </div>
       </div>
     </div>
@@ -95,10 +96,8 @@
 
     <div class="col-md-4 col-xl-6">
       <div class="card bg-c-pink order-card">
-        <div class="card-block">
-          <a href="/doctor-view-discharge-patient">
-            <h6 class="m-b-20">Your Discharged Patient</h6>
-          </a>
+        <div class="card-block" id="doctorDischargePatient">
+          <h6 class="m-b-20">Your Discharged Patient</h6>
           <br>
           <h2 class="text-right"><i class="fas fa-eject f-left"></i></h2>
         </div>
@@ -106,6 +105,21 @@
     </div>
   </div>
 </div>
+
+<script>
+  let doctorRecordPatients = document.getElementById("doctorRecordPatients")
+  let doctorDischargePatient = document.getElementById("doctorDischargePatient")
+  
+  //EventListener
+  doctorRecordPatients.addEventListener("click", function() {
+      window.location.href = "/doctor-view-patient";
+  });
+
+  doctorDischargePatient.addEventListener("click", function() {
+      window.location.href = "/doctor-view-discharge-patient";
+  });
+
+</script>
 
 <br><br><br><br><br><br><br>
 {% endblock content %}

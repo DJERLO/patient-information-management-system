@@ -2,13 +2,23 @@ from django.db import models
 from django.contrib.auth.models import User
 
 
-
-departments=[('Cardiologist','Cardiologist'),
-('Dermatologists','Dermatologists'),
-('Emergency Medicine Specialists','Emergency Medicine Specialists'),
-('Allergists/Immunologists','Allergists/Immunologists'),
-('Anesthesiologists','Anesthesiologists'),
-('Colon and Rectal Surgeons','Colon and Rectal Surgeons')
+departments=[('Cardiologist', 'Cardiologist'),
+    ('Dermatologists', 'Dermatologists'),
+    ('Emergency Medicine Specialists', 'Emergency Medicine Specialists'),
+    ('Allergists/Immunologists', 'Allergists/Immunologists'),
+    ('Anesthesiologists', 'Anesthesiologists'),
+    ('Colon and Rectal Surgeons', 'Colon and Rectal Surgeons'),
+    ('Gastroenterologists', 'Gastroenterologists'),
+    ('Hematologists', 'Hematologists'),
+    ('Nephrologists', 'Nephrologists'),
+    ('Neurologists', 'Neurologists'),
+    ('Oncologists', 'Oncologists'),
+    ('Ophthalmologists', 'Ophthalmologists'),
+    ('Orthopedic Surgeons', 'Orthopedic Surgeons'),
+    ('Pediatricians', 'Pediatricians'),
+    ('Psychiatrists', 'Psychiatrists'),
+    ('Radiologists', 'Radiologists'),
+    ('Rheumatologists', 'Rheumatologists')
 ]
 class Doctor(models.Model):
     user=models.OneToOneField(User,on_delete=models.CASCADE)
@@ -25,7 +35,6 @@ class Doctor(models.Model):
         return self.user.id
     def __str__(self):
         return "{} ({})".format(self.user.first_name,self.department)
-
 
 
 class Patient(models.Model):
@@ -55,8 +64,6 @@ class Appointment(models.Model):
     appointmentDate=models.DateTimeField()
     description=models.TextField(max_length=500)
     status=models.BooleanField(default=False)
-
-
 
 class PatientDischargeDetails(models.Model):
     patientId=models.PositiveIntegerField(null=True)

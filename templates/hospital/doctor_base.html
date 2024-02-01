@@ -4,7 +4,7 @@
 
 <head>
   <meta charset="UTF-8">
-  <title>HMS - Django</title>
+  <title>PIMS - Dr.{{request.user.first_name}} {{request.user.last_name}}</title>
 
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
@@ -299,7 +299,8 @@
         <div class="collapse navbar-collapse justify-content-between" id="navbarCollapse">
           <div class="navbar-nav" style=" margin-left: 90%;">
 
-            <a href="/logout" class="nav-item nav-link">Logout</a>
+            <a href="#" class="nav-item nav-link" id="logoutLink">Logout</a>
+
           </div>
         </div>
       </nav>
@@ -326,6 +327,26 @@
       </div>
     </footer>
   </main>
+  <script>
+    document.getElementById('logoutLink').addEventListener('click', function(event) {
+        event.preventDefault();  // Prevent the default anchor behavior
+    
+        // Create a form dynamically and submit it
+        var form = document.createElement('form');
+        form.method = 'post';
+        form.action = '/logout';
+    
+        var csrfTokenInput = document.createElement('input');
+        csrfTokenInput.type = 'hidden';
+        csrfTokenInput.name = 'csrfmiddlewaretoken';
+        csrfTokenInput.value = '{{ csrf_token }}';  // Add the CSRF token here
+    
+        form.appendChild(csrfTokenInput);
+    
+        document.body.appendChild(form);
+        form.submit();
+    });
+    </script>
   <!-- partial -->
 </body>
 
