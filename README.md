@@ -20,6 +20,77 @@ A data management system designed to facilitate the processing of patient inform
 - Appointment Notifications on both Doctor and Patient Emails
 - Message Notifications
 
+## Requirements and Installation Instructions
+
+### 1. Python Installation:
+
+Before proceeding, ensure that Python is installed on your system. If not, follow these steps:
+
+#### For Windows:
+
+1. Download the latest Python installer for Windows from [python.org](https://www.python.org/downloads/).
+
+2. Run the installer and check the box that says "Add Python to PATH" during installation.
+
+3. Verify the installation by opening a Command Prompt and running:
+
+    ```bash
+    python --version
+    ```
+
+#### For macOS:
+
+1. macOS usually comes with Python pre-installed. Open Terminal and run:
+
+    ```bash
+    python3 --version
+    ```
+
+    If Python is not installed, you can install it using [Homebrew](https://brew.sh/):
+
+    ```bash
+    brew install python
+    ```
+
+#### For Linux (Ubuntu/Debian):
+
+1. Open a terminal and run:
+
+    ```bash
+    sudo apt-get update
+    sudo apt-get install python3
+    ```
+
+2. Verify the installation:
+
+    ```bash
+    python3 --version
+    ```
+
+### 2. Checking Python in PATH:
+
+Ensure that Python is added to the system PATH. Open a new terminal/command prompt window and run:
+
+```bash
+python --version
+```
+
+If it returns the Python version, you're all set. If not, you may need to update your system PATH.
+
+### 3. SQLite Installation:
+
+SQLite comes bundled with Python, so there's usually no need for a separate installation.
+
+### 4. SQLiteStudio:
+
+You can use [SQLiteStudio](https://sqlitestudio.pl/) as a GUI tool for managing SQLite databases. Download and install it according to your operating system.
+
+---
+
+With these tools installed and Python in your system PATH, you can proceed with setting up the Patient Information Management System as described in the previous README section.
+
+Note: Ensure that you have administrative privileges for installing Python and modifying the system PATH.
+
 ## Setting Up and Running the Local Server:
 
 1. Set up a virtual environment:
