@@ -48,7 +48,7 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import authenticate, login
 from django.shortcuts import render, redirect
 from django.contrib import messages
-from .forms import AdminLoginForm, DoctorLoginForm, PatientLoginForm, StaffAdminProfileForm, StaffAdminSignupForm
+from .forms import AdminLoginForm, DoctorForm, DoctorLoginForm, DoctorUserForm, PatientLoginForm, StaffAdminProfileForm, StaffAdminSignupForm
 
 def adminlogin_view(request):
     form = AdminLoginForm()
@@ -169,8 +169,46 @@ def staff_admin_signup_view(request):
 
     return render(request, 'hospital/adminsignup.html', {'form': adminForm, 'profile_form': profile_form})
 
-
 def doctor_signup_view(request):
+    doctorForm = DoctorUserForm()
+    profile_form = DoctorForm()
+
+    if request.method == 'POST':
+        doctorForm = DoctorUserForm(request.POST)
+        profile_form = DoctorForm(request.POST, request.FILES)
+
+        if doctorForm.is_valid() and profile_form.is_valid():
+            user = doctorForm.save(commit=False)
+            user.username = doctorForm.cleaned_data['username']
+            user.set_password(doctorForm.cleaned_data['password1'])
+            user.save()
+
+            # Add user to 'DOCTOR' group
+            my_doctor_group = Group.objects.get_or_create(name='DOCTOR')
+            my_doctor_group[0].user_set.add(user)
+
+            # Create HospitalStaffAdmin instance
+            profile = profile_form.save(commit=False)
+            profile.user = user
+            profile.email = doctorForm.cleaned_data['email']
+            profile.mobile = profile_form.cleaned_data['mobile']
+            profile.profile_pic = profile_form.cleaned_data['profile_pic']
+            profile.save()
+
+            login(request, user)
+            messages.success(request, "User registered successfully!")
+            return redirect('doctorlogin')
+        else:
+            for field, errors in doctorForm.errors.items():
+                for error in errors:
+                    messages.error(request, f"{error}")
+            for field, errors in profile_form.errors.items():
+                for error in errors:
+                    messages.error(request, f"Profile {error}")
+
+    return render(request, 'hospital/doctorsignup.html', {'form': doctorForm, 'profile_form': profile_form})
+
+#def doctor_signup_view(request):
     userForm=forms.DoctorUserForm()
     doctorForm=forms.DoctorForm()
     mydict={'userForm':userForm,'doctorForm':doctorForm}
@@ -350,27 +388,34 @@ def update_doctor_view(request,pk):
 @login_required(login_url='adminlogin')
 @user_passes_test(is_admin)
 def admin_add_doctor_view(request):
-    userForm=forms.DoctorUserForm()
-    doctorForm=forms.DoctorForm()
-    mydict={'userForm':userForm,'doctorForm':doctorForm}
+    doctorForm=forms.DoctorUserForm()
+    profile_form=forms.DoctorForm()
+    mydict={'doctorForm':doctorForm,'profile_form':profile_form}
+    
     if request.method=='POST':
-        userForm=forms.DoctorUserForm(request.POST)
-        doctorForm=forms.DoctorForm(request.POST, request.FILES)
-        if userForm.is_valid() and doctorForm.is_valid():
-            user=userForm.save()
-            user.set_password(user.password)
+        doctorForm=forms.DoctorUserForm(request.POST)
+        profile_form=forms.DoctorForm(request.POST, request.FILES)
+        if doctorForm.is_valid() and profile_form.is_valid():
+            user=doctorForm.save()
+            user.username = doctorForm.cleaned_data['username']
+            user.set_password(doctorForm.cleaned_data['password1'])
             user.save()
 
-            doctor=doctorForm.save(commit=False)
-            doctor.user=user
-            doctor.status=True
-            doctor.save()
+            profile=profile_form.save(commit=False)
+            profile.user=user
+            profile.status=True
+            profile.email = doctorForm.cleaned_data['email']
+            profile.mobile = profile_form.cleaned_data['mobile']
+            profile.profile_pic = profile_form.cleaned_data['profile_pic']
+            profile.save()
 
             my_doctor_group = Group.objects.get_or_create(name='DOCTOR')
             my_doctor_group[0].user_set.add(user)
+        
 
         return HttpResponseRedirect('admin-view-doctor')
     return render(request,'hospital/admin_add_doctor.html',context=mydict)
+
 
 
 

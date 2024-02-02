@@ -2,6 +2,8 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.core.validators import validate_email
 
+
+
 class HospitalStaffAdmin(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
     username = models.CharField(max_length=40, blank=False, null=False)
@@ -46,6 +48,8 @@ class Doctor(models.Model):
     mobile = models.CharField(max_length=20,null=True)
     department= models.CharField(max_length=50,choices=departments,default='Cardiologist')
     status=models.BooleanField(default=False)
+    email = models.EmailField(validators=[validate_email], blank=False, null=False)
+   
     @property
     def get_name(self):
         return self.user.first_name+" "+self.user.last_name
@@ -55,6 +59,7 @@ class Doctor(models.Model):
     def __str__(self):
         return "{} ({})".format(self.user.first_name,self.department)
 
+sex = [('Male','Male'), ('Female','Female')]
 
 class Patient(models.Model):
     user=models.OneToOneField(User,on_delete=models.CASCADE)

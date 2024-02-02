@@ -30,10 +30,10 @@ class StaffAdminProfileForm(forms.ModelForm):
 
 
 #for student related form
-class DoctorUserForm(forms.ModelForm):
+class DoctorUserForm(UserCreationForm):
     class Meta:
         model=User
-        fields=['first_name','last_name','username','password']
+        fields=['first_name','last_name','username', 'email', 'password1', 'password2']
         widgets = {
         'password': forms.PasswordInput()
         }
