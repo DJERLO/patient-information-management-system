@@ -10,7 +10,7 @@ from django.urls import path
 
 #-------------FOR ADMIN RELATED URLS
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path('admin/', admin.site.urls, name='superadmin'),
     path('',views.home_view,name=''),
 
 
@@ -23,7 +23,7 @@ urlpatterns = [
     path('doctorclick', views.doctorclick_view),
     path('patientclick', views.patientclick_view),
 
-    path('adminsignup', views.admin_signup_view),
+    path('adminsignup', views.staff_admin_signup_view),
     path('doctorsignup', views.doctor_signup_view,name='doctorsignup'),
     path('patientsignup', views.patient_signup_view),
     

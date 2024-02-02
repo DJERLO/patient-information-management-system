@@ -1,7 +1,13 @@
 from django.contrib import admin
-from .models import Doctor,Patient,Appointment,PatientDischargeDetails
+from .models import HospitalStaffAdmin, Doctor,Patient, Appointment,PatientDischargeDetails
 
 # Register your models here.
+class HospitalStaffAdminAdmin(admin.ModelAdmin):
+    list_display = ('user', 'username', 'profile_pic', 'address', 'mobile', 'email')
+    # Add any other configuration options you need
+
+admin.site.register(HospitalStaffAdmin, HospitalStaffAdminAdmin)
+
 class DoctorAdmin(admin.ModelAdmin):
     pass
 admin.site.register(Doctor, DoctorAdmin)

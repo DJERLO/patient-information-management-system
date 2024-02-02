@@ -280,7 +280,11 @@
   <nav class="menu" tabindex="0">
     <div class="smartphone-menu-trigger"></div>
     <header class="avatar">
-      <img src="{% static "images/adminpropic.png" %}" />
+      {% if user.hospitalstaffadmin.profile_pic %}
+      <img src="{{ user.hospitalstaffadmin.profile_pic.url }}" alt="Profile Pic"/>
+    {% else %}
+      <img src="{% static 'images/adminpropic.png' %}" alt="Default Profile Pic"/>
+    {% endif %}
       <br><br>
       <h6>Admin</h6>
       <h2>{{request.user.first_name}}</h2>

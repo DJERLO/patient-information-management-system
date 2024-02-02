@@ -4,38 +4,29 @@ from django.contrib.auth.models import User
 from . import models
 
 #Login Forms
-class AdminLoginForm(forms.ModelForm):
-    class Meta:
-        model=User
-        fields=['username', 'password']
-        widgets = {
-        'password': forms.PasswordInput()
-        }
+class AdminLoginForm(forms.Form):
+    username = forms.CharField(max_length=150)
+    password = forms.CharField(widget=forms.PasswordInput())
 
-class DoctorLoginForm(forms.ModelForm):
-    class Meta:
-        model=User
-        fields=['username', 'password']
-        widgets = {
-        'password': forms.PasswordInput()
-        }
+class DoctorLoginForm(forms.Form):
+    username = forms.CharField(max_length=150)
+    password = forms.CharField(widget=forms.PasswordInput())
 
-class PatientLoginForm(forms.ModelForm):
-    class Meta:
-        model=User
-        fields=['username', 'password']
-        widgets = {
-        'password': forms.PasswordInput()
-        }
+class PatientLoginForm(forms.Form):
+    username = forms.CharField(max_length=150)
+    password = forms.CharField(widget=forms.PasswordInput())
 
 #for admin signup
-class AdminSigupForm(forms.ModelForm):
+class StaffAdminSignupForm(UserCreationForm):
     class Meta:
-        model=User
-        fields=['first_name','last_name','username','password']
-        widgets = {
-        'password': forms.PasswordInput()
-        }
+        model = User
+        fields = ['first_name', 'last_name', 'username', 'email', 'password1', 'password2']
+
+
+class StaffAdminProfileForm(forms.ModelForm):
+    class Meta:
+        model = models.HospitalStaffAdmin
+        fields = ['profile_pic', 'address', 'mobile']
 
 
 #for student related form

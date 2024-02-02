@@ -16,9 +16,6 @@ from datetime import datetime
 from . import forms
 
 
-
-
-
 # Create your views here.
 def home_view(request):
     if request.user.is_authenticated:
@@ -51,30 +48,42 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import authenticate, login
 from django.shortcuts import render, redirect
 from django.contrib import messages
-from .forms import AdminLoginForm, DoctorLoginForm, PatientLoginForm
+from .forms import AdminLoginForm, DoctorLoginForm, PatientLoginForm, StaffAdminProfileForm, StaffAdminSignupForm
 
 def adminlogin_view(request):
     form = AdminLoginForm()
+
     if request.method == 'POST':
         form = AdminLoginForm(request.POST)
 
         if form.is_valid():
             username = form.cleaned_data['username']
             password = form.cleaned_data['password']
+
+            print(f"Attempting login with username: {username}, password: {password}")
+
             user = authenticate(request, username=username, password=password)
 
-            if user is not None and is_admin(user):
-                login(request, user)
-                return redirect('admin-dashboard')
+            if user is not None:
+                print(f"User authentication successful for {username}")
+                
+                if is_admin(user):
+                    login(request, user)
+                    return redirect('admin-dashboard')
+                else:
+                    # User is not an admin or maybe a superuser
+                    # messages.error(request, "Invalid user role.")
+                    return redirect('superadmin')
             else:
                 # Authentication failed
                 messages.error(request, "Invalid username or password.")
         else:
-            
-            messages.error(request, "Invalid form submission. Please check the fields.")
+            # This block is executed when the form is not valid
+            print(f"Form is not valid. Form errors: {form.errors}")
+            messages.error(request, "Invalid username or password. Please check the fields.")
 
     return render(request, 'hospital/adminlogin.html', {'form': form})
-    
+
 def doctorlogin_view(request):
     form = DoctorLoginForm()
     if request.method == 'POST':
@@ -114,7 +123,6 @@ def patientlogin_view(request):
                 # Authentication failed
                 messages.error(request, "Invalid username or password.")
         else:
-            
             messages.error(request, "Invalid form submission. Please check the fields.")
 
     return render(request, 'hospital/patientlogin.html', {'form': form})
@@ -122,18 +130,44 @@ def patientlogin_view(request):
         
 #SignUp Views
 
-def admin_signup_view(request):
-    form=forms.AdminSigupForm()
-    if request.method=='POST':
-        form=forms.AdminSigupForm(request.POST)
-        if form.is_valid():
-            user=form.save()
-            user.set_password(user.password)
+def staff_admin_signup_view(request):
+    adminForm = StaffAdminSignupForm()
+    profile_form = StaffAdminProfileForm()
+
+    if request.method == 'POST':
+        adminForm = StaffAdminSignupForm(request.POST)
+        profile_form = StaffAdminProfileForm(request.POST, request.FILES)
+
+        if adminForm.is_valid() and profile_form.is_valid():
+            user = adminForm.save(commit=False)
+            user.username = adminForm.cleaned_data['username']
+            user.set_password(adminForm.cleaned_data['password1'])
             user.save()
+
+            # Add user to 'ADMIN' group
             my_admin_group = Group.objects.get_or_create(name='ADMIN')
             my_admin_group[0].user_set.add(user)
-            return HttpResponseRedirect('adminlogin')
-    return render(request,'hospital/adminsignup.html',{'form':form})
+
+            # Create HospitalStaffAdmin instance
+            profile = profile_form.save(commit=False)
+            profile.user = user
+            profile.email = adminForm.cleaned_data['email']
+            profile.mobile = profile_form.cleaned_data['mobile']
+            profile.profile_pic = profile_form.cleaned_data['profile_pic']
+            profile.save()
+
+            login(request, user)
+            messages.success(request, "User registered successfully!")
+            return redirect('adminlogin')
+        else:
+            for field, errors in adminForm.errors.items():
+                for error in errors:
+                    messages.error(request, f"{error}")
+            for field, errors in profile_form.errors.items():
+                for error in errors:
+                    messages.error(request, f"Profile {error}")
+
+    return render(request, 'hospital/adminsignup.html', {'form': adminForm, 'profile_form': profile_form})
 
 
 def doctor_signup_view(request):
