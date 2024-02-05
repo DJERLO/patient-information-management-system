@@ -76,6 +76,24 @@ class AppointmentForm(forms.ModelForm):
             'appointmentDate': forms.DateInput(attrs={'type': 'datetime-local'}),
         }
 
+class DoctorAppointmentForm(forms.ModelForm):
+    patientId=forms.ModelChoiceField(queryset=models.Patient.objects.all().filter(status=True),empty_label="Patient Name and Symptoms", to_field_name="user_id")
+    
+    def __init__(self, *args, **kwargs):
+        doctor_patients = kwargs.pop('doctor_patients', None)
+        super(DoctorAppointmentForm, self).__init__(*args, **kwargs)
+
+        if doctor_patients:
+            self.fields['patientId'].queryset = doctor_patients
+
+
+    class Meta:
+        model = models.Appointment
+        fields = ['description', 'status', 'appointmentDate']
+        widgets = {
+            'appointmentDate': forms.DateInput(attrs={'type': 'datetime-local'}),
+        }
+
 class PatientAppointmentForm(forms.ModelForm):
     doctorId=forms.ModelChoiceField(queryset=models.Doctor.objects.all().filter(status=True),empty_label="Doctor Name and Department", to_field_name="user_id")
     class Meta:

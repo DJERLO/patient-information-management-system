@@ -142,16 +142,16 @@
       cursor: pointer;
     }
     .menu ul li.icon-dashboard {
-      background-image: url("http://www.entypo.com/images//gauge.svg");
+      background-image: url("{% static 'images/icon-dashboard.png' %}");
     }
     .menu ul li.icon-customers {
-      background-image: url("http://www.entypo.com/images//briefcase.svg");
+      background-image: url("{% static 'images/icon-briefcase.png' %}");
     }
     .menu ul li.icon-users {
-      background-image: url("http://www.entypo.com/images//users.svg");
+      background-image: url("{% static 'images/icon-users.png' %}");
     }
     .menu ul li.icon-calendar {
-      background-image: url("http://www.entypo.com/images//calendar.svg");
+      background-image: url("{% static 'images/icon-calendar.webp' %}");
     }
 
     .menu ul li:hover {
@@ -270,6 +270,8 @@
       }
     }
 
+    
+
   </style>
 
 </head>
@@ -309,9 +311,7 @@
         </button>
         <div class="collapse navbar-collapse justify-content-between" id="navbarCollapse">
           <div class="navbar-nav" style=" margin-left: 90%;">
-
             <a href="/logout" class="nav-item nav-link" id="logoutLink">Logout</a>
-
           </div>
         </div>
       </nav>
@@ -365,6 +365,27 @@
         document.body.appendChild(form);
         form.submit();
     });
+
+    function updateServerTime() {
+      // Fetch the server time and update the #serverTime element
+      var serverTimeElement = document.getElementById('serverTime');
+      setInterval(function() {
+        // Get the current server time with the correct timezone (Asia/Manila)
+        var now = new Date(new Date().toLocaleString("en-US", {timeZone: "Asia/Manila"}));
+        
+        // Format the time
+        var hours = now.getHours();
+        var minutes = now.getMinutes();
+        var seconds = now.getSeconds();
+        var timeString = hours + ':' + (minutes < 10 ? '0' : '') + minutes + ':' + (seconds < 10 ? '0' : '') + seconds;
+        
+        serverTimeElement.innerText = 'Server Time (Asia/Manila): ' + timeString;
+    }, 1000); // Update every second
+  }
+
+  // Call the function to start updating the time
+  updateServerTime();
+
     </script>
 
 

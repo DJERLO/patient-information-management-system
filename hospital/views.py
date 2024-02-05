@@ -12,7 +12,6 @@ from datetime import datetime,timedelta,date
 from django.conf import settings
 from django.contrib import messages
 from django.utils import timezone
-from datetime import datetime
 from . import forms
 
 
@@ -22,6 +21,8 @@ def home_view(request):
         return HttpResponseRedirect('afterlogin')
     return render(request,'hospital/index.html')
 
+def doctor_wait_for_approval(request):
+    return render(request, 'hospital/doctor_wait_for_approval.html')
 
 #for showing signup/login button for admin(by sumit)
 def adminclick_view(request):
@@ -69,10 +70,9 @@ def adminlogin_view(request):
                 
                 if is_admin(user):
                     login(request, user)
-                    return redirect('admin-dashboard')
+                    return redirect('afterlogin')
                 else:
                     # User is not an admin or maybe a superuser
-                    # messages.error(request, "Invalid user role.")
                     return redirect('superadmin')
             else:
                 # Authentication failed
@@ -86,6 +86,7 @@ def adminlogin_view(request):
 
 def doctorlogin_view(request):
     form = DoctorLoginForm()
+    
     if request.method == 'POST':
         form = DoctorLoginForm(request.POST)
 
@@ -96,12 +97,11 @@ def doctorlogin_view(request):
 
             if user is not None and is_doctor(user):
                 login(request, user)
-                return redirect('doctor-dashboard')
+                return redirect('afterlogin')
             else:
                 # Authentication failed
                 messages.error(request, "Invalid username or password.")
         else:
-            
             messages.error(request, "Invalid form submission. Please check the fields.")
 
     return render(request, 'hospital/doctorlogin.html', {'form': form})
@@ -118,7 +118,7 @@ def patientlogin_view(request):
 
             if user is not None and is_patient(user):
                 login(request, user)
-                return redirect('patient-dashboard')
+                return redirect('afterlogin')
             else:
                 # Authentication failed
                 messages.error(request, "Invalid username or password.")
@@ -268,7 +268,8 @@ def afterlogin_view(request):
     if is_admin(request.user):
         return redirect('admin-dashboard')
     elif is_doctor(request.user):
-        account_approval = models.Doctor.objects.filter(user_id=request.user.id, status=True).exists()
+        account_approval = models.Doctor.objects.filter(user_id = request.user.id, status=True).exists()
+        print(account_approval)
         if account_approval:
             return redirect('doctor-dashboard')
         else:
@@ -294,13 +295,6 @@ def afterlogin_view(request):
             # Handle the case when the login type is unknown or not defined
             return HttpResponse("Unknown user type")
         
-
-
-
-
-
-
-
 
 #---------------------------------------------------------------------------------
 #------------------------ ADMIN RELATED VIEWS START ------------------------------
@@ -415,9 +409,6 @@ def admin_add_doctor_view(request):
 
         return HttpResponseRedirect('admin-view-doctor')
     return render(request,'hospital/admin_add_doctor.html',context=mydict)
-
-
-
 
 
 @login_required(login_url='adminlogin')
@@ -809,6 +800,35 @@ def doctor_view_appointment_view(request):
     appointments=zip(appointments,patients)
     return render(request,'hospital/doctor_view_appointment.html',{'appointments':appointments,'doctor':doctor})
 
+
+@login_required(login_url='doctorlogin')
+@user_passes_test(is_doctor)
+def doctor_add_appointment_view(request):
+    doctor = models.Doctor.objects.get(user_id=request.user.id)
+    doctor_patients = models.Patient.objects.filter(status=True, assignedDoctorId=request.user.id)
+
+    if request.method == 'POST':
+        appointmentForm = forms.DoctorAppointmentForm(request.POST, doctor_patients=doctor_patients)
+        if appointmentForm.is_valid():
+            appointment = appointmentForm.save(commit=False)
+            appointment.doctorId = request.user.id
+
+            # Get the patient based on the selected user_id from the form
+            patient_id = request.POST.get('patientId')
+            patient = models.Patient.objects.get(user_id=patient_id)
+
+            appointment.patientId = patient_id
+            appointment.doctorName = request.user.get_full_name()
+            appointment.patientName = patient.get_name
+            appointment.status = False
+            appointment.save()
+
+            return HttpResponseRedirect('doctor-view-appointment')
+    else:
+        appointmentForm = forms.DoctorAppointmentForm(doctor_patients=doctor_patients)
+
+    mydict = {'appointmentForm': appointmentForm, 'doctor': doctor}
+    return render(request, 'hospital/doctor_add_appointment.html', context=mydict)
 
 
 @login_required(login_url='doctorlogin')

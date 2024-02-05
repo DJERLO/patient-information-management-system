@@ -39,6 +39,7 @@ urlpatterns = [
 
     path('afterlogin', views.afterlogin_view,name='afterlogin'),
     path('logout', LogoutView.as_view(template_name='hospital/index.html'),name='logout'),
+    
 
 
     path('admin-dashboard', views.admin_dashboard_view,name='admin-dashboard'),
@@ -78,6 +79,7 @@ urlpatterns = [
 
 #---------FOR DOCTOR RELATED URLS-------------------------------------
 urlpatterns +=[
+    path('doctor-wait-for-approval/', views.doctor_wait_for_approval, name='doctor-wait-for-approval'),
     path('doctor-dashboard', views.doctor_dashboard_view,name='doctor-dashboard'),
 
     path('doctor-patient', views.doctor_patient_view,name='doctor-patient'),
@@ -86,9 +88,10 @@ urlpatterns +=[
 
     path('doctor-appointment', views.doctor_appointment_view,name='doctor-appointment'),
     path('doctor-view-appointment', views.doctor_view_appointment_view,name='doctor-view-appointment'),
+    path('doctor-add-appointment', views.doctor_add_appointment_view,name='doctor-add-appointment'),
     path('doctor-delete-appointment',views.doctor_delete_appointment_view,name='doctor-delete-appointment'),
     path('delete-appointment/<int:pk>', views.delete_appointment_view,name='delete-appointment'),
-]
+]   
 
 
 

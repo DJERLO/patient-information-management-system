@@ -141,16 +141,16 @@
       cursor: pointer;
     }
     .menu ul li.icon-dashboard {
-      background-image: url("http://www.entypo.com/images//gauge.svg");
+      background-image: url("{% static 'images/icon-dashboard.png' %}");
     }
     .menu ul li.icon-customers {
-      background-image: url("http://www.entypo.com/images//briefcase.svg");
+      background-image: url("{% static 'images/icon-briefcase.png' %}");
     }
     .menu ul li.icon-users {
-      background-image: url("http://www.entypo.com/images//users.svg");
+      background-image: url("{% static 'images/icon-users.png' %}");
     }
     .menu ul li.icon-calendar {
-      background-image: url("http://www.entypo.com/images//calendar.svg");
+      background-image: url("{% static 'images/icon-calendar.webp' %}");
     }
 
     .menu ul li:hover {
@@ -300,7 +300,9 @@
           <div class="navbar-nav" style=" margin-left: 90%;">
 
             <a href="#" class="nav-item nav-link" id="logoutLink">Logout</a>
-
+            <div class="navbar-nav">
+              <p class="nav-item nav-link" id="serverTime" style="color: white;"></p>
+            </div>
           </div>
         </div>
       </nav>
@@ -331,7 +333,6 @@
     document.getElementById('logoutLink').addEventListener('click', function(event) {
         event.preventDefault();  // Prevent the default anchor behavior
     
-        // Create a form dynamically and submit it
         var form = document.createElement('form');
         form.method = 'post';
         form.action = '/logout';
@@ -346,6 +347,27 @@
         document.body.appendChild(form);
         form.submit();
     });
+
+    function updateServerTime() {
+      // Fetch the server time and update the #serverTime element
+      var serverTimeElement = document.getElementById('serverTime');
+      setInterval(function() {
+        // Get the current server time with the correct timezone (Asia/Manila)
+        var now = new Date(new Date().toLocaleString("en-US", {timeZone: "Asia/Manila"}));
+        
+        // Format the time
+        var hours = now.getHours();
+        var minutes = now.getMinutes();
+        var seconds = now.getSeconds();
+        var timeString = hours + ':' + (minutes < 10 ? '0' : '') + minutes + ':' + (seconds < 10 ? '0' : '') + seconds;
+        
+        serverTimeElement.innerText = 'Server Time (Asia/Manila): ' + timeString;
+    }, 1000); // Update every second
+  }
+
+  // Call the function to start updating the time
+  updateServerTime();
+</script>
     </script>
   <!-- partial -->
 </body>

@@ -80,7 +80,8 @@
   <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
   <div class="container">
     <div class="row">
-      <div class="col-md-4 col-xl-6">
+      
+      <div class="col-md-4 col-xl-4">
         <div class="card bg-c-blue order-card">
           <div class="card-block" id="doctorViewAppointment">
             <a href="/doctor-view-appointment">
@@ -93,8 +94,21 @@
         </div>
       </div>
 
-      <div class="col-md-4 col-xl-6">
+      <div class="col-md-4 col-xl-4">
         <div class="card bg-c-green order-card">
+          <div class="card-block" id="doctorAddAppointment">
+            <a href="/doctor-add-appointment">
+              <h6 class="m-b-20">Schedule Your Appointment</h6>
+            </a>
+            <br>
+            <h2 class="text-right"><i class="fas fa-book-medical f-left"></i></h2>
+
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-4 col-xl-4">
+        <div class="card bg-c-yellow order-card">
           <div class="card-block" id="doctorDeleteAppointment">
             <a href="/doctor-delete-appointment">
               <h6 class="m-b-20">Delete Appointment</h6>
@@ -110,10 +124,15 @@
   </div>
   <script>
     let doctorViewAppointment = document.getElementById("doctorViewAppointment")
+    let doctorAddAppointment = document.getElementById("doctorAddAppointment")
     let doctorDeleteAppointment = document.getElementById("doctorDeleteAppointment")
 
     doctorViewAppointment.addEventListener("click", function() {
       window.location.href = "/doctor-view-appointment";
+    });
+
+    doctorAddAppointment.addEventListener("click", function() {
+      window.location.href = "/doctor-add-appointment";
     });
 
     doctorDeleteAppointment.addEventListener("click", function() {
