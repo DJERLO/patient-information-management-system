@@ -42,18 +42,12 @@
     }
   </style>
 
-  <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
-  <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
   <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  
 </head>
 <br><br>
-{% if message %}
-<script>
-  var a = "{{message}}";
-  alert(a);
-</script>
-
-{% endif %}
 
 
 <!------ add appointment page by patient(sumit)  ---------->
@@ -65,17 +59,26 @@
         <p>Book Appointment Details</p>
       </div>
       <div class="form-content">
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        {% endfor %}
         <div class="row">
           <div class="col-md-12">
             <div class="form-group">
               {% render_field appointmentForm.description class="form-control" placeholder="Description" %}
             </div>
+            <label for="{{ appointmentForm.appointmentDate.id_for_label }}">Appointment Date:</label>
+            <div class="form-group">
+              {% render_field appointmentForm.appointmentDate class="form-control" placeholder="Appointment Date" %}
+            </div>
             <div class="form-group">
               {% render_field appointmentForm.doctorId class="form-control" placeholder="doctor" %}
             </div>
-            
-
-
 
           </div>
 
@@ -85,6 +88,7 @@
     </div>
   </div>
 </form>
+
 
 
 

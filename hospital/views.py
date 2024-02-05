@@ -1,4 +1,5 @@
-from django.contrib.auth.forms import AuthenticationForm
+
+from django.contrib.auth.models import User
 from django.shortcuts import render,redirect
 from django.urls import reverse
 from . import forms,models
@@ -13,6 +14,7 @@ from django.conf import settings
 from django.contrib import messages
 from django.utils import timezone
 from . import forms
+
 
 
 # Create your views here.
@@ -359,13 +361,17 @@ def delete_doctor_from_hospital_view(request,pk):
 def update_doctor_view(request,pk):
     doctor=models.Doctor.objects.get(id=pk)
     user=models.User.objects.get(id=doctor.user_id)
-
     userForm=forms.DoctorUserForm(instance=user)
     doctorForm=forms.DoctorForm(request.FILES,instance=doctor)
+    
+    doctorForm.fields['address'].initial = doctor.get_address
+    doctorForm.fields['mobile'].initial = doctor.get_mobile
+    
     mydict={'userForm':userForm,'doctorForm':doctorForm}
+    
     if request.method=='POST':
-        userForm=forms.DoctorUserForm(request.POST,instance=user)
-        doctorForm=forms.DoctorForm(request.POST,request.FILES,instance=doctor)
+        userForm=forms.UpdateDoctorUserForm(request.POST,instance=user)
+        doctorForm=forms.UpdateDoctorForm(request.POST,request.FILES,instance=doctor)
         if userForm.is_valid() and doctorForm.is_valid():
             user=userForm.save()
             user.set_password(user.password)
@@ -388,18 +394,14 @@ def admin_add_doctor_view(request):
     
     if request.method=='POST':
         doctorForm=forms.DoctorUserForm(request.POST)
-        profile_form=forms.DoctorForm(request.POST, request.FILES)
+        profile_form=forms.DoctorForm(request.POST or None, request.FILES)
         if doctorForm.is_valid() and profile_form.is_valid():
             user=doctorForm.save()
             user.username = doctorForm.cleaned_data['username']
-            user.set_password(doctorForm.cleaned_data['password1'])
             user.save()
 
             profile=profile_form.save(commit=False)
             profile.user=user
-            profile.status=True
-            profile.email = doctorForm.cleaned_data['email']
-            profile.mobile = profile_form.cleaned_data['mobile']
             profile.profile_pic = profile_form.cleaned_data['profile_pic']
             profile.save()
 
@@ -407,7 +409,7 @@ def admin_add_doctor_view(request):
             my_doctor_group[0].user_set.add(user)
         
 
-        return HttpResponseRedirect('admin-view-doctor')
+        return HttpResponseRedirect(reverse('admin-view-doctor'))
     return render(request,'hospital/admin_add_doctor.html',context=mydict)
 
 
@@ -478,7 +480,7 @@ def delete_patient_from_hospital_view(request,pk):
 def update_patient_view(request,pk):
     patient=models.Patient.objects.get(id=pk)
     user=models.User.objects.get(id=patient.user_id)
-
+    
     userForm=forms.PatientUserForm(instance=user)
     patientForm=forms.PatientForm(request.FILES,instance=patient)
     mydict={'userForm':userForm,'patientForm':patientForm}
@@ -920,7 +922,7 @@ def patient_book_appointment_view(request):
                     pass
                 else:
                     print('else')
-                    message="Please Choose Doctor According To Disease"
+                    messages.error=(request,"Please Choose Doctor According To Disease")
                     return render(request,'hospital/patient_book_appointment.html',{'appointmentForm':appointmentForm,'patient':patient,'message':message})
 
 
@@ -929,7 +931,7 @@ def patient_book_appointment_view(request):
                     pass
                 else:
                     print('else')
-                    message="Please Choose Doctor According To Disease"
+                    messages.error=(request,"Please Choose Doctor According To Disease")
                     return render(request,'hospital/patient_book_appointment.html',{'appointmentForm':appointmentForm,'patient':patient,'message':message})
 
             if doctor.department == 'Emergency Medicine Specialists':
@@ -937,7 +939,7 @@ def patient_book_appointment_view(request):
                     pass
                 else:
                     print('else')
-                    message="Please Choose Doctor According To Disease"
+                    messages.error=(request,"Please Choose Doctor According To Disease")
                     return render(request,'hospital/patient_book_appointment.html',{'appointmentForm':appointmentForm,'patient':patient,'message':message})
 
             if doctor.department == 'Allergists/Immunologists':
@@ -945,7 +947,7 @@ def patient_book_appointment_view(request):
                     pass
                 else:
                     print('else')
-                    message="Please Choose Doctor According To Disease"
+                    messages.error=(request,"Please Choose Doctor According To Disease")
                     return render(request,'hospital/patient_book_appointment.html',{'appointmentForm':appointmentForm,'patient':patient,'message':message})
 
             if doctor.department == 'Anesthesiologists':
@@ -953,7 +955,7 @@ def patient_book_appointment_view(request):
                     pass
                 else:
                     print('else')
-                    message="Please Choose Doctor According To Disease"
+                    messages.error=(request,"Please Choose Doctor According To Disease")
                     return render(request,'hospital/patient_book_appointment.html',{'appointmentForm':appointmentForm,'patient':patient,'message':message})
 
             if doctor.department == 'Colon and Rectal Surgeons':
@@ -961,7 +963,7 @@ def patient_book_appointment_view(request):
                     pass
                 else:
                     print('else')
-                    message="Please Choose Doctor According To Disease"
+                    messages.error=(request,"Please Choose Doctor According To Disease")
                     return render(request,'hospital/patient_book_appointment.html',{'appointmentForm':appointmentForm,'patient':patient,'message':message})
 
             if doctor.department == 'Gastroenterologists':
@@ -969,7 +971,7 @@ def patient_book_appointment_view(request):
                     pass
                 else:
                     print('else')
-                    message = "Please Choose Doctor According To Disease"
+                    messages.error=(request,"Please Choose Doctor According To Disease")
                     return render(request, 'hospital/patient_book_appointment.html', {'appointmentForm': appointmentForm, 'patient': patient, 'message': message})
 
             if doctor.department == 'Hematologists':
@@ -977,7 +979,7 @@ def patient_book_appointment_view(request):
                     pass
                 else:
                     print('else')
-                    message = "Please Choose Doctor According To Disease"
+                    messages.error=(request,"Please Choose Doctor According To Disease")
                     return render(request, 'hospital/patient_book_appointment.html', {'appointmentForm': appointmentForm, 'patient': patient, 'message': message})
 
             if doctor.department == 'Nephrologists':
@@ -985,7 +987,7 @@ def patient_book_appointment_view(request):
                     pass
                 else:
                     print('else')
-                    message = "Please Choose Doctor According To Disease"
+                    messages.error=(request,"Please Choose Doctor According To Disease")
                     return render(request, 'hospital/patient_book_appointment.html', {'appointmentForm': appointmentForm, 'patient': patient, 'message': message})
 
             if doctor.department == 'Neurologists':
@@ -993,7 +995,7 @@ def patient_book_appointment_view(request):
                     pass
                 else:
                     print('else')
-                    message = "Please Choose Doctor According To Disease"
+                    messages.error=(request,"Please Choose Doctor According To Disease")
                     return render(request, 'hospital/patient_book_appointment.html', {'appointmentForm': appointmentForm, 'patient': patient, 'message': message})
 
             if doctor.department == 'Oncologists':
@@ -1001,7 +1003,7 @@ def patient_book_appointment_view(request):
                     pass
                 else:
                     print('else')
-                    message = "Please Choose Doctor According To Disease"
+                    messages.error=(request,"Please Choose Doctor According To Disease")
                     return render(request, 'hospital/patient_book_appointment.html', {'appointmentForm': appointmentForm, 'patient': patient, 'message': message})
 
             if doctor.department == 'Ophthalmologists':
@@ -1009,7 +1011,7 @@ def patient_book_appointment_view(request):
                     pass
                 else:
                     print('else')
-                    message = "Please Choose Doctor According To Disease"
+                    messages.error=(request,"Please Choose Doctor According To Disease")
                     return render(request, 'hospital/patient_book_appointment.html', {'appointmentForm': appointmentForm, 'patient': patient, 'message': message})
 
             if doctor.department == 'Orthopedic Surgeons':
@@ -1017,7 +1019,7 @@ def patient_book_appointment_view(request):
                     pass
                 else:
                     print('else')
-                    message = "Please Choose Doctor According To Disease"
+                    messages.error=(request,"Please Choose Doctor According To Disease")
                     return render(request, 'hospital/patient_book_appointment.html', {'appointmentForm': appointmentForm, 'patient': patient, 'message': message})
 
             if doctor.department == 'Pediatricians':
@@ -1025,7 +1027,7 @@ def patient_book_appointment_view(request):
                     pass
                 else:
                     print('else')
-                    message = "Please Choose Doctor According To Disease"
+                    messages.error=(request,"Please Choose Doctor According To Disease")
                     return render(request, 'hospital/patient_book_appointment.html', {'appointmentForm': appointmentForm, 'patient': patient, 'message': message})
 
             if doctor.department == 'Psychiatrists':
@@ -1033,7 +1035,7 @@ def patient_book_appointment_view(request):
                     pass
                 else:
                     print('else')
-                    message = "Please Choose Doctor According To Disease"
+                    messages.error=(request,"Please Choose Doctor According To Disease")
                     return render(request, 'hospital/patient_book_appointment.html', {'appointmentForm': appointmentForm, 'patient': patient, 'message': message})
 
             if doctor.department == 'Radiologists':
@@ -1041,7 +1043,7 @@ def patient_book_appointment_view(request):
                     pass
                 else:
                     print('else')
-                    message = "Please Choose Doctor According To Disease"
+                    messages.error=(request,"Please Choose Doctor According To Disease")
                     return render(request, 'hospital/patient_book_appointment.html', {'appointmentForm': appointmentForm, 'patient': patient, 'message': message})
 
             if doctor.department == 'Rheumatologists':
@@ -1049,16 +1051,17 @@ def patient_book_appointment_view(request):
                     pass
                 else:
                     print('else')
-                    message = "Please Choose Doctor According To Disease"
+                    messages.error=(request,"Please Choose Doctor According To Disease")
                     return render(request, 'hospital/patient_book_appointment.html', {'appointmentForm': appointmentForm, 'patient': patient, 'message': message})
 
 
-
+            doctor = User.objects.get(id=request.POST.get('doctorId'))
+            patient = User.objects.get(id=request.user.id)
             appointment=appointmentForm.save(commit=False)
             appointment.doctorId=request.POST.get('doctorId')
             appointment.patientId=request.user.id #----user can choose any patient but only their info will be stored
-            appointment.doctorName=models.User.objects.get(id=request.POST.get('doctorId')).first_name
-            appointment.patientName=request.user.first_name #----user can choose any patient but only their info will be stored
+            appointment.doctorName= f"{doctor.first_name} {doctor.last_name}"
+            appointment.patientName= f"{patient.first_name} {patient.last_name}"
             appointment.status=False
             appointment.save()
         return HttpResponseRedirect('patient-view-appointment')

@@ -47,50 +47,108 @@
   <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 </head>
 <br><br>
-<!------ update page for doctor by admin(sumit)  ---------->
 <form method="post" enctype="multipart/form-data">
   {% csrf_token %}
   <div class="container register-form">
-    <div class="form">
-      <div class="note">
-        <p>Update Doctor Details</p>
-      </div>
-      <div class="form-content">
-        <div class="row">
-          <div class="col-md-6">
-            <div class="form-group">
-              {% render_field userForm.first_name class="form-control" placeholder="First Name" %}
-            </div>
-            <div class="form-group">
-              {% render_field userForm.username class="form-control" placeholder="Username" %}
-            </div>
-            <div class="form-group">
-              {% render_field doctorForm.mobile class="form-control" placeholder="Contact" %}
-            </div>
-            <div class="form-group">
-              {% render_field doctorForm.department class="form-control" placeholder="Department" %}
-            </div>
+      <div class="form">
+          <div class="note">
+              <p>Update Doctor Details</p>
           </div>
-          <div class="col-md-6">
-            <div class="form-group">
-              {% render_field userForm.last_name class="form-control" placeholder="Last Name" %}
+          <div class="form-content">
+            <!-- Add this code where you want to display alerts -->
+            <div class="alert-container">
+              {% if messages %}
+                  {% for message in messages %}
+                      <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                          {{ message }}
+                          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                          </button>
+                      </div>
+                  {% endfor %}
+              {% endif %}
             </div>
-            <div class="form-group">
-              {% render_field userForm.password class="form-control" placeholder="Password" %}
-            </div>
-            <div class="form-group">
-              {% render_field doctorForm.address class="form-control" placeholder="Address" %}
-            </div>
-            <div class="form-group">
-              {% render_field doctorForm.profile_pic class="form-control" placeholder="Profile Picture" %}
-            </div>
+              <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label for="{{ profile_form.department.id_for_label }}">Department</label>
+                      {% render_field doctorForm.department class="form-control" placeholder="Department" %}
+                    </div>
+                      <div class="form-group">
+                        <label for="{{ profile_form.first_name.id_for_label }}">First Name</label>
+                        {% render_field userForm.first_name class="form-control" placeholder="First Name" %}
+                      </div>
+                      <div class="form-group">
+                        <label for="{{ profile_form.last_name.id_for_label }}">Last Name</label>
+                        {% render_field userForm.last_name class="form-control" placeholder="Last Name" %}
+                      </div>
+                      <div class="form-group">
+                        <label for="{{ profile_form.username.id_for_label }}">Username</label>
+                        {% render_field userForm.username class="form-control" placeholder="Username" %}
+                      </div>
+                      <div class="form-group">
+                        <label for="{{ profile_form.email.id_for_label }}">Email</label>
+                        {% render_field userForm.email class="form-control" placeholder="Email" %}
+                      </div>
+                
+                    </div>
+                    <div class="col-md-6">
+                      <div class="form-group">
+                        <center>
+                          <label for="{{ profile_form.profile_pic.id_for_label }}">Profile Picture</label>
+                          <img id="preview" src="#" alt="Preview" style="max-width: 100%; max-height: 9.5em; display: none;">
+                        </center>
+                        {% render_field doctorForm.profile_pic class="form-control" onchange="previewImage(this)" %}
+                      </div>
+                      <div class="form-group">
+                        <label for="{{ doctor_form.mobile.id_for_label }}">Mobile</label>
+                        {% render_field doctorForm.mobile class="form-control" placeholder="Mobile" %}
+                      </div>
+                      <div class="form-group">
+                        <label for="{{ doctor_form.address.id_for_label }}">Address</label>
+                        {% render_field doctorForm.address class="form-control" placeholder="Address" %}
+                      </div>
+                  </div>
+              </div>
+                  <center><button type="submit" class="btnSubmit">Update Doctor</button></center> 
+              </div>
+             
           </div>
-        </div>
-        <button type="submit" class="btnSubmit">Update</button>
       </div>
-    </div>
   </div>
 </form>
+
+
+<script>
+  function previewImage(input) {
+      var preview = document.getElementById('preview');
+      var file = input.files[0];
+      var reader = new FileReader();
+
+      reader.onloadend = function () {
+          preview.src = reader.result;
+          preview.style.display = 'block';
+      };
+
+      if (file) {
+          reader.readAsDataURL(file);
+      } else {
+          preview.src = '#';
+          preview.style.display = 'none';
+      }
+  }
+  
+  var addressValue = '{{ doctorForm.fields.address.initial }}';
+  var mobileValue = '{{ doctorForm.fields.mobile.initial }}';
+
+  var addressField = document.getElementById('{{ doctorForm.address.id_for_label }}');
+  var mobileField = document.getElementById('{{ doctorForm.mobile.id_for_label }}');
+
+    // Set the values
+    addressField.value = addressValue;
+    mobileField.value = mobileValue;
+</script>
+
 
 
 {% endblock content %}

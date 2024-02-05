@@ -300,9 +300,7 @@
           <div class="navbar-nav" style=" margin-left: 90%;">
 
             <a href="#" class="nav-item nav-link" id="logoutLink">Logout</a>
-            <div class="navbar-nav">
-              <p class="nav-item nav-link" id="serverTime" style="color: white;"></p>
-            </div>
+  
           </div>
         </div>
       </nav>
@@ -348,27 +346,8 @@
         form.submit();
     });
 
-    function updateServerTime() {
-      // Fetch the server time and update the #serverTime element
-      var serverTimeElement = document.getElementById('serverTime');
-      setInterval(function() {
-        // Get the current server time with the correct timezone (Asia/Manila)
-        var now = new Date(new Date().toLocaleString("en-US", {timeZone: "Asia/Manila"}));
-        
-        // Format the time
-        var hours = now.getHours();
-        var minutes = now.getMinutes();
-        var seconds = now.getSeconds();
-        var timeString = hours + ':' + (minutes < 10 ? '0' : '') + minutes + ':' + (seconds < 10 ? '0' : '') + seconds;
-        
-        serverTimeElement.innerText = 'Server Time (Asia/Manila): ' + timeString;
-    }, 1000); // Update every second
-  }
-
-  // Call the function to start updating the time
-  updateServerTime();
-</script>
-    </script>
+    
+  </script>
   <!-- partial -->
 </body>
 

@@ -42,11 +42,11 @@ departments=[('Cardiologist', 'Cardiologist'),
 class Doctor(models.Model):
     user=models.OneToOneField(User,on_delete=models.CASCADE)
     profile_pic= models.ImageField(upload_to='profile_pic/DoctorProfilePic/',null=True,blank=True)
-    address = models.CharField(max_length=40)
-    mobile = models.CharField(max_length=20,null=True)
+    address = models.CharField(max_length=255, blank=False, null=False)
+    mobile = models.CharField(max_length=20,blank=False, null=False)
     department= models.CharField(max_length=50,choices=departments,default='Cardiologist')
     status=models.BooleanField(default=False)
-    email = models.EmailField(validators=[validate_email], blank=False, null=False)
+   
    
     @property
     def get_name(self):
@@ -54,6 +54,15 @@ class Doctor(models.Model):
     @property
     def get_id(self):
         return self.user.id
+    @property
+    def get_mobile(self):
+        return self.mobile
+
+    @property
+    def get_address(self):
+        return self.address
+        
+
     def __str__(self):
         return "{} ({})".format(self.user.first_name,self.department)
 

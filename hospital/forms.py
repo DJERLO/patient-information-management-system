@@ -29,20 +29,41 @@ class StaffAdminProfileForm(forms.ModelForm):
         fields = ['profile_pic', 'address', 'mobile']
 
 
-#for student related form
+class UpdateDoctorUserForm(forms.ModelForm):
+    class Meta:
+        model=User
+        fields=['first_name','last_name','username', 'email']
+        widgets = {
+            'password': forms.PasswordInput()
+        }
+
+
+#Update Forms
+class UpdateDoctorForm(forms.ModelForm):
+    class Meta:
+        model = models.Doctor
+        fields = ['address', 'mobile', 'department', 'status', 'profile_pic']
+
 class DoctorUserForm(UserCreationForm):
     class Meta:
         model=User
         fields=['first_name','last_name','username', 'email', 'password1', 'password2']
         widgets = {
-        'password': forms.PasswordInput()
+            'password1': forms.PasswordInput(),
+            'password2': forms.PasswordInput(),
         }
-
+        
 class DoctorForm(forms.ModelForm):
     class Meta:
-        model=models.Doctor
-        fields=['address','mobile','department','status','profile_pic']
-
+        model = models.Doctor
+        fields = ['address', 'mobile', 'department', 'status', 'profile_pic']
+    
+    def __init__(self, *args, **kwargs):
+        super(DoctorForm, self).__init__(*args, **kwargs)
+        self.fields['department'].required = False
+        self.fields['status'].required = False
+        self.fields['address'].required = False
+        self.fields['mobile'].required = False
 
 
 #for teacher related form
@@ -62,7 +83,6 @@ class PatientForm(forms.ModelForm):
     class Meta:
         model=models.Patient
         fields=['address','mobile','status','symptoms','profile_pic']
-
 
 
 class AppointmentForm(forms.ModelForm):
@@ -95,10 +115,17 @@ class DoctorAppointmentForm(forms.ModelForm):
         }
 
 class PatientAppointmentForm(forms.ModelForm):
-    doctorId=forms.ModelChoiceField(queryset=models.Doctor.objects.all().filter(status=True),empty_label="Doctor Name and Department", to_field_name="user_id")
+    doctorId = forms.ModelChoiceField(queryset=models.Doctor.objects.all().filter(status=True), empty_label="Doctor Name and Department", to_field_name="user_id")
+
     class Meta:
-        model=models.Appointment
-        fields=['description','status']
+        model = models.Appointment
+        fields = ['description', 'status', 'appointmentDate']
+        widgets = {
+            'appointmentDate': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
+        }
+
+
+
 
 
 #for contact us page
