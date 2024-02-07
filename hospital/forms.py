@@ -60,10 +60,10 @@ class DoctorForm(forms.ModelForm):
     
     def __init__(self, *args, **kwargs):
         super(DoctorForm, self).__init__(*args, **kwargs)
-        self.fields['department'].required = False
+        self.fields['department'].required = True
         self.fields['status'].required = False
-        self.fields['address'].required = False
-        self.fields['mobile'].required = False
+        self.fields['address'].required = True
+        self.fields['mobile'].required = True
 
 
 #for teacher related form

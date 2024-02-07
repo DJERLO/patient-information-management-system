@@ -9,6 +9,7 @@ from django.contrib.auth.models import Group
 from django.http import HttpResponseRedirect
 from django.core.mail import send_mail
 from django.contrib.auth.decorators import login_required,user_passes_test
+from django.contrib.auth.hashers import make_password
 from datetime import datetime,timedelta,date
 from django.conf import settings
 from django.contrib import messages
@@ -366,6 +367,7 @@ def update_doctor_view(request,pk):
     
     doctorForm.fields['address'].initial = doctor.get_address
     doctorForm.fields['mobile'].initial = doctor.get_mobile
+    doctorForm.fields['department'].initial = doctor.get_department
     
     mydict={'userForm':userForm,'doctorForm':doctorForm}
     
@@ -374,7 +376,6 @@ def update_doctor_view(request,pk):
         doctorForm=forms.UpdateDoctorForm(request.POST,request.FILES,instance=doctor)
         if userForm.is_valid() and doctorForm.is_valid():
             user=userForm.save()
-            user.set_password(user.password)
             user.save()
             doctor=doctorForm.save(commit=False)
             doctor.status=True
@@ -403,6 +404,7 @@ def admin_add_doctor_view(request):
             profile=profile_form.save(commit=False)
             profile.user=user
             profile.profile_pic = profile_form.cleaned_data['profile_pic']
+            profile.status=True
             profile.save()
 
             my_doctor_group = Group.objects.get_or_create(name='DOCTOR')
@@ -1138,7 +1140,6 @@ def contactus_view(request):
         form = forms.ContactusForm(request.POST)
 
         if form.is_valid():
-            # Inside the 'if form.is_valid()' block
             user_name = form.cleaned_data['Name']
             user_email = form.cleaned_data['Email']
             subject = form.cleaned_data['Subject']
@@ -1147,7 +1148,7 @@ def contactus_view(request):
             try:
                 # Inside the 'try' block
                 send_mail(
-                    f"{user_name} || {user_email} - {subject}",
+                    f"{user_name} || <{user_email}> - {subject}",
                     message,
                     settings.EMAIL_HOST_USER,
                     [settings.EMAIL_RECEIVING_USER],

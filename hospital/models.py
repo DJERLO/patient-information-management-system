@@ -3,7 +3,8 @@ from django.contrib.auth.models import User
 from django.core.validators import validate_email
 
 class HospitalStaffAdmin(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
+    staff_id = models.AutoField(primary_key=True)  
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     username = models.CharField(max_length=40, blank=False, null=False)
     profile_pic= models.ImageField(upload_to='profile_pic/StaffAdminProfilePic/',null=True, blank=True)
     address = models.CharField(max_length=40, blank=False, null=False)
@@ -57,10 +58,12 @@ class Doctor(models.Model):
     @property
     def get_mobile(self):
         return self.mobile
-
     @property
     def get_address(self):
         return self.address
+    @property
+    def get_department(self):
+        return self.department
         
 
     def __str__(self):

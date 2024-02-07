@@ -141,8 +141,8 @@ MEDIA_ROOT=os.path.join(BASE_DIR,'media')
 LOGIN_REDIRECT_URL='/afterlogin'
 
 #for contact us give your gmail id and password
-#EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend' #Test on the Console before
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend' #Sends an Emil thru SMTP
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend' #Test on the Console before
+#EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend' #Sends an Emil thru SMTP
 EMAIL_HOST = 'smtp-relay.brevo.com'
 EMAIL_USE_TLS = True
 EMAIL_PORT = 587

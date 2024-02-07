@@ -13,7 +13,7 @@
     }
   
     .market-update-block {
-      flex-basis: calc(33.3333% - 1.6em);
+      flex-basis: calc(50% - 1.6em);
       margin-bottom: 1.6em;
       padding: 2em 2em;
       background: #999;
@@ -93,49 +93,50 @@
 </head>
 
 <body>
-  <div class="container-sm market-updates">
-    <div class="col-md-4 market-update-gd">
-      <div class="market-update-block clr-block-1">
-        <div class="col-md-8 market-update-left">
-          <h3>{{doctorcount}}</h3>
-          <h4>Total Doctor</h4>
-          <p>Approval Required : {{pendingdoctorcount}}</p>
+  <div class="container-fluid market-updates">
+    <div class="row">
+      <div class="col-md-4 market-update-gd">
+        <div class="market-update-block clr-block-1">
+          <div class="col-md-8 market-update-left">
+            <h3>{{doctorcount}}</h3>
+            <h4>Total Doctor</h4>
+            <p>Approval Required: {{pendingdoctorcount}}</p>
+          </div>
+          <div class="col-md-4 market-update-right">
+            <i class="fa fa-user-md"></i>
+          </div>
+          <div class="clearfix"> </div>
         </div>
-        <div class="col-md-4 market-update-right">
-          <i class="fa fa-user-md"></i>
+      </div>
+
+      <div class="col-md-4 market-update-gd">
+        <div class="market-update-block clr-block-2">
+          <div class="col-md-8 market-update-left">
+            <h3>{{patientcount}}</h3>
+            <h4>Total Patient</h4>
+            <p>Wants to Admit: {{pendingpatientcount}}</p>
+          </div>
+          <div class="col-md-4 market-update-right">
+            <i class="fa fa-user-o"></i>
+          </div>
+          <div class="clearfix"> </div>
         </div>
-        <div class="clearfix"> </div>
+      </div>
+
+      <div class="col-md-4 market-update-gd">
+        <div class="market-update-block clr-block-3">
+          <div class="col-md-8 market-update-left">
+            <h3>{{appointmentcount}}</h3>
+            <h4>Total Appointment</h4>
+            <p>Approve Appointments: {{pendingappointmentcount}}</p>
+          </div>
+          <div class="col-md-4 market-update-right">
+            <i class="fa fa-calendar"></i>
+          </div>
+          <div class="clearfix"> </div>
+        </div>
       </div>
     </div>
-    
-    <div class="col-md-4 market-update-gd">
-      <div class="market-update-block clr-block-2">
-        <div class="col-md-8 market-update-left">
-          <h3>{{patientcount}}</h3>
-          <h4>Total Patient</h4>
-          <p>Wants to Admit : {{pendingpatientcount}}</p>
-        </div>
-        <div class="col-md-4 market-update-right">
-          <i class="fa fa-user-o"></i>
-        </div>
-        <div class="clearfix"> </div>
-      </div>
-    </div>
-    
-    <div class="col-md-4 market-update-gd">
-      <div class="market-update-block clr-block-3">
-        <div class="col-md-8 market-update-left">
-          <h3>{{appointmentcount}}</h3>
-          <h4>Total Appointment</h4>
-          <p>Approve Appointments :{{pendingappointmentcount}} </p>
-        </div>
-        <div class="col-md-4 market-update-right">
-          <i class="fa fa-calendar"> </i>
-        </div>
-        <div class="clearfix"> </div>
-      </div>
-    </div>
-    <div class="clearfix"> </div>
   </div>
 </body>
 

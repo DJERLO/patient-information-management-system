@@ -108,6 +108,10 @@
                         <label for="{{ doctor_form.address.id_for_label }}">Address</label>
                         {% render_field doctorForm.address class="form-control" placeholder="Address" %}
                       </div>
+                      <div class="form-group">
+                        <label for="{{ profile_form.password.id_for_label }}">Email</label>
+                        {% render_field userForm.password class="form-control" placeholder="Password" %}
+                      </div>
                   </div>
               </div>
                   <center><button type="submit" class="btnSubmit">Update Doctor</button></center> 
@@ -140,13 +144,17 @@
   
   var addressValue = '{{ doctorForm.fields.address.initial }}';
   var mobileValue = '{{ doctorForm.fields.mobile.initial }}';
+  var departmentValue = '{{doctorForm.fields.department.initial}}';
 
   var addressField = document.getElementById('{{ doctorForm.address.id_for_label }}');
   var mobileField = document.getElementById('{{ doctorForm.mobile.id_for_label }}');
+  var departmentField = document.getElementById('{{ doctorForm.department.id_for_label }}');
 
     // Set the values
     addressField.value = addressValue;
     mobileField.value = mobileValue;
+    departmentField.value = departmentValue;
+
 </script>
 
 
