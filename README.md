@@ -8,19 +8,22 @@ A comprehensive data management system designed to streamline the processing of 
 
 - **Date & Scheduling Appointment:** Enables appointment scheduling for Admin, Doctors, and Patients (requires approval).
 - **Authentication:** Implemented for Staff, Doctors, and Patients.
-- **Updated Admin(Staff):** Allows Admin to update Doctor profiles soon Patients.
+- **Updated Admin(Staff):** Staffs Admin have ability to update doctor and patients.
 - **Doctor Appointment Scheduling:** Doctors can schedule/book appointments for patients within their department.
-- **Patient Appointment Booking:** Patients can book appointments too, but require some pending approval from Staff Members.
+- **Doctor Approval Appointment :** Doctors can now accept/reject request appointments from patients within their department.
+- **Patient Appointment Booking:** Patients can request book appointments too, but require some pending approval from assigned Doctor or Staff Members.
+- **About Us Section** Added About Us New Page
 
 ## Bug Fixes and Improvements:
-
+- **Adjustments on user's base.html** For Mobile and Tablet Device
+- **Mobile Phones and Tablet UI** Small device can now navigate freely in this update.
 - **Clickable Cards:** Improved user experience by making cards clickable instead of plain text.
 - **Static Icons:** Added static icons to replace deprecated icon links.
+- **SweetAlerts2** SweetAlerts are now integrated on CRUD Operations.
 
 ## Planning to Add:
-
-- **Admin(Staff) Profile Update:** Enhancement to enable Admin(Staff) to update Doctor and Patients profiles.
-- **Patient Overhaul Form:** Addition of a comprehensive form for demographic information and insurance details.
+- Verification Email (6-digit code)
+- Overhaul of Contact Us Form
 
 ## Requirements and Installation Instructions
 
