@@ -28,7 +28,7 @@ class StaffAdminProfileForm(forms.ModelForm):
         model = models.HospitalStaffAdmin
         fields = ['profile_pic', 'address', 'mobile']
 
-
+#Update Forms
 class UpdateDoctorUserForm(forms.ModelForm):
     class Meta:
         model=User
@@ -38,12 +38,12 @@ class UpdateDoctorUserForm(forms.ModelForm):
         }
 
 
-#Update Forms
 class UpdateDoctorForm(forms.ModelForm):
     class Meta:
         model = models.Doctor
         fields = ['address', 'mobile', 'department', 'status', 'profile_pic']
 
+#Sign Up
 class DoctorUserForm(UserCreationForm):
     class Meta:
         model=User
@@ -66,24 +66,64 @@ class DoctorForm(forms.ModelForm):
         self.fields['mobile'].required = True
 
 
-#for teacher related form
 class PatientUserForm(forms.ModelForm):
-    class Meta:
-        model=User
-        fields=['first_name','last_name','username','password']
-        widgets = {
-        'password': forms.PasswordInput()
-        }
-        
-class PatientForm(forms.ModelForm):
-    #this is the extrafield for linking patient and their assigend doctor
-    #this will show dropdown __str__ method doctor model is shown on html so override it
-    #to_field_name this will fetch corresponding value  user_id present in Doctor model and return it
-    assignedDoctorId=forms.ModelChoiceField(queryset=models.Doctor.objects.all().filter(status=True),empty_label="Name and Department", to_field_name="user_id")
-    class Meta:
-        model=models.Patient
-        fields=['address','mobile','status','symptoms','profile_pic']
+    password = forms.CharField(widget=forms.PasswordInput())
 
+    class Meta:
+        model = User
+        fields = ['first_name', 'last_name', 'email', 'username', 'password']
+
+class PatientForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super(PatientForm, self).__init__(*args, **kwargs)
+        doctors = models.Doctor.objects.filter(status=True)
+        choices = [("", "Select Doctor and Department")]  # Add an empty option
+        choices += [(doctor.user_id, str(doctor)) for doctor in doctors]
+        self.fields['assigned_doctor_id'].choices = choices
+        self.fields['assigned_doctor'].choices = [(doctor.user_id, str(doctor)) for doctor in doctors]
+    
+    # Modify queryset to use user_id instead of id
+    assigned_doctor_id = forms.ChoiceField(required=False, widget=forms.Select)
+    assigned_doctor = forms.ChoiceField(required=False, widget=forms.Select)
+    
+    class Meta:
+        model = models.Patient
+        fields = ['first_name', 'last_name', 'gender', 'date_of_birth', 'address', 'mobile', 'status', 'symptoms', 'profile_pic', 'assigned_doctor', 'assigned_doctor_id']
+        widgets = {
+            'date_of_birth': forms.DateInput(attrs={'type': 'date'}),
+        }
+
+
+class UpdatePatientUserForm(forms.ModelForm):
+    password = forms.CharField(widget=forms.PasswordInput(), required=True)  # Password field adjustment
+
+    class Meta:
+        model = User
+        fields = ['first_name', 'last_name', 'email', 'username', 'password']
+
+class UpdatePatientForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super(UpdatePatientForm, self).__init__(*args, **kwargs)
+        doctors = models.Doctor.objects.filter(status=True)
+        choices = [("", "Select Doctor and Department")]  # Add an empty option
+        choices += [(doctor.user_id, str(doctor)) for doctor in doctors]
+        self.fields['assigned_doctor_id'].choices = choices
+        self.fields['assigned_doctor'].choices = [(doctor.user_id, str(doctor)) for doctor in doctors]
+    
+    assigned_doctor_id = forms.ChoiceField(required=False, widget=forms.Select)
+    assigned_doctor = forms.ChoiceField(required=False, widget=forms.Select)
+
+    
+
+    class Meta:
+        model = models.Patient
+        fields = ['first_name', 'last_name', 'gender', 'date_of_birth', 'address', 'mobile', 'status', 'symptoms', 'profile_pic', 'assigned_doctor', 'assigned_doctor_id']
+        widgets = {
+            'date_of_birth': forms.DateInput(attrs={'type': 'date'}),
+        }
+
+
+    
 
 class AppointmentForm(forms.ModelForm):
     doctorId=forms.ModelChoiceField(queryset=models.Doctor.objects.all().filter(status=True),empty_label="Doctor Name and Department", to_field_name="user_id")
@@ -117,14 +157,19 @@ class DoctorAppointmentForm(forms.ModelForm):
 class PatientAppointmentForm(forms.ModelForm):
     doctorId = forms.ModelChoiceField(queryset=models.Doctor.objects.all().filter(status=True), empty_label="Doctor Name and Department", to_field_name="user_id")
 
+    def __init__(self, *args, **kwargs):
+        patient_doctors = kwargs.pop('patient_doctors', None)
+        super(PatientAppointmentForm, self).__init__(*args, **kwargs)
+
+        if patient_doctors:
+            self.fields['doctorId'].queryset = patient_doctors
+
     class Meta:
         model = models.Appointment
         fields = ['description', 'status', 'appointmentDate']
         widgets = {
             'appointmentDate': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
         }
-
-
 
 
 

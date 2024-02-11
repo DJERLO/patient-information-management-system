@@ -2,19 +2,74 @@
 
 
 {% block content %}
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    /* Mobile-first approach */
+    body {
+      font-size: 16px; /* Base font size */
+    }
 
+    .jumbotron {
+      padding: 10vh 0;
+    }
+
+    .jumbotron h1.display-4 {
+      font-size: 2rem;
+    }
+
+    .jumbotron p.lead,
+    .jumbotron p.responsive-text {
+      font-size: 1rem;
+    }
+
+    /* Media queries for larger screens */
+    @media (min-width: 768px) {
+      .jumbotron {
+        padding: 15vh 0;
+      }
+
+      .jumbotron h1.display-4 {
+        font-size: 3rem;
+      }
+
+      .jumbotron p.lead,
+      .jumbotron p.responsive-text {
+        font-size: 1.25rem;
+      }
+    }
+  </style>
+</head>
 <br>
 <br>
 
-<div class="jumbotron" style="margin-bottom:0px;">
-  <h1 class="display-4" style="text-align:center;">Hello, Doctor</h1>
-  <p class="lead">Welcome to Hospital Management System.</p>
+<div class="jumbotron text-center" style="margin-bottom:0px;">
+  <h1 class="display-4">Hello, Doctor</h1>
+  <p class="lead">Welcome to the Doctor Portal of the Patient Information Management System (PIMS).</p>
   <hr class="my-4">
-
-  <p class="lead">
-    <a class="btn btn-danger btn-lg" href="/doctorsignup" role="button">Apply</a>
-    <a class="btn btn-success btn-lg" href="/doctorlogin" role="button">Login</a>
-  </p>
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-md-8 text-center">
+        <p class="responsive-text">As a doctor, you play a crucial role in patient care and management. Our system is designed to assist you in efficiently managing patient information and treatment plans.</p>
+        <p class="responsive-text">With features tailored to your needs, you can easily access patient records, schedule appointments, and collaborate with other healthcare professionals.</p>
+        <p class="responsive-text">Prescriptions are issued offline, ensuring patients receive physical copies directly from their assigned doctors.</p>
+        <p class="responsive-text">Explore our platform to streamline your workflow and enhance patient care.</p>
+      </div>
+    </div>
+    <div class="row justify-content-center mt-4">
+      <div class="col-md-6">
+        <a class="btn btn-danger btn-lg btn-block mb-2" href="/doctorsignup" role="button">Apply</a>
+        <a class="btn btn-success btn-lg btn-block" href="/doctorlogin" role="button">Login</a>
+      </div>
+    </div>
+    <div class="row justify-content-center mt-4">
+      <div class="col-md-6">
+        <a href="/aboutus" class="text-muted text-center">Learn more about our features</a>
+      </div>
+    </div>
+  </div>
 </div>
+
 
 {% endblock content %}

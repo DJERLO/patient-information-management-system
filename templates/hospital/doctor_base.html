@@ -4,6 +4,8 @@
 
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <title>PIMS - Dr.{{request.user.first_name}} {{request.user.last_name}}</title>
 
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
@@ -87,16 +89,17 @@
     }
 
 
-
-
-
     body {
-
       padding-left: 240px;
+      overflow-x: hidden;
     }
     main {
       position: relative;
       height: 100vh;
+    }
+
+    .fixed-top{
+      position: absolute;
     }
 
     .menu {
@@ -223,11 +226,12 @@
         transform: translate3d(0px, -50%, 0);
       }
     }
-    @media screen and (max-width: 400px) {
+    @media screen and (max-width: 400px) and (min-width: 334px) {
       body {
         padding-left: 0;
       }
       .menu {
+        margin-top: 55px;
         width: 230px;
         box-shadow: 0 0 0 100em rgba(0, 0, 0, 0);
         transform: translate3d(-230px, 0, 0);
@@ -269,6 +273,27 @@
       }
     }
 
+    .navbar-brand {
+      font-size: 1.5em; /* Default font size */
+    }
+
+    @media (max-width: 768px) {
+      .navbar-brand {
+        font-size: 1.2em; /* Font size for screens with a max-width of 768px */
+      }
+    }
+
+    @media (max-width: 576px) {
+      .navbar-brand {
+        font-size: 1em; /* Font size for screens with a max-width of 576px */
+      }
+    }
+      @media (max-width: 399px) {
+      .navbar-brand {
+        font-size: 0.7em; /* Font size for screens with a max-width of 576px */
+      }
+    }
+
   </style>
 </head>
 
@@ -283,9 +308,21 @@
       <h2>{{request.user.first_name}}</h2>
     </header>
     <ul>
-      <li tabindex="0" class="icon-dashboard"> <a style="color:white; text-decoration:none;" href="/doctor-dashboard"><span>Dashboard</span></a> </li>
-      <li tabindex="0" class="icon-users"> <a style="color:white; text-decoration:none;" href="/doctor-patient"><span>Patient</span></a></li>
-      <li tabindex="0" class="icon-calendar"> <a style="color:white; text-decoration:none;" href="/doctor-appointment"><span>Appointments</span></a></li>
+      <li tabindex="0" id="doctorDashboardIcon" class="icon-dashboard">
+        <a style="color:white; text-decoration:none;" href="/doctor-dashboard">
+            <span>Dashboard</span>
+        </a>
+      </li>
+      <li tabindex="0" id="doctorPatientIcon" class="icon-users">
+          <a style="color:white; text-decoration:none;" href="/doctor-patient">
+              <span>Patient</span>
+          </a>
+      </li>
+      <li tabindex="0" id="doctorAppointmentIcon" class="icon-calendar">
+          <a style="color:white; text-decoration:none;" href="/doctor-appointment">
+              <span>Appointments</span>
+          </a>
+      </li>
     </ul>
   </nav>
   <main>
@@ -311,21 +348,11 @@
     {% block content %}
     {% endblock content %}
     <!-- content end-->
+    
     <br><br><br><br><br><br><br>
-    <footer>
-     
-      <br>
-      <div class="container">
-        <div class="row">
-          <div class="col-md-12 col-sm-12">
-            <div style="color:#ffffff;" class="wow fadeInUp footer-copyright">
-              <p>
-                Copyright &copy; 2021 Developed By Sumit Kumar </p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </footer>
+    <!-- content end -->
+    {% include 'hospital/footer.html' %}
+   
   </main>
   <script>
     document.getElementById('logoutLink').addEventListener('click', function(event) {
@@ -344,6 +371,23 @@
     
         document.body.appendChild(form);
         form.submit();
+    });
+
+        document.addEventListener("DOMContentLoaded", function() {
+        // Doctor Dashboard Icon
+        document.getElementById("doctorDashboardIcon").addEventListener("click", function() {
+            window.location.href = "/doctor-dashboard";
+        });
+
+        // Doctor Patient Icon
+        document.getElementById("doctorPatientIcon").addEventListener("click", function() {
+            window.location.href = "/doctor-patient";
+        });
+
+        // Doctor Appointment Icon
+        document.getElementById("doctorAppointmentIcon").addEventListener("click", function() {
+            window.location.href = "/doctor-appointment";
+        });
     });
 
     

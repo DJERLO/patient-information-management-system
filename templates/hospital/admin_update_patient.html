@@ -1,4 +1,5 @@
 {% extends 'hospital/admin_base.html' %}
+{% load static %}
 {% load widget_tweaks %}
 {% block content %}
 
@@ -45,66 +46,89 @@
   <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
   <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
   <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+
 </head>
 <br><br>
 <form method="post" enctype="multipart/form-data">
   {% csrf_token %}
   <div class="container register-form">
-      <div class="form">
-          <div class="note">
-              <p>Update Doctor Details</p>
-          </div>
-          <div class="form-content">
-            <!-- Add this code where you want to display alerts -->
-            <div class="alert-container">
-              {% if messages %}
-                  {% for message in messages %}
-                      <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                          {{ message }}
-                          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                              <span aria-hidden="true">&times;</span>
-                          </button>
-                      </div>
-                  {% endfor %}
-              {% endif %}
-            </div>
-              <div class="row">
-                  <div class="col-md-6">
-                      <div class="form-group">
-                        {% render_field userForm.first_name class="form-control" placeholder="First Name" %}
-                      </div>
-                      <div class="form-group">
-                        {% render_field userForm.last_name class="form-control" placeholder="Last Name" %}
-                      </div>
-                      <div class="form-group">
-                        {% render_field userForm.username class="form-control" placeholder="Username" %}
-                      </div>
-                      <div class="form-group">
-                        {% render_field userForm.email class="form-control" placeholder="Email" %}
-                      </div>
-                      <div class="form-group">
-                        {% render_field userForm.mobile class="form-control" placeholder="Mobile" %}
-                      </div>
-
-                  </div>
-                  <div class="col-md-6">
-                      <div class="form-group">
-                        <center>
-                          <label for="{{ profile_form.profile_pic.id_for_label }}">Profile Picture</label>
-                          <img id="preview" src="#" alt="Preview" style="max-width: 100%; max-height: 9.5em; display: none;">
-                        </center>
-                        {% render_field patientForm.profile_pic class="form-control" onchange="previewImage(this)" %}
-                      </div>
-                      <div class="form-group">
-                        {% render_field patientForm.address class="form-control" placeholder="Address" %}
-                      </div>  
-                  </div>
-              </div>
-                  <center><button type="submit" class="btnSubmit">Update Doctor</button></center> 
-              </div>
-             
-          </div>
+    <div class="form">
+      <div class="note">
+        <p>Update Patient</p>
       </div>
+      <div class="form-content">
+        <div class="alert-container">
+          {% for message in messages %}
+          <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          {% endfor %}
+        </div>
+        <center>
+          <h3>Current Doctor: {{ patientForm.initial.assigned_doctor }}</h3>
+          <img id="preview" src="{{patientForm.initial.profile_pic.url}}" alt="Preview" style="max-width: 100%; max-height: 9.5em;">
+        </center>
+        <div class="row">
+          <div class="col-md-6">
+            <div class="form-group">
+              <label for="{{ patientForm.assigned_doctor_id.id_for_label }}">Update Doctor:</label>
+              {% render_field patientForm.assigned_doctor_id class="form-control" placeholder="Doctor" %}
+            </div>
+            <div class="form-group">
+              <label for="{{ patientForm.symptoms.id_for_label }}">Symptoms:</label>
+              {% render_field patientForm.symptoms class="form-control" placeholder="Symptoms" %}
+            </div>
+            <div class="form-group">
+              <label for="{{ userForm.first_name.id_for_label }}">First Name:</label>
+              {% render_field userForm.first_name class="form-control" placeholder="First Name" %}
+            </div>
+            <div class="form-group">
+              <label for="{{ userForm.last_name.id_for_label }}">Last Name:</label>
+              {% render_field userForm.last_name class="form-control" placeholder="Last Name" %}
+            </div>
+            <div class="form-group">
+              <label for="{{ patientForm.gender.id_for_label }}">Gender:</label>
+              {% render_field patientForm.gender class="form-control" %}
+            </div>
+            <div class="form-group">
+              <label for="{{ patientForm.date_of_birth.id_for_label }}">Date of Birth:</label>
+              {% render_field patientForm.date_of_birth class="form-control" %}
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-group">
+              <label for="{{ patientForm.profile_pic.id_for_label }}">Profile Picture:</label>
+              {% render_field patientForm.profile_pic class="form-control" onchange="previewImage(this)" %}
+            </div>
+            <div class="form-group">
+              <label for="{{ userForm.username.id_for_label }}">Username:</label>
+              {% render_field userForm.username class="form-control" placeholder="Username" %}
+            </div>
+            <div class="form-group">
+              <label for="{{ userForm.password.id_for_label }}">Change Password:</label>
+              {% render_field userForm.password class="form-control" placeholder="Reset Password" %}
+            </div>
+            <div class="form-group">
+              <label for="{{ patientForm.address.id_for_label }}">Address:</label>
+              {% render_field patientForm.address class="form-control" placeholder="Address" %}
+            </div>
+            <div class="form-group">
+              <label for="{{ patientForm.mobile.id_for_label }}">Contact Number:</label>
+              {% render_field patientForm.mobile class="form-control" placeholder="Contact Number" pattern="(^(\+)(\d){12}$)|(^\d{11}$)" %}
+            </div>
+            <div class="form-group">
+              <label for="{{ userForm.email.id_for_label }}">Email:</label>
+              {% render_field userForm.email class="form-control" placeholder="Email" %}
+            </div>
+          </div>
+        </div>
+        <center><button type="submit" class="btnSubmit">Update Patient</button></center>
+      </div>
+    </div>
   </div>
 </form>
 
@@ -116,16 +140,34 @@
 
       reader.onloadend = function () {
           preview.src = reader.result;
-          preview.style.display = 'block';
       };
 
       if (file) {
           reader.readAsDataURL(file);
       } else {
-          preview.src = '#';
-          preview.style.display = 'none';
+          preview.src = "{% static 'images/profile.webp' %}";
       }
   }
+
+  
+
+  window.onload = function() {
+    var symptomsField = document.getElementById('{{ patientForm.symptoms.id_for_label }}');
+    var genderField = document.getElementById('{{ patientForm.gender.id_for_label }}');
+    var dobField = document.getElementById('{{ patientForm.date_of_birth.id_for_label }}');
+    var addressField = document.getElementById('{{ patientForm.address.id_for_label }}');
+    var mobileField = document.getElementById('{{ patientForm.mobile.id_for_label }}');
+    var emailField = document.getElementById('{{ patientForm.email.id_for_label }}');
+
+    // Set initial values
+    genderField.value = '{{ patientForm.fields.gender.initial }}';
+    dobField.value = '{{ patientForm.fields.date_of_birth.initial }}';
+    addressField.value = '{{ patientForm.fields.address.initial }}';
+    mobileField.value = '{{ patientForm.fields.mobile.initial }}';
+    emailField.value = '{{ patientForm.fields.email.initial }}';
+    symptomsField.value = '{{ patientForm.fields.symptoms.initial }}';
+  };
+
 </script>
 
 

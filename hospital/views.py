@@ -1,5 +1,6 @@
 
 from django.contrib.auth.models import User
+from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import render,redirect
 from django.urls import reverse
 from . import forms,models
@@ -230,8 +231,55 @@ def doctor_signup_view(request):
         return HttpResponseRedirect('doctorlogin')
     return render(request,'hospital/doctorsignup.html',context=mydict)
 
-
 def patient_signup_view(request):
+    if request.method == 'POST':
+        userForm = forms.PatientUserForm(request.POST)
+        patientForm = forms.PatientForm(request.POST, request.FILES)
+
+        if userForm.is_valid() and patientForm.is_valid():
+            user = userForm.save(commit=False)
+            user.set_password(userForm.cleaned_data['password'])  # Set password for the user
+            user.save()
+            
+            patient = patientForm.save(commit=False)
+            patient.user = user
+            patient.status = False
+            
+            # Get the assigned doctor's ID from the form data
+            assigned_doctor_id = request.POST.get('assigned_doctor_id')  # Correct variable name
+            if assigned_doctor_id:
+                assigned_doctor_id = int(assigned_doctor_id)  # Convert to integer
+                try:
+                    # Fetch the doctor object based on the ID
+                    doctor = models.Doctor.objects.get(user_id=assigned_doctor_id)
+                    patient.assigned_doctor_id = assigned_doctor_id
+                    patient.assigned_doctor = str(doctor)
+                except models.Doctor.DoesNotExist:
+                    messages.error(request, "Invalid doctor ID provided")
+                    return render(request, 'hospital/patientsignup.html', {'userForm': userForm, 'patientForm': patientForm})
+            
+            patient.save()
+            
+            my_patient_group, created = Group.objects.get_or_create(name='PATIENT')
+            my_patient_group.user_set.add(user)
+            
+            messages.success(request, "User Registered")
+            return HttpResponseRedirect('patientlogin')
+        else:
+            for field, errors in userForm.errors.items():
+                for error in errors:
+                    messages.error(request, f"User Form: {field.capitalize()} - {error}")
+            for field, errors in patientForm.errors.items():
+                for error in errors:
+                    messages.error(request, f"Patient Form: {field.capitalize()} - {error}")
+    else:
+        userForm = forms.PatientUserForm()
+        patientForm = forms.PatientForm()
+
+    context = {'userForm': userForm, 'patientForm': patientForm}
+    return render(request, 'hospital/patientsignup.html', context)
+
+#def patient_signup_view(request):
     userForm=forms.PatientUserForm()
     patientForm=forms.PatientForm()
     mydict={'userForm':userForm,'patientForm':patientForm}
@@ -244,7 +292,7 @@ def patient_signup_view(request):
             user.save()
             patient=patientForm.save(commit=False)
             patient.user=user
-            patient.assignedDoctorId=request.POST.get('assignedDoctorId')
+            patient.assigned_doctor_id=request.POST.get('assigned_doctor_id')
             patient=patient.save()
             my_patient_group = Group.objects.get_or_create(name='PATIENT')
             my_patient_group[0].user_set.add(user)
@@ -479,54 +527,116 @@ def delete_patient_from_hospital_view(request,pk):
 
 @login_required(login_url='adminlogin')
 @user_passes_test(is_admin)
-def update_patient_view(request,pk):
-    patient=models.Patient.objects.get(id=pk)
-    user=models.User.objects.get(id=patient.user_id)
-    
-    userForm=forms.PatientUserForm(instance=user)
-    patientForm=forms.PatientForm(request.FILES,instance=patient)
-    mydict={'userForm':userForm,'patientForm':patientForm}
-    if request.method=='POST':
-        userForm=forms.PatientUserForm(request.POST,instance=user)
-        patientForm=forms.PatientForm(request.POST,request.FILES,instance=patient)
+def update_patient_view(request, pk):
+    patient = models.Patient.objects.get(id=pk)
+    user = models.User.objects.get(id=patient.user_id)
+
+    userForm = forms.UpdatePatientUserForm(instance=user)
+    patientForm = forms.UpdatePatientForm(instance=patient)
+
+    # Set initial values for form fields
+    patientForm.fields['address'].initial = patient.get_address
+    patientForm.fields['mobile'].initial = patient.get_mobile
+    patientForm.fields['date_of_birth'].initial = patient.get_DOB.strftime('%Y-%m-%d')
+    patientForm.fields['gender'].initial = patient.get_gender
+    patientForm.fields['symptoms'].initial = patient.get_symptoms
+   
+    if request.method == 'POST':
+        userForm = forms.UpdatePatientUserForm(request.POST, instance=user)
+        patientForm = forms.UpdatePatientForm(request.POST, request.FILES, instance=patient)
+
         if userForm.is_valid() and patientForm.is_valid():
-            user=userForm.save()
-            user.set_password(user.password)
+            user = userForm.save()
+            email = request.POST.get('email')
+            user.email = email
+            # Check if a new password is provided in the form
+            new_password = request.POST.get('password')
+            if new_password:
+                # Set the new password
+                user.set_password(new_password)
             user.save()
-            patient=patientForm.save(commit=False)
-            patient.status=True
-            patient.assignedDoctorId=request.POST.get('assignedDoctorId')
+
+            patient = patientForm.save(commit=False)
+            patient.status = True
+            # Get the assigned doctor ID from the form data
+            assigned_doctor_id = request.POST.get('assigned_doctor_id')
+            doctor = models.Doctor.objects.get(user_id=assigned_doctor_id)
+            print("Assigned Doctor ID:", assigned_doctor_id)
+            if assigned_doctor_id:
+                assigned_doctor_id = int(assigned_doctor_id)  # Convert to integer
+                try:
+                    # Fetch the doctor object based on the ID
+                    patient.assigned_doctor_id = assigned_doctor_id
+                    patient.assigned_doctor = str(doctor)
+                except models.Doctor.DoesNotExist:
+                    messages.error(request, "Invalid doctor ID provided")
+                    return render(request, 'hospital/admin_update_patient.html', {'userForm': userForm, 'patientForm': patientForm})
+
             patient.save()
+            messages.success(request, "Patient information updated successfully.")
             return redirect('admin-view-patient')
-    return render(request,'hospital/admin_update_patient.html',context=mydict)
+        else:
+            for field, errors in userForm.errors.items():
+                for error in errors:
+                    messages.error(request, f"User Form: {field.capitalize()} - {error}")
+            for field, errors in patientForm.errors.items():
+                for error in errors:
+                    messages.error(request, f"Patient Form: {field.capitalize()} - {error}")
+
+    mydict = {'userForm': userForm, 'patientForm': patientForm}
+    return render(request, 'hospital/admin_update_patient.html', context=mydict)
 
 
 @login_required(login_url='adminlogin')
 @user_passes_test(is_admin)
 def admin_add_patient_view(request):
-    userForm=forms.PatientUserForm()
-    patientForm=forms.PatientForm()
-    mydict={'userForm':userForm,'patientForm':patientForm}
-    if request.method=='POST':
-        userForm=forms.PatientUserForm(request.POST)
-        patientForm=forms.PatientForm(request.POST,request.FILES)
+    userForm = forms.PatientUserForm()
+    patientForm = forms.UpdatePatientForm()
+    context = {'userForm': userForm, 'patientForm': patientForm}
+    
+    if request.method == 'POST':
+        userForm = forms.PatientUserForm(request.POST)
+        patientForm = forms.PatientForm(request.POST, request.FILES)
+        
         if userForm.is_valid() and patientForm.is_valid():
-            user=userForm.save()
-            user.set_password(user.password)
+            user = userForm.save(commit=False)
+            user.set_password(userForm.cleaned_data['password'])
             user.save()
-
-            patient=patientForm.save(commit=False)
-            patient.user=user
-            patient.status=True
-            patient.assignedDoctorId=request.POST.get('assignedDoctorId')
+            
+            patient = patientForm.save(commit=False)
+            patient.user = user
+            patient.status = True  # Assuming status True for admin admission
+            
+            assigned_doctor_id = request.POST.get('assigned_doctor_id')
+            
+            if assigned_doctor_id:
+                assigned_doctor_id = int(assigned_doctor_id)  # Convert to integer
+                doctor = models.Doctor.objects.get(user_id= assigned_doctor_id)
+                try:
+                    # Fetch the doctor object based on the ID
+                    patient.assigned_doctor_id = assigned_doctor_id
+                    patient.assigned_doctor = str(doctor)
+                except models.Doctor.DoesNotExist:
+                    messages.error(request, "Invalid doctor ID provided")
+                    return render(request, 'hospital/admin_add_patient.html', context=context)
+            
             patient.save()
+            
+            my_patient_group, created = Group.objects.get_or_create(name='PATIENT')
+            my_patient_group.user_set.add(user)
+            
+            messages.success(request, "Patient Registered Successfully")
+            return HttpResponseRedirect('admin-view-patient')  # Adjust the URL path according to your project's URL configuration
+        else:
+            for field, errors in userForm.errors.items():
+                for error in errors:
+                    messages.error(request, f"User Form: {field.capitalize()} - {error}")
+            for field, errors in patientForm.errors.items():
+                for error in errors:
+                    messages.error(request, f"Patient Form: {field.capitalize()} - {error}")
 
-            my_patient_group = Group.objects.get_or_create(name='PATIENT')
-            my_patient_group[0].user_set.add(user)
-
-        return HttpResponseRedirect('admin-view-patient')
-    return render(request,'hospital/admin_add_patient.html',context=mydict)
-
+    # If the request method is GET or form validation fails, render the form again with the error messages
+    return render(request, 'hospital/admin_add_patient.html', context=context)
 
 
 #------------------FOR APPROVING PATIENT BY ADMIN----------------------
@@ -572,8 +682,8 @@ def admin_discharge_patient_view(request):
 @user_passes_test(is_admin)
 def discharge_patient_view(request,pk):
     patient=models.Patient.objects.get(id=pk)
-    days=(date.today()-patient.admitDate) #2 days, 0:00:00
-    assignedDoctor=models.User.objects.all().filter(id=patient.assignedDoctorId)
+    days=(date.today()-patient.admit_date) #2 days, 0:00:00
+    assignedDoctor=models.User.objects.all().filter(id=patient.assigned_doctor_id)
     d=days.days # only how many day that is 2
     patientDict={
         'patientId':pk,
@@ -581,7 +691,7 @@ def discharge_patient_view(request,pk):
         'mobile':patient.mobile,
         'address':patient.address,
         'symptoms':patient.symptoms,
-        'admitDate':patient.admitDate,
+        'admit_date':patient.admit_date,
         'todayDate':date.today(),
         'day':d,
         'assignedDoctorName':assignedDoctor[0].first_name,
@@ -603,7 +713,7 @@ def discharge_patient_view(request,pk):
         pDD.address=patient.address
         pDD.mobile=patient.mobile
         pDD.symptoms=patient.symptoms
-        pDD.admitDate=patient.admitDate
+        pDD.admit_date=patient.admit_date
         pDD.releaseDate=date.today()
         pDD.daySpent=int(d)
         pDD.medicineCost=int(request.POST['medicineCost'])
@@ -644,7 +754,7 @@ def download_pdf_view(request,pk):
         'address':dischargeDetails[0].address,
         'mobile':dischargeDetails[0].mobile,
         'symptoms':dischargeDetails[0].symptoms,
-        'admitDate':dischargeDetails[0].admitDate,
+        'admit_date':dischargeDetails[0].admit_date,
         'releaseDate':dischargeDetails[0].releaseDate,
         'daySpent':dischargeDetails[0].daySpent,
         'medicineCost':dischargeDetails[0].medicineCost,
@@ -734,7 +844,7 @@ def reject_appointment_view(request,pk):
 @user_passes_test(is_doctor)
 def doctor_dashboard_view(request):
     #for three cards
-    patientcount=models.Patient.objects.all().filter(status=True,assignedDoctorId=request.user.id).count()
+    patientcount=models.Patient.objects.all().filter(status=True,assigned_doctor_id=request.user.id).count()
     appointmentcount=models.Appointment.objects.all().filter(status=True,doctorId=request.user.id).count()
     patientdischarged=models.PatientDischargeDetails.objects.all().distinct().filter(assignedDoctorName=request.user.first_name).count()
 
@@ -765,14 +875,12 @@ def doctor_patient_view(request):
     return render(request,'hospital/doctor_patient.html',context=mydict)
 
 
-
 @login_required(login_url='doctorlogin')
 @user_passes_test(is_doctor)
 def doctor_view_patient_view(request):
-    patients=models.Patient.objects.all().filter(status=True,assignedDoctorId=request.user.id)
+    patients=models.Patient.objects.all().filter(status=True,assigned_doctor_id=request.user.id)
     doctor=models.Doctor.objects.get(user_id=request.user.id) #for profile picture of doctor in sidebar
     return render(request,'hospital/doctor_view_patient.html',{'patients':patients,'doctor':doctor})
-
 
 
 @login_required(login_url='doctorlogin')
@@ -783,13 +891,11 @@ def doctor_view_discharge_patient_view(request):
     return render(request,'hospital/doctor_view_discharge_patient.html',{'dischargedpatients':dischargedpatients,'doctor':doctor})
 
 
-
 @login_required(login_url='doctorlogin')
 @user_passes_test(is_doctor)
 def doctor_appointment_view(request):
     doctor=models.Doctor.objects.get(user_id=request.user.id) #for profile picture of doctor in sidebar
     return render(request,'hospital/doctor_appointment.html',{'doctor':doctor})
-
 
 
 @login_required(login_url='doctorlogin')
@@ -804,12 +910,36 @@ def doctor_view_appointment_view(request):
     appointments=zip(appointments,patients)
     return render(request,'hospital/doctor_view_appointment.html',{'appointments':appointments,'doctor':doctor})
 
+@login_required(login_url='doctorlogin')
+@user_passes_test(is_doctor)
+def doctor_approve_appointment_view(request):
+    doctor = models.Doctor.objects.get(user_id=request.user.id)
+    appointments = models.Appointment.objects.filter(status=False, doctorId=doctor.get_id)
+    return render(request, 'hospital/doctor_approve_appointment.html', {'appointments': appointments, 'doctor': doctor})
+
+@login_required(login_url='doctorlogin')
+@user_passes_test(is_doctor)
+def approve_doctor_appointment_view(request,pk):
+    appointment=models.Appointment.objects.get(id=pk)
+    appointment.status=True
+    appointment.save()
+    return redirect(reverse('doctor-approve-appointment'))
+
+
+
+@login_required(login_url='doctorlogin')
+@user_passes_test(is_doctor)
+def reject_doctor_appointment_view(request,pk):
+    appointment=models.Appointment.objects.get(id=pk)
+    appointment.delete()
+    return redirect('doctor-approve-appointment')
+
 
 @login_required(login_url='doctorlogin')
 @user_passes_test(is_doctor)
 def doctor_add_appointment_view(request):
     doctor = models.Doctor.objects.get(user_id=request.user.id)
-    doctor_patients = models.Patient.objects.filter(status=True, assignedDoctorId=request.user.id)
+    doctor_patients = models.Patient.objects.filter(status=True, assigned_doctor_id=request.user.id)
 
     if request.method == 'POST':
         appointmentForm = forms.DoctorAppointmentForm(request.POST, doctor_patients=doctor_patients)
@@ -824,7 +954,7 @@ def doctor_add_appointment_view(request):
             appointment.patientId = patient_id
             appointment.doctorName = request.user.get_full_name()
             appointment.patientName = patient.get_name
-            appointment.status = False
+            appointment.status = True
             appointment.save()
 
             return HttpResponseRedirect('doctor-view-appointment')
@@ -881,7 +1011,7 @@ def delete_appointment_view(request,pk):
 @user_passes_test(is_patient)
 def patient_dashboard_view(request):
     patient=models.Patient.objects.get(user_id=request.user.id)
-    doctor=models.Doctor.objects.get(user_id=patient.assignedDoctorId)
+    doctor=models.Doctor.objects.get(user_id=patient.assigned_doctor_id)
     mydict={
     'patient':patient,
     'doctorName':doctor.get_name,
@@ -889,7 +1019,7 @@ def patient_dashboard_view(request):
     'doctorAddress':doctor.address,
     'symptoms':patient.symptoms,
     'doctorDepartment':doctor.department,
-    'admitDate':patient.admitDate,
+    'admit_date':patient.admit_date,
     }
     return render(request,'hospital/patient_dashboard.html',context=mydict)
 
@@ -906,13 +1036,21 @@ def patient_appointment_view(request):
 @login_required(login_url='patientlogin')
 @user_passes_test(is_patient)
 def patient_book_appointment_view(request):
-    appointmentForm=forms.PatientAppointmentForm()
     patient=models.Patient.objects.get(user_id=request.user.id) #for profile picture of patient in sidebar
+    doctor=models.Doctor.objects.get(user_id=patient.assigned_doctor_id)
+    assigned_doctor_id = patient.assigned_doctor_id
+    patient_doctors = models.Doctor.objects.filter(status=True, user_id = assigned_doctor_id)
+    appointmentForm=forms.PatientAppointmentForm(patient_doctors=patient_doctors)
+
     message=None
-    mydict={'appointmentForm':appointmentForm,'patient':patient,'message':message}
+    mydict={
+        'appointmentForm':appointmentForm,
+        'patient':patient,
+        'message':message,
+        }
     
     if request.method=='POST':
-        appointmentForm=forms.PatientAppointmentForm(request.POST)
+        appointmentForm=forms.PatientAppointmentForm(request.POST, patient_doctors=patient_doctors)
         if appointmentForm.is_valid():
             print(request.POST.get('doctorId'))
             desc=request.POST.get('description')
@@ -1055,7 +1193,7 @@ def patient_book_appointment_view(request):
                     print('else')
                     messages.error=(request,"Please Choose Doctor According To Disease")
                     return render(request, 'hospital/patient_book_appointment.html', {'appointmentForm': appointmentForm, 'patient': patient, 'message': message})
-
+    
 
             doctor = User.objects.get(id=request.POST.get('doctorId'))
             patient = User.objects.get(id=request.user.id)
@@ -1067,6 +1205,10 @@ def patient_book_appointment_view(request):
             appointment.status=False
             appointment.save()
         return HttpResponseRedirect('patient-view-appointment')
+    else:
+        # If it's a GET request, just initialize the form with the filtered queryset
+        appointmentForm = forms.PatientAppointmentForm(patient_doctors=patient_doctors)
+    
     return render(request,'hospital/patient_book_appointment.html',context=mydict)
 
 
@@ -1098,7 +1240,7 @@ def patient_discharge_view(request):
         'address':patient.address,
         'mobile':patient.mobile,
         'symptoms':patient.symptoms,
-        'admitDate':patient.admitDate,
+        'admit_date':patient.admit_date,
         'releaseDate':dischargeDetails[0].releaseDate,
         'daySpent':dischargeDetails[0].daySpent,
         'medicineCost':dischargeDetails[0].medicineCost,

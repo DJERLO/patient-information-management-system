@@ -2,19 +2,75 @@
 
 
 {% block content %}
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    /* Mobile-first approach */
+    body {
+      font-size: 16px; /* Base font size */
+    }
 
+    .jumbotron {
+      padding: 10vh 0;
+    }
+
+    .jumbotron h1.display-4 {
+      font-size: 2rem;
+    }
+
+    .jumbotron p.lead,
+    .jumbotron p.responsive-text {
+      font-size: 1rem;
+    }
+
+    /* Media queries for larger screens */
+    @media (min-width: 768px) {
+      .jumbotron {
+        padding: 15vh 0;
+      }
+
+      .jumbotron h1.display-4 {
+        font-size: 3rem;
+      }
+
+      .jumbotron p.lead,
+      .jumbotron p.responsive-text {
+        font-size: 1.25rem;
+      }
+    }
+  </style>
+</head>
 <br>
 <br>
 
 <div class="jumbotron" style="margin-bottom:0px;">
-  <h1 class="display-4" style="text-align:center;">Hello, Patient</h1>
-  <p class="lead">Welcome to Hospital Management System.</p>
+  <h1 class="display-4 text-center">Hello, Patient</h1>
+  <p class="lead text-center">Welcome to the Patient Portal of the Patient Information Management System (PIMS).</p>
   <hr class="my-4">
-
-  <p class="lead">
-    <a class="btn btn-danger btn-lg" href="/patientsignup" role="button">Register Your Account</a>
-    <a class="btn btn-success btn-lg" href="/patientlogin" role="button">Login</a>
-  </p>
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-md-8 text-center">
+        <p class="responsive-text">As a patient, your health and well-being are our top priorities. Our system simplifies the admission process and provides you with convenient access to your medical appointments and billing information.</p>
+        <p class="responsive-text">Register your account to start managing your healthcare journey with ease. From scheduling appointments to viewing your billing details, our platform empowers you to take control of your health-related activities.</p>
+        <p class="responsive-text">Please note that prescriptions are issued offline by your doctors, and you will receive physical copies during your appointments.</p>
+        <p class="responsive-text">Explore our features to learn more about how we can assist you in managing your healthcare needs effectively.</p>
+      </div>
+    </div>
+    <div class="row justify-content-center mt-4">
+      <div class="col-md-6">
+        <a class="btn btn-danger btn-lg btn-block mb-2" href="/patientsignup" role="button">Register</a>
+        <a class="btn btn-success btn-lg btn-block" href="/patientlogin" role="button">Login</a>
+      </div>
+    </div>
+    <div class="row justify-content-center mt-4">
+      <div class="col-md-6">
+        <a href="/aboutus" class="text-muted text-center">Learn more about our features</a>
+      </div>
+    </div>
+  </div>
 </div>
+
+
 
 {% endblock content %}

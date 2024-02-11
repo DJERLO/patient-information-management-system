@@ -3,58 +3,98 @@
 {%load static%}
 
 <head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
   <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
   <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
-
-  <style media="screen">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <style>
     a:link {
       text-decoration: none;
     }
 
     h6 {
       text-align: center;
+      font-size: 1.2em;
     }
 
     .row {
-      margin: 100px;
+      margin: 10px auto;
     }
+
+    .table-responsive {
+      text-wrap: nowrap;
+      padding: 0 0 0 0;
+    }
+
+    .view-doctor-panel{
+      width: 100%;
+      height: 100vw;
+      position: relative;
+      margin: 1px 1px 1px 1px;
+      text-align: justify;
+    }
+    
   </style>
 </head>
 
-<div class="container">
+<div class="container-fluid view-doctor-panel">
   <div class="panel panel-primary">
     <div class="panel-heading">
       <h6 class="panel-title">Doctors</h6>
     </div>
-    <table class="table table-hover" id="dev-table">
-      <thead>
-        <tr>
-
-          <th>Name</th>
-          <th>Profile Picture</th>
-          <th>Contact</th>
-          <th>Address</th>
-          <th>Department</th>
-          <th>Update</th>
-          <th>Delete</th>
-        </tr>
-      </thead>
-      {% for d in doctors %}
-      <tr>
-
-        <td> {{d.get_name}}</td>
-        <td> <img src="{{ d.profile_pic.url }}" alt="Profile Pic" height="40px" width="40px" /></td>
-        <td>{{d.mobile}}</td>
-        <td>{{d.address}}</td>
-        <td>{{d.department}}</td>
-        <td><a class="btn btn-primary btn-xs" href="{% url 'update-doctor' d.id  %}"><span class="glyphicon glyphicon-edit"></span></a></td>
-        <td><a class="btn btn-danger btn-xs" href="{% url 'delete-doctor-from-hospital' d.id  %}"><span class="glyphicon glyphicon-trash"></span></a></td>
-      </tr>
-      {% endfor %}
-    </table>
+    <div class="table-responsive">
+      <table class="table table-hover table-responsive" id="dev-table">
+        <thead>
+          <tr>
+            <th class="col-xs-2 col-sm-1">Name</th>
+            <th class="col-xs-2 col-sm-1">Profile Picture</th>
+            <th class="col-xs-2 col-sm-1">Contact</th>
+            <th class="col-xs-2 col-sm-3">Address</th>
+            <th class="col-xs-2 col-sm-2">Department</th>
+            <th class="col-xs-2 col-sm-1">Update</th>
+            <th class="col-xs-2 col-sm-1">Delete</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for d in doctors %}
+          <tr>
+            <td class="col-xs-2 col-sm-1">{{ d.get_name }}</td>
+            <td class="col-xs-2 col-sm-1"><img src="{{ d.profile_pic.url }}" alt="Profile Pic" height="40px" width="40px" /></td>
+            <td class="col-xs-2 col-sm-1">{{ d.mobile }}</td>
+            <td class="col-xs-2 col-sm-3">{{ d.address }}</td>
+            <td class="col-xs-2 col-sm-2">{{ d.department }}</td>
+            <td class="col-xs-2 col-sm-1"><a class="btn btn-primary btn-xs" href="{% url 'update-doctor' d.id  %}"><span class="glyphicon glyphicon-edit"></span></a></td>
+            <td class="col-xs-2 col-sm-1"><a class="btn btn-danger btn-xs delete-btn" href="{% url 'delete-doctor-from-hospital' d.id  %}"><span class="glyphicon glyphicon-trash"></span></a></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
   </div>
 </div>
-
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+      document.querySelectorAll('.delete-btn').forEach(item => {
+          item.addEventListener('click', function(event) {
+              event.preventDefault();
+              const url = this.getAttribute('href');
+              Swal.fire({
+                  title: 'Are you sure?',
+                  text: 'You are about to delete this doctor.',
+                  icon: 'warning',
+                  showCancelButton: true,
+                  confirmButtonColor: '#3085d6',
+                  cancelButtonColor: '#d33',
+                  confirmButtonText: 'Yes, delete it!'
+              }).then((result) => {
+                  if (result.isConfirmed) {
+                      window.location.href = url;
+                  }
+              });
+          });
+      });
+  });
+  </script>
 
 {% endblock content %}

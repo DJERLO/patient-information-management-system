@@ -17,38 +17,55 @@
     }
 
     .row {
-      margin: 100px;
+      margin: 10px auto;
+    }
+
+    .table-responsive {
+      text-wrap: nowrap;
+      padding: 0 0 0 0;
+    }
+
+    .view-your-appointments-panel{
+      width: 100%;
+      height: 100vw;
+      position: relative;
+      margin: 1px 1px 1px 1px;
+      text-align: justify;
     }
   </style>
 </head>
 
-<div class="container">
+<div class="container view-your-appointments-panel">
   <div class="panel panel-primary">
     <div class="panel-heading">
       <h6 class="panel-title">Your Appointments</h6>
     </div>
-    <table class="table table-hover" id="dev-table">
-      <thead>
-        <tr>
-          <th>Patient Name</th>
-          <th>Picture</th>
-          <th>Description</th>
-          <th>Contact</th>
-          <th>Address</th>
-          <th>Appointment Date</th>
-        </tr>
-      </thead>
-      {% for a,p in appointments %}
-      <tr>
-        <td>{{a.patientName}}</td>
-        <td> <img src="{{ p.profile_pic.url }}" alt="Profile Pic" height="40px" width="40px" /></td>
-        <td>{{a.description}}</td>
-        <td>{{p.mobile}}</td>
-        <td>{{p.address}}</td>
-        <td>{{a.appointmentDate}}</td>
-      </tr>
-      {% endfor %}
-    </table>
+    <div class="table-responsive">
+      <table class="table table-hover" id="dev-table">
+        <thead>
+          <tr>
+            <th>Patient Name</th>
+            <th>Picture</th>
+            <th>Description</th>
+            <th>Contact</th>
+            <th>Address</th>
+            <th>Appointment Date</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for a, p in appointments %}
+          <tr>
+            <td>{{ a.patientName }}</td>
+            <td><img src="{{ p.profile_pic.url }}" alt="Profile Pic" height="40px" width="40px" /></td>
+            <td>{{ a.description }}</td>
+            <td>{{ p.mobile }}</td>
+            <td>{{ p.address }}</td>
+            <td>{{ a.appointmentDate }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
   </div>
 </div>
 

@@ -5,6 +5,7 @@
   <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
   <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
   <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <style media="screen">
     a:link {
       text-decoration: none;
@@ -15,42 +16,80 @@
     }
 
     .row {
-      margin: 100px;
+      margin: 10px auto;
+    }
+
+    .table-responsive {
+      text-wrap: nowrap;
+      padding: 0 0 0 0;
+    }
+
+    .view-appointment-approvals-panel{
+      width: 100%;
+      height: 100vw;
+      position: relative;
+      margin: 1px 1px 1px 1px;
+      text-align: justify;
     }
   </style>
 </head>
 
-<div class="container">
+<div class="container view-appointment-approvals-panel">
   <div class="panel panel-primary">
     <div class="panel-heading">
       <h6 class="panel-title">Appointment Approvals Required</h6>
     </div>
-    <table class="table table-hover" id="dev-table">
-      <thead>
-        <tr>
-          <th>Doctor Name</th>
-          <th>Patient Name</th>
-          <th>Description</th>
-          <th>Date</th>
-          <th>Approve</th>
-          <th>Reject</th>
-        </tr>
-      </thead>
-      {% for a in appointments %}
-      <tr>
-        <td> {{a.doctorName}}</td>
-        <td>{{a.patientName}}</td>
-        <td>{{a.description}}</td>
-        <td>{{a.appointmentDate}}</td>
-        <td><a class="btn btn-primary btn-xs" href="{% url 'approve-appointment' a.id  %}"><span class="glyphicon glyphicon-ok"></span></a></td>
-        <td><a class="btn btn-danger btn-xs" href="{% url 'reject-appointment' a.id  %}"><span class="glyphicon glyphicon-trash"></span></a></td>
-      </tr>
-      {% endfor %}
-    </table>
+    <div class="table-responsive">
+      <table class="table table-hover" id="dev-table">
+        <thead>
+          <tr>
+            <th>Doctor Name</th>
+            <th>Patient Name</th>
+            <th>Description</th>
+            <th>Date</th>
+            <th>Approve</th>
+            <th>Reject</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for a in appointments %}
+          <tr>
+            <td>{{ a.doctorName }}</td>
+            <td>{{ a.patientName }}</td>
+            <td>{{ a.description }}</td>
+            <td>{{ a.appointmentDate }}</td>
+            <td><a class="btn btn-primary btn-xs" href="{% url 'approve-appointment' a.id %}"><span class="glyphicon glyphicon-ok"></span></a></td>
+            <td><a class="btn btn-danger btn-xs delete-btn" href="{% url 'reject-appointment' a.id %}"><span class="glyphicon glyphicon-trash"></span></a></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
   </div>
-
-
 </div>
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+      document.querySelectorAll('.delete-btn').forEach(item => {
+          item.addEventListener('click', function(event) {
+              event.preventDefault();
+              const url = this.getAttribute('href');
+              Swal.fire({
+                  title: 'Are you sure?',
+                  text: 'You are about to delete this appointment?.',
+                  icon: 'warning',
+                  showCancelButton: true,
+                  confirmButtonColor: '#3085d6',
+                  cancelButtonColor: '#d33',
+                  confirmButtonText: 'Yes, delete it!'
+              }).then((result) => {
+                  if (result.isConfirmed) {
+                      window.location.href = url;
+                  }
+              });
+          });
+      });
+  });
+  </script>
 
 
 {% endblock content %}

@@ -1,18 +1,73 @@
 {% extends 'hospital/homebase.html' %}
 
 {% block content %}
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<br>
-<br>
+  <style>
+    /* Mobile-first approach */
+    body {
+      font-size: 16px; /* Base font size */
+    }
 
-<div class="jumbotron" style="margin-bottom: 0;">
-  <h1 class="display-4 text-center">Hello, Admin</h1>
-  <p class="lead text-center">Welcome to Hospital Management System.</p>
-  <hr class="my-4">
-  <div class="text-center">
-    <a class="btn btn-danger btn-lg mr-2" href="/adminsignup" role="button">Sign Up</a>
-    <a class="btn btn-success btn-lg" href="/adminlogin" role="button">Login</a>
-  </div>
+    .jumbotron {
+      padding: 10vh 0;
+    }
+
+    .jumbotron h1.display-4 {
+      font-size: 2rem;
+    }
+
+    .jumbotron p.lead,
+    .jumbotron p.responsive-text {
+      font-size: 1rem;
+    }
+
+    /* Media queries for larger screens */
+    @media (min-width: 768px) {
+      .jumbotron {
+        padding: 15vh 0;
+      }
+
+      .jumbotron h1.display-4 {
+        font-size: 3rem;
+      }
+
+      .jumbotron p.lead,
+      .jumbotron p.responsive-text {
+        font-size: 1.25rem;
+      }
+    }
+
+    /* Add your other media queries for larger screens here if needed */
+  </style>
+</head>
+<body>
+  <div class="jumbotron text-center">
+    <h1 class="display-4">Hello, Staff</h1>
+    <p class="lead">Welcome to the Staff Portal of the Patient Information Management System (PIMS).</p>
+    <hr class="my-4">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8 mx-auto">
+                <p class="responsive-text">As a staff member, you have access to a range of tools and features to effectively manage patient information and streamline hospital operations.</p>
+                <p class="responsive-text">From managing appointments and patient records to collaborating with colleagues, our portal is designed to enhance your productivity and efficiency.</p>
+                <p class="responsive-text">Explore the system and discover how it can simplify your daily tasks and improve patient care.</p>
+            </div>
+        </div>
+        <div class="row mt-4">
+            <div class="col-md-6 mx-auto">
+                <a class="btn btn-danger btn-lg btn-block mb-2" href="/adminsignup" role="button">Sign Up</a>
+                <a class="btn btn-success btn-lg btn-block" href="/adminlogin" role="button">Login</a>
+            </div>
+        </div>
+        <div class="row mt-4">
+            <div class="col-md-6 mx-auto">
+                <a href="/aboutus" class="text-muted">Learn more about our features</a>
+            </div>
+        </div>
+    </div>
 </div>
-
+</body>
 {% endblock content %}

@@ -16,6 +16,12 @@
       color: #aa082e;
       background-color: #b6bde7;
       font-family: 'Roboto', sans-serif;
+      overflow-x: hidden;
+      height: 100vh;
+    }
+
+    form{
+      padding: 10% 10% 10% 10%
     }
 
     a:link {
@@ -32,6 +38,9 @@
     }
 
     .form-content {
+      display: flex;
+      align-content:center ;
+      flex-direction: column;
       padding: 5%;
       border: 1px solid #ced4da;
       margin-bottom: 2%;
@@ -46,6 +55,7 @@
       border-radius: 1.5rem;
       padding: 1%;
       width: 20%;
+      min-width: 200px;
       cursor: pointer;
       background: #0062cc;
       color: #fff;
@@ -111,7 +121,6 @@
   <br><br><br>
   
 
-  {% include "hospital/footer.html" %}
 </body>
 
 </html>

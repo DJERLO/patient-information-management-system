@@ -11,39 +11,59 @@
       text-decoration: none;
     }
 
+
     h6 {
       text-align: center;
     }
 
     .row {
-      margin: 100px;
+      margin: 10px auto;
     }
+
+    .table-responsive {
+      text-wrap: nowrap;
+      padding: 0 0 0 0;
+    }
+
+    .view-appointment-panel{
+      width: 100%;
+      height: 100vw;
+      position: relative;
+      margin: 1px 1px 1px 1px;
+      text-align: justify;
+    }
+    
   </style>
 </head>
 
-<div class="container">
+
+<div class="container view-appointment-panel">
   <div class="panel panel-primary">
     <div class="panel-heading">
       <h6 class="panel-title">Appointments</h6>
     </div>
-    <table class="table table-hover" id="dev-table">
-      <thead>
-        <tr>
-          <th>Doctor Name</th>
-          <th>Patient Name</th>
-          <th>Description</th>
-          <th>Date</th>
-        </tr>
-      </thead>
-      {% for a in appointments %}
-      <tr>
-        <td> {{a.doctorName}}</td>
-        <td>{{a.patientName}}</td>
-        <td>{{a.description}}</td>
-        <td>{{a.appointmentDate}}</td>
-      </tr>
-      {% endfor %}
-    </table>
+    <div class="table-responsive">
+      <table class="table table-hover" id="dev-table">
+        <thead>
+          <tr>
+            <th>Doctor Name</th>
+            <th>Patient Name</th>
+            <th>Description</th>
+            <th>Date</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for a in appointments %}
+          <tr>
+            <td>{{ a.doctorName }}</td>
+            <td>{{ a.patientName }}</td>
+            <td>{{ a.description }}</td>
+            <td>{{ a.appointmentDate }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
   </div>
 </div>
 

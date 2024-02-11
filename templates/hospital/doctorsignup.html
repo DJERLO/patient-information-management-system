@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-
+{% load static %}
 {% load widget_tweaks %}
 <html lang="en" dir="ltr">
 
@@ -12,7 +12,10 @@
       color: #aa082e;
       background-color: #b6bde7;
       font-family: 'Roboto', sans-serif;
+      overflow-x: hidden;
+      height: 100vh;
     }
+
 
     a:link {
       text-decoration: none;
@@ -28,6 +31,9 @@
     }
 
     .form-content {
+      display: flex;
+      align-content:center ;
+      flex-direction: column;
       padding: 5%;
       border: 1px solid #ced4da;
       margin-bottom: 2%;
@@ -42,6 +48,7 @@
       border-radius: 1.5rem;
       padding: 1%;
       width: 20%;
+      min-width: 200px;
       cursor: pointer;
       background: #0062cc;
       color: #fff;
@@ -80,7 +87,7 @@
                 {% endif %}
               </div>
                 <div class="row">
-                    <div class="col-md-6">
+                    <div class="col-md-6 mb-5 pt-1">
                         <div class="form-group">
                           {% render_field form.first_name class="form-control" placeholder="First Name" %}
                         </div>
@@ -94,23 +101,20 @@
                           {% render_field form.email class="form-control" placeholder="Email" %}
                         </div>
                         <div class="form-group">
-                        {% render_field profile_form.mobile class="form-control" placeholder="Contact" pattern="(^(\+)(\d){12}$)|(^\d{11}$)" %}
-                        </div>
-                        <div class="form-group">
-                          {% render_field profile_form.address class="form-control" placeholder="Address" %}
-                        </div>
-                        <div class="form-group">
                           {% render_field form.password1 class="form-control" placeholder="Password" %}
                         </div>
                         <div class="form-group">
                           {% render_field form.password2 class="form-control" placeholder="Repeat Password" %}
                         </div>
-                    </div>
-                    <div class="col-md-6">
+                        <div class="form-group">
+                          {% render_field profile_form.address class="form-control" placeholder="Address" %}
+                        </div>
+                      </div>
+                      <div class="col-md-6 p-1">
                         <div class="form-group">
                           <center>
                             <label for="{{ profile_form.profile_pic.id_for_label }}">Profile Picture</label>
-                            <img id="preview" src="#" alt="Preview" style="max-width: 100%; max-height: 9.5em; display: none;">
+                            <img id="preview" src="{% static 'images/profile.webp' %}" alt="Preview" style="max-width: 100%; max-height: 150px; display: block;">
                           </center>
                           {% render_field profile_form.profile_pic class="form-control" onchange="previewImage(this)" %}
                         </div>
@@ -119,7 +123,7 @@
                           {% render_field profile_form.department class="form-control" placeholder="Department" %}
                         </div>
                         <div class="form-group">
-                          {% render_field profile_form.address class="form-control" placeholder="Address" %}
+                          {% render_field profile_form.mobile class="form-control" placeholder="Contact" pattern="(^(\+)(\d){12}$)|(^\d{11}$)" %}
                         </div>
                     </div>
                 </div>
@@ -146,8 +150,7 @@
         if (file) {
             reader.readAsDataURL(file);
         } else {
-            preview.src = '#';
-            preview.style.display = 'none';
+            preview.src = "{% static 'images/profile.webp' %}";
         }
     }
 </script>

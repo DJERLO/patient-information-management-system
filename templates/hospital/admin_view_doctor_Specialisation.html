@@ -16,32 +16,49 @@
     }
 
     .row {
-      margin: 100px;
+      margin: 10px auto;
+    }
+
+    .table-responsive {
+      text-wrap: nowrap;
+      padding: 0 0 0 0;
+    }
+
+    .view-departments-doctors-panel{
+      width: 100%;
+      height: 100vw;
+      position: relative;
+      margin: 1px 1px 1px 1px;
+      text-align: justify;
     }
   </style>
 </head>
 
-<div class="container">
+<div class="container view-departments-doctors-panel">
   <div class="panel panel-primary">
     <div class="panel-heading">
       <h6 class="panel-title">Department & Doctors</h6>
     </div>
-    <table class="table table-hover" id="dev-table">
-      <thead>
-        <tr>
-          <th>Department</th>
-          <th>Doctor Name</th>
-          <th>Contact</th>
-        </tr>
-      </thead>
-      {% for d in doctors %}
-      <tr>
-        <td>{{d.department}}</td>
-        <td> {{d.get_name}}</td>
-        <td>{{d.mobile}}</td>
-      </tr>
-      {% endfor %}
-    </table>
+    <div class="table-responsive">
+      <table class="table table-hover" id="dev-table">
+        <thead>
+          <tr>
+            <th>Department</th>
+            <th>Doctor Name</th>
+            <th>Contact</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for d in doctors %}
+          <tr>
+            <td>{{ d.department }}</td>
+            <td>{{ d.get_name }}</td>
+            <td>{{ d.mobile }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
   </div>
 </div>
 

@@ -7,9 +7,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <title>About Us</title>
   <style media="screen">
-    .jumbotron {
+    .aboutus {
+      text-align: center;
       margin-top: 0px;
       margin-bottom: 0px;
+    }
+
+    .display4{
+      margin-top: 100px;
     }
 
     .jumbotron h1 {
@@ -19,22 +24,58 @@
     .alert {
       margin: 0px;
     }
+    /* Mobile-first approach */
+    body {
+      font-size: 16px; /* Base font size */
+    }
+
+    .jumbotron {
+      padding: 10vh 0;
+    }
+
+    .jumbotron h1.display-4 {
+      font-size: 2rem;
+    }
+
+    .jumbotron p.lead,
+    .jumbotron p.responsive-text {
+      font-size: 1rem;
+    }
+
+    /* Media queries for larger screens */
+    @media (min-width: 768px) {
+      .jumbotron {
+        padding: 15vh 0;
+      }
+
+      .jumbotron h1.display-4 {
+        font-size: 3rem;
+      }
+
+      .jumbotron p.lead,
+      .jumbotron p.responsive-text {
+        font-size: 1.25rem;
+      }
+    }
   </style>
-  <title>sumit</title>
 </head>
 
 <body>
   {% include "hospital/navbar.html" %}
+  <br><br><br><br>
   <center>
-    <h3 class='alert alert-success' style="margin-bottom:0px;">About Us !</h3>
+    <h3 class='alert alert-success' style="margin-bottom:0px;">About Us!</h3>
   </center>
-  <div class="jumbotron" style="margin-bottom: 0px;margin-top: 0px;">
-    <h1 class="display-4">Hello</h1>
-    <p class="lead">A service dedicated to Hospital Admin, Doctor and Patient.</p>
-    <hr class="my-4">
-    <p>Explore our Website.</p>
+  <div class="aboutus" style="margin-bottom: 0px;margin-top: 0px;">
+    
+    <h1 class="display-4">Welcome to Our PIMS Portal</h1>
+    <p class="lead">A comprehensive system dedicated to managing patient information effectively.</p>
+    {% include "hospital/admin_doctor_patient_card.html" %}
+    <hr>
+    <p>Our portal provides a seamless experience for hospital administrators, doctors, and patients alike. With intuitive interfaces and powerful features, we aim to streamline the process of managing patient records, appointments, and treatments.</p>
+    <p>Whether you're an administrator overseeing the operation of the hospital, a doctor managing patient care, or a patient accessing your medical information, our PIMS portal is designed to meet your needs.</p>
+    <p>Explore our website to discover the range of functionalities we offer and how they can benefit your healthcare experience.</p>
   </div>
 </body>
-
 
 </html>

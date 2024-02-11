@@ -17,34 +17,51 @@
     }
 
     .row {
-      margin: 100px;
+      margin: 10px auto;
+    }
+
+    .table-responsive {
+      text-wrap: nowrap;
+      padding: 0 0 0 0;
+    }
+
+    .view-delete-your-appointments-panel{
+      width: 100%;
+      height: 100vw;
+      position: relative;
+      margin: 1px 1px 1px 1px;
+      text-align: justify;
     }
   </style>
 </head>
 
-<div class="container">
+<div class="container view-delete-your-appointments-panel">
   <div class="panel panel-primary">
     <div class="panel-heading">
       <h6 class="panel-title">Delete Your Appointments</h6>
     </div>
-    <table class="table table-hover" id="dev-table">
-      <thead>
-        <tr>
-          <th>Patient Name</th>
-          <th>Picture</th>
-          <th>Description</th>
-          <th>Delete</th>
-        </tr>
-      </thead>
-      {% for a,p in appointments %}
-      <tr>
-        <td>{{a.patientName}}</td>
-        <td> <img src="{{ p.profile_pic.url }}" alt="Profile Pic" height="40px" width="40px" /></td>
-        <td>{{a.description}}</td>
-        <td><a class="btn btn-danger btn-xs" href="{% url 'delete-appointment' a.id  %}"><span class="glyphicon glyphicon-trash"></span></a></td>
-      </tr>
-      {% endfor %}
-    </table>
+    <div class="table-responsive">
+      <table class="table table-hover" id="dev-table">
+        <thead>
+          <tr>
+            <th>Patient Name</th>
+            <th>Picture</th>
+            <th>Description</th>
+            <th>Delete</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for a, p in appointments %}
+          <tr>
+            <td>{{ a.patientName }}</td>
+            <td><img src="{{ p.profile_pic.url }}" alt="Profile Pic" height="40px" width="40px" /></td>
+            <td>{{ a.description }}</td>
+            <td><a class="btn btn-danger btn-xs" href="{% url 'delete-appointment' a.id %}"><span class="glyphicon glyphicon-trash"></span></a></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
   </div>
 </div>
 

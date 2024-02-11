@@ -1,0 +1,104 @@
+{% extends 'hospital/doctor_base.html' %}
+{% block content %}
+{%load static%}
+
+<head>
+  <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+  <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+  <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+  <style media="screen">
+    a:link {
+      text-decoration: none;
+    }
+
+    h6 {
+      text-align: center;
+    }
+
+    .row {
+      margin: 10px auto;
+    }
+
+    .table-responsive {
+      text-wrap: nowrap;
+      padding: 0 0 0 0;
+    }
+
+    .view-your-appointment-approvals-panel{
+      width: 100%;
+      height: 100vw;
+      position: relative;
+      margin: 1px 1px 1px 1px;
+      text-align: justify;
+    }
+  </style>
+</head>
+
+<div class="container view-your-appointment-approvals-panel">
+  <div class="panel panel-primary">
+    <div class="panel-heading">
+      <h6 class="panel-title">Your Appointment Approvals Required</h6>
+    </div>
+    <div class="table-responsive">
+      <table class="table table-hover" id="approval-table">
+        <thead>
+          <tr>
+            <th>Doctor Name</th>
+            <th>Patient Name</th>
+            <th>Description</th>
+            <th>Date</th>
+            <th>Approve</th>
+            <th>Reject</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for appointment in appointments %}
+          <tr>
+            <td>{{ appointment.doctorName }}</td>
+            <td>{{ appointment.patientName }}</td>
+            <td>{{ appointment.description }}</td>
+            <td>{{ appointment.appointmentDate }}</td>
+            <td>
+              <a class="btn btn-primary btn-xs" href="{% url 'approve-doctor-appointment' appointment.id %}">
+                <span class="glyphicon glyphicon-ok"></span>
+              </a>
+            </td>
+            <td>
+              <a class="btn btn-danger btn-xs delete-btn" href="{% url 'reject-doctor-appointment' appointment.id %}">
+                <span class="glyphicon glyphicon-trash"></span>
+              </a>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+      document.querySelectorAll('.delete-btn').forEach(item => {
+          item.addEventListener('click', function(event) {
+              event.preventDefault();
+              const url = this.getAttribute('href');
+              Swal.fire({
+                  title: 'Are you sure?',
+                  text: 'You are about to reject this appointment?.',
+                  icon: 'warning',
+                  showCancelButton: true,
+                  confirmButtonColor: '#3085d6',
+                  cancelButtonColor: '#d33',
+                  confirmButtonText: 'Yes, reject it!'
+              }).then((result) => {
+                  if (result.isConfirmed) {
+                      window.location.href = url;
+                  }
+              });
+          });
+      });
+  });
+  </script>
+
+{% endblock content %}

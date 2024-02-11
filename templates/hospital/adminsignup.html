@@ -1,18 +1,21 @@
 <!DOCTYPE html>
-
+{% load static %}
 {% load widget_tweaks %}
 <html lang="en" dir="ltr">
 
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>PIMS - Register Staff</title>
   <style type="text/css">
     body {
       color: #aa082e;
       background-color: #b6bde7;
       font-family: 'Roboto', sans-serif;
+      overflow-x: hidden;
+      height: 100vh;
     }
+    
 
     a:link {
       text-decoration: none;
@@ -26,8 +29,12 @@
       font-weight: bold;
       line-height: 80px;
     }
+    
 
     .form-content {
+      display: flex;
+      align-content:center ;
+      flex-direction: column;
       padding: 5%;
       border: 1px solid #ced4da;
       margin-bottom: 2%;
@@ -42,6 +49,7 @@
       border-radius: 1.5rem;
       padding: 1%;
       width: 20%;
+      min-width: 200px;
       cursor: pointer;
       background: #0062cc;
       color: #fff;
@@ -80,31 +88,34 @@
                 {% endif %}
               </div>
                 <div class="row">
-                    <div class="col-md-6">
+                    <div class="col-md-6 mt-4">
                         <div class="form-group">
                             {% render_field form.first_name class="form-control" placeholder="First Name" %}
+                        </div>
+                        <div class="form-group">
+                            {% render_field form.last_name class="form-control" placeholder="Last Name" %}
                         </div>
                         <div class="form-group">
                             {% render_field form.username class="form-control" placeholder="Username" %}
                         </div>
                         <div class="form-group">
-                            {% render_field form.password1 class="form-control" placeholder="Password" %}
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            {% render_field form.last_name class="form-control" placeholder="Last Name" %}
-                        </div>
-                        <div class="form-group">
                           {% render_field form.email class="form-control" placeholder="Email" %}
+                        </div>
+                        <div class="form-group">
+                            {% render_field form.password1 class="form-control" placeholder="Password" %}
                         </div>
                         <div class="form-group">
                             {% render_field form.password2 class="form-control" placeholder="Repeat Password" %}
                         </div>
                     </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-6">
+                    <div class="col-md-6 p-1">
+                      <div class="form-group">
+                        <center>
+                          <label for="{{ profile_form.profile_pic.id_for_label }}">Profile Picture</label>
+                          <img id="preview" src="{% static 'images/profile.webp' %}" alt="Preview" style="max-width: 100%; max-height: 150px; display: block;">
+                          {% render_field profile_form.profile_pic class="form-control" onchange="previewImage(this)" %}
+                        </center>
+                      </div>
                         <div class="form-group">
                             {% render_field profile_form.address class="form-control" placeholder="Address" %}
                         </div>
@@ -112,18 +123,8 @@
                             {% render_field profile_form.mobile class="form-control" placeholder="Contact Number" pattern="(^(\+)(\d){12}$)|(^\d{11}$)" %}
                         </div>
                     </div>
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            {% render_field profile_form.email class="form-control" placeholder="Email" %}
-                        </div>
-                        <div class="form-group">
-                          <label for="{{ profile_form.profile_pic.id_for_label }}">Profile Picture</label>
-                          <img id="preview" src="#" alt="Preview" style="max-width: 100%; max-height: 150px; display: none;">
-                          {% render_field profile_form.profile_pic class="form-control" onchange="previewImage(this)" %}
-                        </div>
-                            
-                    </div>
                   </div>
+
                     <center><button type="submit" class="btnSubmit">Submit</button></center> 
                     <div class="text-center">Already have an account? <a href="adminlogin">Login here</a></div>
                 </div>
@@ -147,14 +148,11 @@
         if (file) {
             reader.readAsDataURL(file);
         } else {
-            preview.src = '#';
-            preview.style.display = 'none';
+            preview.src = '{% load static %}';
         }
     }
 </script>
 
-
-  {% include "hospital/footer.html" %}
 </body>
 
 </html>

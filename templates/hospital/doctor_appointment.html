@@ -7,17 +7,18 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
   <link href="http://netdna.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" rel="stylesheet">
-
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
+  
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css">
 
     <style type="text/css">
       a:link {
         text-decoration: none;
       }
-    
-      .menu {
-        top: 50px;
-      }
+      
+      .fixed-top{
+      position: absolute;
+    }
     
       h6 {
         color: white;
@@ -77,7 +78,6 @@
   </head>
 </head>
 
-  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
   <div class="container">
     <div class="row">
       
@@ -98,10 +98,23 @@
         <div class="card bg-c-green order-card">
           <div class="card-block" id="doctorAddAppointment">
             <a href="/doctor-add-appointment">
-              <h6 class="m-b-20">Schedule Your Appointment</h6>
+              <h6 class="m-b-20">Book Your Appointment</h6>
             </a>
             <br>
             <h2 class="text-right"><i class="fas fa-book-medical f-left"></i></h2>
+
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-4 col-xl-4">
+        <div class="card bg-c-pink order-card">
+          <div class="card-block" id="doctorApproveAppointment">
+            <a href="/doctor-approve-appointment">
+              <h6 class="m-b-20">Approve Appointments</h6>
+            </a>
+            <br>
+            <h2 class="text-right"><i class="fas fa-check f-left"></i></h2>
 
           </div>
         </div>
@@ -125,14 +138,19 @@
   <script>
     let doctorViewAppointment = document.getElementById("doctorViewAppointment")
     let doctorAddAppointment = document.getElementById("doctorAddAppointment")
+    let doctorApproveAppointment = document.getElementById("doctorApproveAppointment")
     let doctorDeleteAppointment = document.getElementById("doctorDeleteAppointment")
-
+    
     doctorViewAppointment.addEventListener("click", function() {
       window.location.href = "/doctor-view-appointment";
     });
 
     doctorAddAppointment.addEventListener("click", function() {
       window.location.href = "/doctor-add-appointment";
+    });
+
+    doctorApproveAppointment.addEventListener("click", function() {
+      window.location.href = "/doctor-approve-appointment";
     });
 
     doctorDeleteAppointment.addEventListener("click", function() {

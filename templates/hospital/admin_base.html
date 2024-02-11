@@ -4,6 +4,8 @@
 
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <title>PIMS - Staff {{request.user.first_name}} {{request.user.last_name}}</title>
 
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
@@ -29,7 +31,7 @@
     }
 
 
-
+    
 
     /*---------------------------------------
        Social section
@@ -87,25 +89,26 @@
 
     }
 
-
-
-
-
     body {
-
       padding-left: 240px;
+      overflow-x: hidden;
     }
     main {
       position: relative;
       height: 100vh;
     }
 
+    .fixed-top{
+      position: absolute;
+    }
+
+
     .menu {
       background: #03a9f4;
       height: 100vh;
       width: 240px;
       position: fixed;
-      top: 0px;
+      top: 0;
       left: 0;
       z-index: 5;
       outline: none;
@@ -224,16 +227,18 @@
         transform: translate3d(0px, -50%, 0);
       }
     }
-    @media screen and (max-width: 400px) {
+    @media screen and (max-width: 400px) and (min-width: 334px)  {
       body {
         padding-left: 0;
       }
       .menu {
+        margin-top: 55px;
         width: 230px;
         box-shadow: 0 0 0 100em rgba(0, 0, 0, 0);
         transform: translate3d(-230px, 0, 0);
         transition: all 0.3s ease-in-out;
       }
+
       .menu .smartphone-menu-trigger {
         width: 40px;
         height: 40px;
@@ -252,10 +257,12 @@
         top: 45%;
         left: 50%;
         transform: translate3d(-50%, -50%, 0);
+        
       }
       .menu .smartphone-menu-trigger:after {
         top: 55%;
         transform: translate3d(-50%, -50%, 0);
+        
       }
       .menu ul li {
         padding: 1em 1em 1em 3em;
@@ -270,125 +277,148 @@
       }
     }
 
-    
+    .navbar-brand {
+      font-size: 1.5em; /* Default font size */
+    }
+
+    @media (max-width: 768px) {
+      .navbar-brand {
+        font-size: 1.2em; /* Font size for screens with a max-width of 768px */
+      }
+    }
+
+    @media (max-width: 576px) {
+      .navbar-brand {
+        font-size: 1em; /* Font size for screens with a max-width of 576px */
+      }
+    }
+      @media (max-width: 399px) {
+      .navbar-brand {
+        font-size: 0.7em; 
+      }
+    }
+
 
   </style>
 
 </head>
 
 <body>
-
-  <!-- partial:index.partial.html -->
-  <nav class="menu" tabindex="0">
+<!-- partial:index.partial.html -->
+<nav class="menu" tabindex="0">
     <div class="smartphone-menu-trigger"></div>
     <header class="avatar">
-      {% if user.hospitalstaffadmin.profile_pic %}
-      <img src="{{ user.hospitalstaffadmin.profile_pic.url }}" alt="Profile Pic"/>
-    {% else %}
-      <img src="{% static 'images/adminpropic.png' %}" alt="Default Profile Pic"/>
-    {% endif %}
-      <br><br>
-      <h6>Admin</h6>
-      <h2>{{request.user.first_name}}</h2>
+        {% if user.hospitalstaffadmin.profile_pic %}
+        <img src="{{ user.hospitalstaffadmin.profile_pic.url }}" alt="Profile Pic"/>
+        {% else %}
+        <img src="{% static 'images/adminpropic.png' %}" alt="Default Profile Pic"/>
+        {% endif %}
+        <br><br>
+        <h6>Admin</h6>
+        <h2>{{request.user.first_name}}</h2>
     </header>
     <ul>
-      <li tabindex="0" class="icon-dashboard"> <a style="color:white; text-decoration:none;" href="/admin-dashboard"><span>Dashboard</span></a> </li>
-      <li tabindex="0" class="icon-customers"> <a style="color:white; text-decoration:none;" href="/admin-doctor"><span>Doctor</span></a></li>
-      <li tabindex="0" class="icon-users"> <a style="color:white; text-decoration:none;" href="/admin-patient"><span>Patient</span></a></li>
-      <li tabindex="0" class="icon-calendar"> <a style="color:white; text-decoration:none;" href="/admin-appointment"><span>Appointment</span></a></li>
+      <li tabindex="0" id="adminDashboardIcon" class="icon-dashboard">
+          <a style="color:white; text-decoration:none;" href="/admin-dashboard">
+              <span>Dashboard</span>
+          </a>
+      </li>
+      <li tabindex="0" id="adminDoctorIcon" class="icon-customers">
+          <a style="color:white; text-decoration:none;" href="/admin-doctor">
+              <span>Doctor</span>
+          </a>
+      </li>
+      <li tabindex="0" id="adminPatientIcon" class="icon-users">
+          <a style="color:white; text-decoration:none;" href="/admin-patient">
+              <span>Patient</span>
+          </a>
+      </li>
+      <li tabindex="0" id="adminAppointmentIcon" class="icon-calendar">
+          <a style="color:white; text-decoration:none;" href="/admin-appointment">
+              <span>Appointment</span>
+          </a>
+      </li>
     </ul>
-  </nav>
+</nav>
 
-  <main>
-
-
+<main>
     <!-- nav start -->
     <div class="bs-example">
-      <nav class="navbar navbar-expand-md  navbar-dark fixed-top" style="background:#337AB7;">
-        <a href="/admin-dashboard" class="navbar-brand">HOSPITAL MANAGEMENT</a>
-        <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse justify-content-between" id="navbarCollapse">
-          <div class="navbar-nav" style=" margin-left: 90%;">
-            <a href="/logout" class="nav-item nav-link" id="logoutLink">Logout</a>
+      <nav class="navbar navbar-expand-md navbar-dark fixed-top" style="background:#337AB7;">
+          <a href="/admin-dashboard" class="navbar-brand">HOSPITAL MANAGEMENT</a>
+          <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
+              <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse justify-content-between" id="navbarCollapse">
+              <div class="navbar-nav" style="margin-left: 90%;">
+                  <a href="/logout" class="nav-item nav-link" id="logoutLink">Logout</a>
+              </div>
           </div>
-        </div>
       </nav>
-    </div>
+  </div>
     <!-- nav end -->
-
-
 
     <br><br>
 
-    <!-- content start-->
-    {% block content %}
-
-    {% endblock content %}
-    <!-- content end-->
-
-    <br><br><br><br>
-    <footer>
-     
-
-      <br>
-      <div class="container">
+    <!-- content start -->
+    <div class="container-fluid">
         <div class="row">
-          <div class="col-md-12 col-sm-12">
-            <div style="color:#ffffff;" class="wow fadeInUp footer-copyright">
-              <p>
-                Copyright &copy; 2021 Developed By Sumit Kumar </p>
+            <div class="col-md-12">
+                {% block content %}
+
+                {% endblock %}
             </div>
-          </div>
         </div>
-      </div>
-    </footer>
-
-  </main>
-  <script>
-    document.getElementById('logoutLink').addEventListener('click', function(event) {
-        event.preventDefault();  // Prevent the default anchor behavior
+    </div>
+    <!-- content end -->
     
-        // Create a form dynamically and submit it
-        var form = document.createElement('form');
-        form.method = 'post';
-        form.action = '/logout';
-    
-        var csrfTokenInput = document.createElement('input');
-        csrfTokenInput.type = 'hidden';
-        csrfTokenInput.name = 'csrfmiddlewaretoken';
-        csrfTokenInput.value = '{{ csrf_token }}';  // Add the CSRF token here
-    
-        form.appendChild(csrfTokenInput);
-    
-        document.body.appendChild(form);
-        form.submit();
-    });
+    <br><br><br><br>
+    {% include 'hospital/footer.html' %}
 
-    function updateServerTime() {
-      // Fetch the server time and update the #serverTime element
-      var serverTimeElement = document.getElementById('serverTime');
-      setInterval(function() {
-        // Get the current server time with the correct timezone (Asia/Manila)
-        var now = new Date(new Date().toLocaleString("en-US", {timeZone: "Asia/Manila"}));
-        
-        // Format the time
-        var hours = now.getHours();
-        var minutes = now.getMinutes();
-        var seconds = now.getSeconds();
-        var timeString = hours + ':' + (minutes < 10 ? '0' : '') + minutes + ':' + (seconds < 10 ? '0' : '') + seconds;
-        
-        serverTimeElement.innerText = 'Server Time (Asia/Manila): ' + timeString;
-    }, 1000); // Update every second
-  }
-
-  // Call the function to start updating the time
-  updateServerTime();
-
-    </script>
+</main>
+  
 
 
 </body>
+<script>
+  document.getElementById('logoutLink').addEventListener('click', function(event) {
+      event.preventDefault();  // Prevent the default anchor behavior
+  
+      // Create a form dynamically and submit it
+      var form = document.createElement('form');
+      form.method = 'post';
+      form.action = '/logout';
+  
+      var csrfTokenInput = document.createElement('input');
+      csrfTokenInput.type = 'hidden';
+      csrfTokenInput.name = 'csrfmiddlewaretoken';
+      csrfTokenInput.value = '{{ csrf_token }}';  // Add the CSRF token here
+  
+      form.appendChild(csrfTokenInput);
+  
+      document.body.appendChild(form);
+      form.submit();
+  });
+      document.addEventListener("DOMContentLoaded", function() {
+        // Admin Dashboard Icon
+        document.getElementById("adminDashboardIcon").addEventListener("click", function() {
+            window.location.href = "/admin-dashboard";
+        });
 
+        // Admin Doctor Icon
+        document.getElementById("adminDoctorIcon").addEventListener("click", function() {
+            window.location.href = "/admin-doctor";
+        });
+
+        // Admin Patient Icon
+        document.getElementById("adminPatientIcon").addEventListener("click", function() {
+            window.location.href = "/admin-patient";
+        });
+
+        // Admin Appointment Icon
+        document.getElementById("adminAppointmentIcon").addEventListener("click", function() {
+            window.location.href = "/admin-appointment";
+        });
+    });
+  </script>
 </html>

@@ -55,6 +55,7 @@ class Doctor(models.Model):
     @property
     def get_id(self):
         return self.user.id
+    #I fetch three of these and i can set the values on the doctor update form
     @property
     def get_mobile(self):
         return self.mobile
@@ -64,30 +65,79 @@ class Doctor(models.Model):
     @property
     def get_department(self):
         return self.department
+    
+    @property
+    def get_assigned_doctor(self):
+        return "{} ({})".format(self.user.first_name,self.department)
         
-
     def __str__(self):
         return "{} ({})".format(self.user.first_name,self.department)
 
-sex = [('Male','Male'), ('Female','Female')]
+sex = [('Unspecify', 'Unspecify'),('Male','Male'), ('Female','Female')]
 
 class Patient(models.Model):
-    user=models.OneToOneField(User,on_delete=models.CASCADE)
-    profile_pic= models.ImageField(upload_to='profile_pic/PatientProfilePic/',null=True,blank=True)
-    address = models.CharField(max_length=40)
-    mobile = models.CharField(max_length=20,null=False)
-    symptoms = models.CharField(max_length=100,null=False)
-    assignedDoctorId = models.PositiveIntegerField(null=True)
-    admitDate=models.DateField(auto_now=True)
-    status=models.BooleanField(default=False)
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    profile_pic = models.ImageField(upload_to='profile_pic/PatientProfilePic/', null=True, blank=True)
+    first_name = models.CharField(max_length=50)
+    last_name = models.CharField(max_length=50)
+    gender = models.CharField(max_length=10, choices=sex, default="Choose your Sex")  # New field
+    date_of_birth = models.DateField()  # New field
+    
+    address = models.CharField(max_length=100)
+    mobile = models.CharField(max_length=20)
+    symptoms = models.CharField(max_length=100)
+    status = models.BooleanField(default=False)
+    admit_date = models.DateField(auto_now=True)
+    
+    # Change assigned_doctor_id to reference user_id of hospital_doctor table
+    assigned_doctor_id = models.PositiveIntegerField(null=False)
+    assigned_doctor = models.CharField(max_length=50)
+
+    def set_assigned_doctor_id(self, doctor_id):
+        self.assigned_doctor_id = doctor_id
+    
     @property
     def get_name(self):
-        return self.user.first_name+" "+self.user.last_name
+        return self.user.first_name + " " + self.user.last_name
+    
     @property
     def get_id(self):
         return self.user.id
+    
+    @property
+    def get_gender(self):
+        return self.gender
+    
+    @property
+    def get_DOB(self):
+        return self.date_of_birth
+    
+    @property
+    def get_address(self):
+        return self.address
+    
+    @property
+    def get_mobile(self):
+        return self.mobile
+    
+    @property
+    def get_email(self):
+        return self.email
+    
+    @property
+    def get_symptoms(self):
+        return self.symptoms
+    
+    @property
+    def get_assigned_doctor_id(self):
+        return self.assigned_doctor_id
+    
+    @property
+    def get_assigned_doctor(self):
+        return self.assigned_doctor
+
     def __str__(self):
-        return self.user.first_name+" ("+self.symptoms+")"
+        return self.user.first_name + " (" + self.symptoms + ")"
 
 
 class Appointment(models.Model):

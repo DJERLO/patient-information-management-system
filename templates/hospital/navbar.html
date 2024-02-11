@@ -17,9 +17,24 @@
     }
 
     .navbar-brand {
-      font-size: 20px;
-      font-family: sans-serif;
+      font-size: 1.5em; /* Default font size */
+    }
 
+    @media (max-width: 768px) {
+      .navbar-brand {
+        font-size: 1.2em; /* Font size for screens with a max-width of 768px */
+      }
+    }
+
+    @media (max-width: 576px) {
+      .navbar-brand {
+        font-size: 1em; /* Font size for screens with a max-width of 576px */
+      }
+    }
+      @media (max-width: 399px) {
+      .navbar-brand {
+        font-size: 0.7em; /* Font size for screens with a max-width of 576px */
+      }
     }
   </style>
 </head>
@@ -43,6 +58,7 @@
           <a href="/adminclick" class="nav-item nav-link">Admin</a>
           <a href="/doctorclick" class="nav-item nav-link">Doctor</a>
           <a href="/patientclick" class="nav-item nav-link">Patient</a>
+          <a href="/aboutus" class="nav-item nav-link">About Us</a>
           <a href="/contactus" class="nav-item nav-link">Contact Us</a>
         </div>
 

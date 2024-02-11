@@ -5,14 +5,26 @@
 
 {% block content %}
 
-
 <head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style media="screen">
+    
+    .container{
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      text-wrap: nowrap;
+      flex-direction: column;
+      flex-wrap: nowrap;
+      margin-top: 15%;
+    }
+
     .jumbotron {
       margin-top: 0px;
       margin-bottom: 0px;
       background-image: url('{% static "images/back.jpg" %}');
-      background-size: cover;
+      background-size:cover;
       background-repeat: no-repeat;
     }
 
@@ -37,32 +49,35 @@
       animation: glow 1s ease-in-out infinite alternate;
     }
 
-    @-webkit-keyframes glow {
-      from {
-        text-shadow: 0 0 10px #eeeeee, 0 0 20px #000000, 0 0 30px #000000, 0 0 40px #000000, 0 0 50px #9554b3, 0 0 60px #9554b3, 0 0 70px #9554b3;
-      }
-
-      to {
-        text-shadow: 0 0 20px #eeeeee, 0 0 30px #fa2d2d, 0 0 40px #fa2d2d, 0 0 50px #fa2d2d, 0 0 60px #fa2d2d, 0 0 70px #fa2d2d, 0 0 80px #fa2d2d;
-      }
+    @keyframes glow {
+    0% {
+      text-shadow: 0 0 10px #eeeeee, 0 0 20px #000000, 0 0 30px #000000;
     }
+    50% {
+      text-shadow: 0 0 20px #eeeeee, 0 0 30px #fa2d2d, 0 0 40px #fa2d2d;
+    }
+    100% {
+      text-shadow: 0 0 20px #eeeeee, 0 0 30px #fa2d2d, 0 0 40px #fa2d2d, 0 0 50px #fa2d2d;
+    }
+  }
   </style>
 </head>
 <br>
 <br>
 
-<div class="jumbotron" style="margin-bottom: 0px;margin-top: 0px;">
-  <div class="container">
+<div class="jumbotron pb-10">
+  <div class="container-fluid">
     <div class="row">
       <div class="col-md-12">
-        <h1 class="display-3 glow">Patient Information Management System</h1>
+        <h1 class="display-3 glow mt-5">Patient Information Management System</h1>
         <p class="lead">Emergency?</p>
         <p>
           <a class="btn btn-danger btn-lg" href="/patientclick" role="button">Take Appointment Now!</a>
         </p>
       </div>
+      {% include "hospital/admin_doctor_patient_card.html" %}
     </div>
+    
   </div>
-  {% include "hospital/admin_doctor_patient_card.html" %}
 </div>
 {% endblock content %}
