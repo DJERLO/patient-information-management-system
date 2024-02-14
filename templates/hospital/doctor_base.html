@@ -7,7 +7,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <title>PIMS - Dr.{{request.user.first_name}} {{request.user.last_name}}</title>
-
+  <link rel="icon" type="image/x-icon" href={% static "images/favicon.ico"%}>
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
@@ -159,6 +159,13 @@
     .menu ul li:hover {
       background-color: rgba(0, 0, 0, 0.1);
     }
+
+    .menu ul li.active {
+      background-color: rgba(0, 0, 0, 0.1); /* Change background color for active item */
+      font-weight: bold; /* Optionally make the text bold for active item */
+      color: #ffffff; /* Optionally change text color for active item */
+    }
+
     .menu ul li:focus {
       outline: none;
     }
@@ -168,6 +175,7 @@
       }
       .menu {
         width: 90px;
+        overflow-x: auto;
       }
       .menu .avatar {
         padding: 0.5em;
@@ -305,23 +313,23 @@
       <img src="{{ doctor.profile_pic.url }}" alt="Profile Pic" />
       <br><br>
       <h6>Doctor</h6>
-      <h2>{{request.user.first_name}}</h2>
+      <h2>{{ request.user.first_name }}</h2>
     </header>
     <ul>
-      <li tabindex="0" id="doctorDashboardIcon" class="icon-dashboard">
+      <li tabindex="0" id="doctorDashboardIcon" class="icon-dashboard {% if 'dashboard' in request.path %}active{% endif %}">
         <a style="color:white; text-decoration:none;" href="/doctor-dashboard">
-            <span>Dashboard</span>
+          <span>Dashboard</span>
         </a>
       </li>
-      <li tabindex="0" id="doctorPatientIcon" class="icon-users">
-          <a style="color:white; text-decoration:none;" href="/doctor-patient">
-              <span>Patient</span>
-          </a>
+      <li tabindex="0" id="doctorPatientIcon" class="icon-users {% if 'patient' in request.path %}active{% endif %}">
+        <a style="color:white; text-decoration:none;" href="/doctor-patient">
+          <span>Patient</span>
+        </a>
       </li>
-      <li tabindex="0" id="doctorAppointmentIcon" class="icon-calendar">
-          <a style="color:white; text-decoration:none;" href="/doctor-appointment">
-              <span>Appointments</span>
-          </a>
+      <li tabindex="0" id="doctorAppointmentIcon" class="icon-calendar {% if 'appointment' in request.path %}active{% endif %}">
+        <a style="color:white; text-decoration:none;" href="/doctor-appointment">
+          <span>Appointments</span>
+        </a>
       </li>
     </ul>
   </nav>

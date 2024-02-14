@@ -40,6 +40,26 @@
       }
     }
 
+     /* Media queries for smaller device screens */
+     @media (max-width: 768px) {
+      .jumbotron {
+        
+        padding: 10vh 5px;
+      }
+
+      .jumbotron h1.display-4 {
+        font-size: 3rem;
+      }
+
+      .jumbotron p.lead,
+      .jumbotron p.responsive-text {
+        font-size: 0.7rem;
+      }
+      .btn{
+        padding: 0.8rem;
+      }
+    }
+
     /* Add your other media queries for larger screens here if needed */
   </style>
 </head>
@@ -63,7 +83,7 @@
             </div>
         </div>
         <div class="row mt-4">
-            <div class="col-md-6 mx-auto">
+            <div class="col-sm-6 mx-auto">
                 <a href="/aboutus" class="text-muted">Learn more about our features</a>
             </div>
         </div>

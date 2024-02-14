@@ -8,7 +8,8 @@
     
     .container {
       padding: 10px;
-      margin-top: 100px;
+      margin-top: 10px;
+      margin-bottom: 10px;
     }
 
     .card {
@@ -23,6 +24,8 @@
       color: grey;
       font-size: 18px;
     }
+
+    
 
     button {
       border: none;
@@ -53,9 +56,33 @@
       width: 100%;
     }
 
-    @media screen and (min-width: 600px) {
+    
+    .grid-item:hover .card {
+      transform: scale(1.05);
+    }
+
+    @media screen and (min-width: 767px) {
+      .grid-container{
+        width: 100%;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .grid-item {
+        width: 100%;
+        height: 100%;
+        justify-content: center;
+        align-self: center;
+      }
+      
+    }
+
+    @media screen and (max-width: 767px) {
       .grid-container {
-        grid-template-columns: auto auto auto;
+        width: 100%;
+        height: 100%;
       }
     }
 

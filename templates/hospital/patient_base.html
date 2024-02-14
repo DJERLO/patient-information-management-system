@@ -7,7 +7,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <title>PIMS - Patient {{request.user.first_name}} {{request.user.last_name}}</title>
-
+  <link rel="icon" type="image/x-icon" href={% static "images/favicon.ico"%}>
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
@@ -161,6 +161,13 @@
     .menu ul li:hover {
       background-color: rgba(0, 0, 0, 0.1);
     }
+
+    .menu ul li.active {
+      background-color: rgba(0, 0, 0, 0.1); /* Change background color for active item */
+      font-weight: bold; /* Optionally make the text bold for active item */
+      color: #ffffff; /* Optionally change text color for active item */
+    }
+
     .menu ul li:focus {
       outline: none;
     }
@@ -228,7 +235,7 @@
         transform: translate3d(0px, -50%, 0);
       }
     }
-    @media screen and (max-width: 400px) {
+    @media screen and (max-width: 400px) and (min-width: 334px) {
       body {
         padding-left: 0;
       }
@@ -277,21 +284,25 @@
 
     .navbar-brand {
       font-size: 1.5em; /* Default font size */
+      text-align: center;
     }
 
     @media (max-width: 768px) {
       .navbar-brand {
+        width: 100%;
         font-size: 1.2em; /* Font size for screens with a max-width of 768px */
       }
     }
 
     @media (max-width: 576px) {
       .navbar-brand {
+        width: 100%;
         font-size: 1em; /* Font size for screens with a max-width of 576px */
       }
     }
       @media (max-width: 399px) {
       .navbar-brand {
+        width: 100%;
         font-size: 0.7em; /* Font size for screens with a max-width of 576px */
       }
     }
@@ -307,23 +318,23 @@
       <img src="{{ patient.profile_pic.url }}" alt="Profile Pic" />
       <br><br>
       <h6>Patient</h6>
-      <h2>{{request.user.first_name}}</h2>
+      <h2>{{ request.user.first_name }}</h2>
     </header>
     <ul>
-      <li tabindex="0" class="icon-dashboard" id="dashboardIcon">
+      <li tabindex="0" id="dashboardIcon" class="icon-dashboard {% if 'dashboard' in request.path %}active{% endif %}">
         <a style="color:white; text-decoration:none;" href="/patient-dashboard">
-            <span>Dashboard</span>
+          <span>Dashboard</span>
         </a>
       </li>
-      <li tabindex="0" class="icon-calendar" id="appointmentIcon">
-          <a style="color:white; text-decoration:none;" href="/patient-appointment">
-              <span>Appointments</span>
-          </a>
+      <li tabindex="0" id="appointmentIcon" class="icon-calendar {% if 'appointment' in request.path %}active{% endif %}">
+        <a style="color:white; text-decoration:none;" href="/patient-appointment">
+          <span>Appointments</span>
+        </a>
       </li>
-      <li tabindex="0" class="icon-users" id="dischargeIcon">
-          <a style="color:white; text-decoration:none;" href="/patient-discharge">
-              <span>Discharge</span>
-          </a>
+      <li tabindex="0" id="dischargeIcon" class="icon-users {% if 'discharge' in request.path %}active{% endif %}">
+        <a style="color:white; text-decoration:none;" href="/patient-discharge">
+          <span>Discharge</span>
+        </a>
       </li>
     </ul>
   </nav>

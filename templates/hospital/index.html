@@ -7,6 +7,7 @@
 
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
   <style media="screen">
     
     .container{
@@ -24,9 +25,13 @@
       margin-top: 0px;
       margin-bottom: 0px;
       background-image: url('{% static "images/back.jpg" %}');
-      background-size:cover;
+      background-size: cover;
       background-repeat: no-repeat;
+      backdrop-filter: blur(5px);
+      width: 100vw;
+      height: auto;
     }
+
 
     .jumbotron h5,
     h3 {
@@ -37,7 +42,6 @@
     .alert {
       margin: 0px;
     }
-
 
 
     .glow {
@@ -65,17 +69,19 @@
 <br>
 <br>
 
-<div class="jumbotron pb-10">
+<div class="jumbotron jumbotron-overlay pb-10">
   <div class="container-fluid">
     <div class="row">
-      <div class="col-md-12">
+      <div class="col-md-12 px-5">
         <h1 class="display-3 glow mt-5">Patient Information Management System</h1>
         <p class="lead">Emergency?</p>
         <p>
           <a class="btn btn-danger btn-lg" href="/patientclick" role="button">Take Appointment Now!</a>
         </p>
       </div>
+      <div class="col-md-12 pt-6">
       {% include "hospital/admin_doctor_patient_card.html" %}
+      </div>
     </div>
     
   </div>

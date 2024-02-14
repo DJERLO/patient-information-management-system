@@ -39,18 +39,38 @@
         font-size: 1.25rem;
       }
     }
+
+    /* Media queries for smaller device screens */
+    @media (max-width: 768px) {
+      .jumbotron {
+        padding: 10vh 5px;
+      }
+
+      .jumbotron h1.display-4 {
+        font-size: 3rem;
+      }
+
+      .jumbotron p.lead,
+      .jumbotron p.responsive-text {
+        font-size: 0.7rem;
+      }
+      .btn{
+        padding: 0.8rem;
+      }
+    }
+
+    
   </style>
 </head>
-<br>
-<br>
 
-<div class="jumbotron text-center" style="margin-bottom:0px;">
+<body>
+<div class="jumbotron text-center">
   <h1 class="display-4">Hello, Doctor</h1>
   <p class="lead">Welcome to the Doctor Portal of the Patient Information Management System (PIMS).</p>
   <hr class="my-4">
   <div class="container">
     <div class="row justify-content-center">
-      <div class="col-md-8 text-center">
+      <div class="col-md-8 mx-auto">
         <p class="responsive-text">As a doctor, you play a crucial role in patient care and management. Our system is designed to assist you in efficiently managing patient information and treatment plans.</p>
         <p class="responsive-text">With features tailored to your needs, you can easily access patient records, schedule appointments, and collaborate with other healthcare professionals.</p>
         <p class="responsive-text">Prescriptions are issued offline, ensuring patients receive physical copies directly from their assigned doctors.</p>
@@ -58,18 +78,18 @@
       </div>
     </div>
     <div class="row justify-content-center mt-4">
-      <div class="col-md-6">
+      <div class="col-md-6 mx-auto">
         <a class="btn btn-danger btn-lg btn-block mb-2" href="/doctorsignup" role="button">Apply</a>
         <a class="btn btn-success btn-lg btn-block" href="/doctorlogin" role="button">Login</a>
       </div>
     </div>
     <div class="row justify-content-center mt-4">
-      <div class="col-md-6">
+      <div class="col-md-6 mx-auto">
         <a href="/aboutus" class="text-muted text-center">Learn more about our features</a>
       </div>
     </div>
   </div>
 </div>
-
+</body>
 
 {% endblock content %}

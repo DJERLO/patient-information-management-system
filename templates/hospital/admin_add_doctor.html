@@ -4,9 +4,19 @@
 {% block content %}
 
 <head>
+  <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+  
   <style media="screen">
+    body {
+      font-size: 1rem;
+    }
+    
     a:link {
       text-decoration: none;
+    }
+
+    .fixed-top{
+      position: absolute;
     }
 
     .note {
@@ -37,15 +47,31 @@
       background: #0062cc;
       color: #fff;
     }
+    /*For Larger Device Screens*/
+    @media (min-width: 768px){
+      .btnSubmit {
+       max-width: 200px;
+      text-align: center;
+      }
 
-    .menu {
-      top: 50px;
     }
-  </style>
 
-  <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+    /*For Smaller Device Screens*/
+    @media (max-width: 767px){
+      .btnSubmit {
+        width: 30%;
+        height: 100%;
+        font-size: 1.1rem;
+        text-align: center;
+      }
+
+    }
+
+    
+  </style>
   <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
   <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  
 
 </head>
 <br><br><br>

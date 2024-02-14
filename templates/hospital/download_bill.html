@@ -1,199 +1,156 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
-
-
 <head>
   <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Billing Invoice: {{patientName}}</title>
+  <link rel="icon" type="image/x-icon" href={% static "images/favicon.ico"%}>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
   <style>
     @page {
       size: A4;
       margin: 1cm;
-
-      @frame footer {
-        -pdf-frame-content: footerContent;
-        bottom: 0cm;
-        margin-left: 9cm;
-        margin-right: 9cm;
-        height: 1cm;
-      }
     }
 
+    body {
+      background-color: #f8f9fa;
+      font-family: Arial, sans-serif;
+      
+    }
+
+    .information{
+      font-family: Georgia, 'Times New Roman', Times, serif;
+    }
+
+    .title{
+      text-align: center;
+      margin: 10px;
+    }
+
+    .note{
+      font-style: italic;
+      color: #999393;
+    }
+    .container{
+      border: 3px solid#732828;
+    }
     .invoice-box {
       max-width: 800px;
       margin: auto;
-      padding: 30px;
-      border: 1px solid #eee;
-      box-shadow: 0 0 10px rgba(0, 0, 0, .15);
-      font-size: 16px;
-      line-height: 24px;
-      font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif;
-      color: #555;
+      padding: 20px;
+      border: 5px solid#f9f9f9;
+      border-radius: 10px;
+      background-color: #f9f9f9;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      font-size: 18px;
+      line-height: 1.5;
+      color: #333;
+    }
+
+    .invoice-box h1 {
+      margin-bottom: 20px;
+      font-weight: bold;
+      color: #333;
+      text-align: center;
+      display: block;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
     }
 
     .invoice-box table {
       width: 100%;
-      line-height: inherit;
-      text-align: left;
+      border-collapse: collapse;
     }
 
-    .invoice-box table td {
-      padding: 5px;
+    .invoice-box table td,
+    .invoice-box table th {
+      padding: 10px;
       vertical-align: top;
+      border-bottom: 1px solid #f2f2f2;
     }
 
-    .invoice-box table tr td:nth-child(2) {
-      text-align: right;
-    }
-
-    .invoice-box table tr.top table td {
-      padding-bottom: 20px;
-    }
-
-    .invoice-box table tr.top table td.title {
-      font-size: 45px;
-      line-height: 45px;
-      color: #333;
-    }
-
-    .invoice-box table tr.information table td {
-      padding-bottom: 40px;
+    .invoice-box table th {
+      background-color: #f2f2f2;
+      font-weight: bold;
+      color: #555;
     }
 
     .invoice-box table tr.heading td {
-      background: #eee;
-      border-bottom: 1px solid #ddd;
+      background-color: #f2f2f2;
       font-weight: bold;
-    }
-
-    .invoice-box table tr.details td {
-      padding-bottom: 20px;
     }
 
     .invoice-box table tr.item td {
-      border-bottom: 1px solid #eee;
-    }
-
-    .invoice-box table tr.item.last td {
       border-bottom: none;
     }
 
-    .invoice-box table tr.total td:nth-child(2) {
-      border-top: 2px solid #eee;
+    .invoice-box table tr.total td {
       font-weight: bold;
     }
 
+    .invoice-box table tr.information td {
+      width: 50%;
+    }
+
     @media only screen and (max-width: 600px) {
-      .invoice-box table tr.top table td {
+      .invoice-box table tr.information td {
         width: 100%;
         display: block;
         text-align: center;
       }
-
-      .invoice-box table tr.information table td {
-        width: 100%;
-        display: block;
-        text-align: center;
-      }
-    }
-
-    /** RTL **/
-    .rtl {
-      direction: rtl;
-      font-family: Tahoma, 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif;
-    }
-
-    .rtl table {
-      text-align: right;
-    }
-
-    .rtl table tr td:nth-child(2) {
-      text-align: left;
     }
   </style>
 </head>
 
 <body>
-
-  <br><br><br>
   <div class="invoice-box">
-    <table cellpadding="0" cellspacing="0">
-      <tr class="top">
-        <td colspan="2">
-          <table>
-            <tr>
-              <td class="title">
-                <h5>Hospital Management</h5>
-              </td>
-
-              <td>
-
-                Admit Date: {{admitDate}}<br>
-                Release Date: {{releaseDate}}<br>
-                Days Spent: {{daySpent}}
-              </td>
-            </tr>
-          </table>
+      <div>
+        <img src="{% static 'images/logo.png' %}" alt="Hospital Logo" style="display: block; margin: auto; width: 200px;">
+        <h1 class="title">Hospital Management</h1>
+      </div>
+    <table class="container">
+      <tr class="information">
+        <td>
+          <strong>Patient Name:</strong> {{patientName}}<br>
+          <strong>Patient Contact:</strong> {{mobile}}<br>
+          <strong>Patient Address:</strong> {{address}}<br>
+        </td>
+        <td>
+          <strong>Admit Date:</strong> {{admitDate}}<br>
+          <strong>Release Date:</strong> {{releaseDate}}<br>
+          <strong>Days Spent:</strong> {{daySpent}}
         </td>
       </tr>
-
       <tr class="information">
         <td colspan="2">
-          <table>
-            <tr>
-              <td>
-                Patient Name : {{patientName}}<br>
-                Patient Contact : {{mobile}}<br>
-                Patient Addres : {{address}}<br>
-              </td>
-
-              <td>
-                Doctor Name :<br>
-                {{assignedDoctorName}}<br>
-
-              </td>
-            </tr>
-          </table>
+          <strong>Doctor Name:</strong> {{assignedDoctorName}}<br>
         </td>
       </tr>
-
-
       <tr class="information">
         <td colspan="2">
-          <table>
-            <tr>
-              <td>
-                Disease and Symptoms :<br>
-                &nbsp &nbsp &nbsp &nbsp &nbsp {{symptoms}}
-              </td>
-
-            </tr>
-          </table>
+          <strong>Disease and Symptoms:</strong><br>
+          {{symptoms}}
         </td>
       </tr>
-
-
-
       <tr class="information">
         <td colspan="2">
-          <table>
-            <tr>
-              <td>
-                Charges :<br><br>
-                Room Charge of {{daySpent}} Days : {{roomCharge}}<br>
-                Doctor Fee : {{doctorFee}}<br>
-                Medicine Cost : {{medicineCost}}<br>
-                Other Charge : {{OtherCharge}} <br><br>
-                &nbsp &nbsp &nbsp &nbsp &nbsp Total : {{total}}
-              </td>
-            </tr>
-          </table>
+          <strong>Charges:</strong><br>
+          Room Charge(Day): {{daySpent}} x $200 = {{roomCharge}}<br>
+          Doctor Fee: ${{doctorFee}}<br>
+          Medicine Cost: ${{medicineCost}}<br>
+          Other Charge: ${{OtherCharge}}<br><br>
+          <strong>Total:</strong> ${{total}}
         </td>
       </tr>
-
-
     </table>
   </div>
+  <hr>
+  <!-- Add note here regarding this is the official copy of their invoice from hospital -->
+  <p class="note" style="text-align: center; font-style: italic;">Note: This is the official copy of your invoice from the hospital.</p>
+  <hr>
 </body>
-
 
 </html>

@@ -131,8 +131,10 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 STATIC_URL = '/static/'
-
-STATICFILES_DIRS=[STATIC_DIR,]
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static'),
+]
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT=os.path.join(BASE_DIR,'media')
@@ -162,4 +164,10 @@ LOGGING = {
         'handlers': ['console'],
         'level': 'DEBUG',
     },
+}
+
+REST_FRAMEWORK = {
+    'DEFAULT_RENDERER_CLASSES': [
+        'rest_framework.renderers.JSONRenderer',
+    ]
 }

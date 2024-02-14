@@ -6,6 +6,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <title>About Us</title>
+  <link rel="icon" type="image/x-icon" href={% static "images/favicon.ico"%}>
   <style media="screen">
     .aboutus {
       text-align: center;
@@ -13,8 +14,13 @@
       margin-bottom: 0px;
     }
 
-    .display4{
-      margin-top: 100px;
+    .text-content{
+      margin-top: 0%;
+      margin-left: 10px;
+      margin-right: 10px;
+      text-align: justify;
+      padding-left: 300px;
+      padding-right: 300px;
     }
 
     .jumbotron h1 {
@@ -24,9 +30,14 @@
     .alert {
       margin: 0px;
     }
+
+    hr{
+      border: 2px solid black;
+    }
+
     /* Mobile-first approach */
     body {
-      font-size: 16px; /* Base font size */
+      font-size: 1rem; /* Base font size */
     }
 
     .jumbotron {
@@ -34,7 +45,7 @@
     }
 
     .jumbotron h1.display-4 {
-      font-size: 2rem;
+      font-size: 1.5rem;
     }
 
     .jumbotron p.lead,
@@ -49,14 +60,56 @@
       }
 
       .jumbotron h1.display-4 {
-        font-size: 3rem;
+        font-size: 1.2rem;
       }
 
       .jumbotron p.lead,
       .jumbotron p.responsive-text {
         font-size: 1.25rem;
       }
+      .text-content{
+        margin-left: 15px;
+        margin-right: 15px;
+        text-align: justify;
+        padding-left: 1.2rem;
+        padding-right: 1.2rem;
+      }
+      .display-4{
+        font-size: 1.5rem;
+      }
     }
+
+    /* Media queries for smaller screens */
+    @media (max-width: 767px) {
+      .jumbotron {
+        padding: 10vh 5px;
+      }
+
+      .jumbotron h1.display-4 {
+        font-size: 0.5rem;
+        
+      }
+
+      .jumbotron p.lead,
+      .jumbotron p.responsive-text {
+        font-size: 0.625rem;
+      }
+
+      .display-4{
+        font-size: 0.825rem;
+      }
+
+      .text-content{
+        margin-left: 0.825rem;
+        margin-right: 0.825rem;
+        text-align: justify;
+        padding-left: 0.625rem;
+        padding-right: 0.625rem;
+      }
+
+    }
+
+    
   </style>
 </head>
 
@@ -67,15 +120,20 @@
     <h3 class='alert alert-success' style="margin-bottom:0px;">About Us!</h3>
   </center>
   <div class="aboutus" style="margin-bottom: 0px;margin-top: 0px;">
-    
-    <h1 class="display-4">Welcome to Our PIMS Portal</h1>
-    <p class="lead">A comprehensive system dedicated to managing patient information effectively.</p>
+    <div class="text-content">
+      <h1 class=" display-4 text-center">Welcome to Our PIMS Portal</h1>
+      <p class="lead">A comprehensive system dedicated to managing patient information effectively.</p>
+    </div>
+    <hr class="col-md-8 px-5">
+    <h1 class="display-6">Features</h1>
     {% include "hospital/admin_doctor_patient_card.html" %}
+      <div class="text-content">
+        <p>Our portal provides a seamless experience for hospital administrators, doctors, and patients alike. With intuitive interfaces and powerful features, we aim to streamline the process of managing patient records, appointments, and treatments.</p>
+        <p>Whether you're an administrator overseeing the operation of the hospital, a doctor managing patient care, or a patient accessing your medical information, our PIMS portal is designed to meet your needs.</p>
+        <p>Explore our website to discover the range of functionalities we offer and how they can benefit your healthcare experience.</p>
+      </div>
     <hr>
-    <p>Our portal provides a seamless experience for hospital administrators, doctors, and patients alike. With intuitive interfaces and powerful features, we aim to streamline the process of managing patient records, appointments, and treatments.</p>
-    <p>Whether you're an administrator overseeing the operation of the hospital, a doctor managing patient care, or a patient accessing your medical information, our PIMS portal is designed to meet your needs.</p>
-    <p>Explore our website to discover the range of functionalities we offer and how they can benefit your healthcare experience.</p>
   </div>
 </body>
-
+{% include 'hospital/footer.html' %}
 </html>

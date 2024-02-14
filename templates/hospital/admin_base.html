@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 {% load static %}
+{% with current_page=request.path %}
 <html lang="en">
 
 <head>
@@ -7,7 +8,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <title>PIMS - Staff {{request.user.first_name}} {{request.user.last_name}}</title>
-
+  <link rel="icon" type="image/x-icon" href={% static "images/favicon.ico"%}>
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
@@ -157,18 +158,30 @@
       background-image: url("{% static 'images/icon-calendar.webp' %}");
     }
 
+    .menu ul li.icon-admin {
+      background-image: url("{% static 'images/icon-admin.png' %}");
+    }
+
     .menu ul li:hover {
       background-color: rgba(0, 0, 0, 0.1);
     }
+
+    .menu ul li.active {
+      background-color: rgba(0, 0, 0, 0.1); 
+      font-weight: bold; 
+      color: #ffffff; 
+    }
+
     .menu ul li:focus {
       outline: none;
     }
-    @media screen and (max-width: 900px) and (min-width: 400px) {
+    @media screen and (max-width: 1265px) and (min-width: 400px) {
       body {
         padding-left: 90px;
       }
       .menu {
         width: 90px;
+        overflow-x: auto;
       }
       .menu .avatar {
         padding: 0.5em;
@@ -304,45 +317,52 @@
 </head>
 
 <body>
-<!-- partial:index.partial.html -->
-<nav class="menu" tabindex="0">
+  <nav class="menu" tabindex="0">
     <div class="smartphone-menu-trigger"></div>
     <header class="avatar">
-        {% if user.hospitalstaffadmin.profile_pic %}
+      {% if user.hospitalstaffadmin.profile_pic %}
         <img src="{{ user.hospitalstaffadmin.profile_pic.url }}" alt="Profile Pic"/>
-        {% else %}
+      {% else %}
         <img src="{% static 'images/adminpropic.png' %}" alt="Default Profile Pic"/>
-        {% endif %}
-        <br><br>
-        <h6>Admin</h6>
-        <h2>{{request.user.first_name}}</h2>
+      {% endif %}
+      <br><br>
+      <h6>Admin</h6>
+      <h2>{{ request.user.first_name }}</h2>
     </header>
     <ul>
-      <li tabindex="0" id="adminDashboardIcon" class="icon-dashboard">
-          <a style="color:white; text-decoration:none;" href="/admin-dashboard">
-              <span>Dashboard</span>
-          </a>
+      <li tabindex="0" id="adminDashboardIcon" class="icon-dashboard {% if 'dashboard' in request.path %}active{% endif %}">
+        <a style="color:white; text-decoration:none;" href="/admin-dashboard">
+          <span>Dashboard</span>
+        </a>
       </li>
-      <li tabindex="0" id="adminDoctorIcon" class="icon-customers">
-          <a style="color:white; text-decoration:none;" href="/admin-doctor">
-              <span>Doctor</span>
+      {% if user.is_superuser %}
+        <li tabindex="0" id="djangoAdminIcon" class="icon-admin">
+          <a style="color:white; text-decoration:none;" href="/admin/">
+            <span>Admin</span>
           </a>
+        </li>
+      {% endif %}
+      <li tabindex="0" id="adminDoctorIcon" class="icon-customers {% if 'doctor' in request.path %}active{% endif %}">
+        <a style="color:white; text-decoration:none;" href="/admin-doctor">
+          <span>Doctor</span>
+        </a>
       </li>
-      <li tabindex="0" id="adminPatientIcon" class="icon-users">
-          <a style="color:white; text-decoration:none;" href="/admin-patient">
-              <span>Patient</span>
-          </a>
+      <li tabindex="0" id="adminPatientIcon" class="icon-users {% if 'patient' in request.path %}active{% endif %}">
+        <a style="color:white; text-decoration:none;" href="/admin-patient">
+          <span>Patient</span>
+        </a>
       </li>
-      <li tabindex="0" id="adminAppointmentIcon" class="icon-calendar">
-          <a style="color:white; text-decoration:none;" href="/admin-appointment">
-              <span>Appointment</span>
-          </a>
+      <li tabindex="0" id="adminAppointmentIcon" class="icon-calendar {% if 'appointment' in request.path %}active{% endif %}">
+        <a style="color:white; text-decoration:none;" href="/admin-appointment">
+          <span>Appointment</span>
+        </a>
       </li>
     </ul>
-</nav>
-
+  </nav>
+{% endwith %}
 <main>
-    <!-- nav start -->
+    
+  <!-- nav start -->
     <div class="bs-example">
       <nav class="navbar navbar-expand-md navbar-dark fixed-top" style="background:#337AB7;">
           <a href="/admin-dashboard" class="navbar-brand">HOSPITAL MANAGEMENT</a>
@@ -373,13 +393,11 @@
     <!-- content end -->
     
     <br><br><br><br>
+    
     {% include 'hospital/footer.html' %}
-
 </main>
-  
-
-
 </body>
+
 <script>
   document.getElementById('logoutLink').addEventListener('click', function(event) {
       event.preventDefault();  // Prevent the default anchor behavior
@@ -404,21 +422,28 @@
         document.getElementById("adminDashboardIcon").addEventListener("click", function() {
             window.location.href = "/admin-dashboard";
         });
-
+        
+        
         // Admin Doctor Icon
         document.getElementById("adminDoctorIcon").addEventListener("click", function() {
-            window.location.href = "/admin-doctor";
+          window.location.href = "/admin-doctor";
         });
-
+        
         // Admin Patient Icon
         document.getElementById("adminPatientIcon").addEventListener("click", function() {
-            window.location.href = "/admin-patient";
+          window.location.href = "/admin-patient";
         });
-
+        
         // Admin Appointment Icon
         document.getElementById("adminAppointmentIcon").addEventListener("click", function() {
-            window.location.href = "/admin-appointment";
+          window.location.href = "/admin-appointment";
         });
+        
+        // Admin Administrative Icon
+        document.getElementById("djangoAdminIcon").addEventListener("click", function() {
+            window.location.href = "/admin/";
+        });
+        
     });
   </script>
 </html>

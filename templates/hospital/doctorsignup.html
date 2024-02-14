@@ -7,13 +7,13 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <title>PIMS - Apply Doctor</title>
+  <link rel="icon" type="image/x-icon" href={% static "images/favicon.ico"%}>
   <style type="text/css">
     body {
       color: #aa082e;
       background-color: #b6bde7;
       font-family: 'Roboto', sans-serif;
-      overflow-x: hidden;
-      height: 100vh;
+      font-size: 1rem;
     }
 
 
@@ -53,6 +53,36 @@
       background: #0062cc;
       color: #fff;
     }
+
+    /* Media query for larger devices */
+    @media (min-width: 768px) {
+      body {
+        font-size: 1.1rem; /* Adjust font size for larger devices */
+      }
+    }
+
+    /* Media query for smaller devices */
+    @media (max-width: 767px) {
+      body {
+        font-size: 0.9rem; /* Adjust font size for smaller devices */
+      }
+      .btnSubmit {
+        width: 50%;
+        padding: 1%;
+      }
+
+      .form-control {
+        width: 50%;
+        border-radius: 1.5rem;
+    }
+      
+      #preview{
+        flex-basis: content;
+        aspect-ratio: 1/1;
+        margin-bottom: 1.2rem;
+      }
+    }
+
   </style>
 
 </head>
@@ -128,7 +158,7 @@
                     </div>
                 </div>
                     <center><button type="submit" class="btnSubmit">Apply</button></center> 
-                    <div class="text-center">Already have an account? <a href="adminlogin">Login here</a></div>
+                    <div class="text-center">Already have an account? <a href="/doctorlogin">Login here</a></div>
                 </div>
                
             </div>
@@ -155,7 +185,7 @@
     }
 </script>
 
-  {% include "hospital/footer.html" %}
+  
 </body>
 
 

@@ -1,18 +1,23 @@
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from hospital import views
 from django.contrib.auth.views import LoginView,LogoutView
 from django.urls import path
 
+#-------------REST API
+from hospital.views import PatientListCreate, PatientRetrieveUpdateDestroy
 
-
+urlpatterns = [
+    path('patients/', PatientListCreate.as_view(), name='patient-list-create'),
+    path('patients/id=<int:pk>/', PatientRetrieveUpdateDestroy.as_view(), name='patient-retrieve-update-destroy'),
+]
 #-------------FOR ADMIN RELATED URLS
 urlpatterns = [
     path('admin/', admin.site.urls, name='superadmin'),
+    path('api/', include('hospital.urls')),
     path('',views.home_view,name=''),
-
 
     path('aboutus', views.aboutus_view),
     path('contactus', views.contactus_view),
@@ -57,6 +62,7 @@ urlpatterns = [
 
     path('admin-patient', views.admin_patient_view,name='admin-patient'),
     path('admin-view-patient', views.admin_view_patient_view,name='admin-view-patient'),
+    
     path('delete-patient-from-hospital/<int:pk>', views.delete_patient_from_hospital_view,name='delete-patient-from-hospital'),
     path('update-patient/<int:pk>', views.update_patient_view,name='update-patient'),
     path('admin-add-patient', views.admin_add_patient_view,name='admin-add-patient'),

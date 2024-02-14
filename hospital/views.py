@@ -7,7 +7,7 @@ from . import forms,models
 from django.db.models import Sum
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import Group
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, JsonResponse
 from django.core.mail import send_mail
 from django.contrib.auth.decorators import login_required,user_passes_test
 from django.contrib.auth.hashers import make_password
@@ -17,7 +17,31 @@ from django.contrib import messages
 from django.utils import timezone
 from . import forms
 
+#   REST API Instances
+from rest_framework import generics
+from .serializers import PatientSerializer
 
+class PatientListCreate(generics.ListCreateAPIView):
+    serializer_class = PatientSerializer
+
+    def get_queryset(self):
+        # Check if the user is an admin 
+        if self.request.user.groups.filter(name='ADMIN').exists():
+            # Admins can access all patients
+            return models.Patient.objects.all()
+        else:
+            return models.Patient.objects.none()
+
+class PatientRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
+    serializer_class = PatientSerializer
+    
+    def get_queryset(self):
+        # Check if the user is an admin 
+        if self.request.user.groups.filter(name='ADMIN').exists():
+            # Admins can access all patients
+            return models.Patient.objects.all()
+        else:
+            return models.Patient.objects.none()
 
 # Create your views here.
 def home_view(request):
@@ -513,7 +537,6 @@ def admin_view_patient_view(request):
     return render(request,'hospital/admin_view_patient.html',{'patients':patients})
 
 
-
 @login_required(login_url='adminlogin')
 @user_passes_test(is_admin)
 def delete_patient_from_hospital_view(request,pk):
@@ -713,7 +736,7 @@ def discharge_patient_view(request,pk):
         pDD.address=patient.address
         pDD.mobile=patient.mobile
         pDD.symptoms=patient.symptoms
-        pDD.admit_date=patient.admit_date
+        pDD.admitDate=patient.admit_date
         pDD.releaseDate=date.today()
         pDD.daySpent=int(d)
         pDD.medicineCost=int(request.POST['medicineCost'])
@@ -754,7 +777,7 @@ def download_pdf_view(request,pk):
         'address':dischargeDetails[0].address,
         'mobile':dischargeDetails[0].mobile,
         'symptoms':dischargeDetails[0].symptoms,
-        'admit_date':dischargeDetails[0].admit_date,
+        'admitDate':dischargeDetails[0].admitDate,
         'releaseDate':dischargeDetails[0].releaseDate,
         'daySpent':dischargeDetails[0].daySpent,
         'medicineCost':dischargeDetails[0].medicineCost,

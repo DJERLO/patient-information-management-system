@@ -7,11 +7,13 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <title>PIMS - Patient Sign Up</title>
+  <link rel="icon" type="image/x-icon" href={% static "images/favicon.ico"%}>
   <style type="text/css">
     body {
       color: #aa082e;
       background-color: #b6bde7;
       font-family: 'Roboto', sans-serif;
+      font-size: 1rem;
     }
 
     a:link {
@@ -31,6 +33,7 @@
       padding: 5%;
       border: 1px solid #ced4da;
       margin-bottom: 2%;
+      
     }
 
     .form-control {
@@ -49,6 +52,35 @@
 
     #preview{
       margin-bottom: 1rem;
+    }
+
+    /* Media query for larger devices */
+    @media (min-width: 768px) {
+      body {
+        font-size: 1.1rem; /* Adjust font size for larger devices */
+      }
+    }
+
+    /* Media query for smaller devices */
+    @media (max-width: 767px) {
+      body {
+        font-size: 0.9rem; /* Adjust font size for smaller devices */
+      }
+      .btnSubmit {
+        width: 50%;
+        padding: 1%;
+      }
+
+      .form-control {
+        width: 50%;
+        border-radius: 1.5rem;
+    }
+      
+      #preview{
+        flex-basis: content;
+        aspect-ratio: 1/1;
+        margin-bottom: 1.2rem;
+      }
     }
 
   </style>
@@ -152,7 +184,7 @@
 </form>
 
 
-  {% include "hospital/footer.html" %}
+  
 </body>
 <script>
   function previewImage(input) {

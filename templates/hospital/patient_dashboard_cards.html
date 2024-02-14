@@ -74,6 +74,7 @@
     .market-update-block.clr-block-1:hover {
       background: #3C3C3C;
       transition: 0.5s all;
+      transform: scale3d(1.025, 1.025, 1.025);
       -webkit-transition: 0.5s all;
       -moz-transition: 0.5s all;
       -o-transition: 0.5s all;
@@ -82,6 +83,7 @@
     .market-update-block.clr-block-2:hover {
       background: #3C3C3C;
       transition: 0.5s all;
+      transform: scale3d(1.025, 1.025, 1.025);
       -webkit-transition: 0.5s all;
       -moz-transition: 0.5s all;
       -o-transition: 0.5s all;
@@ -89,6 +91,7 @@
 
     .market-update-block.clr-block-3:hover {
       background: #3C3C3C;
+      transform: scale3d(1.025, 1.025, 1.025);
       transition: 0.5s all;
       -webkit-transition: 0.5s all;
       -moz-transition: 0.5s all;
@@ -143,9 +146,20 @@
     }
 
 
-
     .market-update-left {
       padding: 0px;
+    }
+
+    @media screen and (min-width: 768px) and (max-width: 1130px) {
+      .market-update-block{
+        width: 100%;
+        height: 100%;
+        padding: 1.5em 1.5em;
+      }
+
+        .market-update-right i {
+          margin-right: 2.5rem;
+      }
     }
   </style>
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
@@ -194,7 +208,7 @@
         </div>
       </div>
     </div>
-    <div class="row">
+    <div class="row mt-3">
       <div class="col-md-4 market-update-gd">
         <div class="market-update-block clr-block-1">
           <div class="market-update-left">

@@ -175,10 +175,10 @@ class PatientAppointmentForm(forms.ModelForm):
 
 #for contact us page
 class ContactusForm(forms.Form):
-    Name = forms.CharField(max_length=30)
-    Email = forms.EmailField()
-    Subject = forms.CharField(max_length=30)
-    Message = forms.CharField(max_length=500,widget=forms.Textarea(attrs={'rows': 3, 'cols': 30}))
+    Name = forms.CharField(max_length=30, required=True)
+    Email = forms.EmailField(required=True)
+    Subject = forms.CharField(max_length=30, required=True)
+    Message = forms.CharField(max_length=500, widget=forms.Textarea(attrs={'rows': 3, 'cols': 30}), required=True)
 
 
 
