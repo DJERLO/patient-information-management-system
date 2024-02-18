@@ -7,7 +7,8 @@
   <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
   <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
+  <link rel="stylesheet" href="//cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
+  <script src="//cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
   <style media="screen">
     a:link {
       text-decoration: none;
@@ -78,6 +79,7 @@
   </div>
 </div>
 <script>
+  let table = new DataTable('#approval-table');
   document.addEventListener("DOMContentLoaded", function() {
       document.querySelectorAll('.delete-btn').forEach(item => {
           item.addEventListener('click', function(event) {
@@ -99,6 +101,10 @@
           });
       });
   });
+
+
+  
+
   </script>
 
 {% endblock content %}

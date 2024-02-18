@@ -5,9 +5,10 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
-  <link href="http://netdna.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css">
   <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="//cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
+  <script src="//cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
   <style type="text/css">
      h6 {
       color: white;
@@ -16,6 +17,16 @@
     .fixed-top{
       position: absolute;
     }
+
+   img{
+    width: 80%;
+    max-width: 200px;
+    height: auto;
+    
+   }
+
+
+  
   </style>
   {%include 'hospital/admin_dashboard_cards.html'%}
 <br><br><br>
@@ -28,7 +39,7 @@
           <h6 class="panel-title">Recent Doctors</h6>
         </div>
         <div class="table-responsive">
-          <table class="table table-hover table-striped">
+          <table id="dev-doctor-table" class="table table-hover table-striped">
             <thead class="thead-dark">
               <tr>
                 <th>Name</th>
@@ -55,6 +66,32 @@
         </div>
       </div>
     </div>
+    
+    <div class="col-xl-6">
+      <div class="panel panel-primary">
+        <div class="panel-heading" style="text-align:center;">
+          <h6 class="panel-title">Patient Admission Timeline</h6>
+        </div>
+        <div class="panel-body">
+          <div class="d-flex justify-content-center" style="width:100%; overflow-x:auto;">
+            <img  src="https://quickchart.io/chart?c={type:'line',data:{labels:[{% for date, count in admission_counts_list %}'{{ date }}',{% endfor %}],datasets:[{label:'Admissions',data:[{% for date, count in admission_counts_list %}{{ count }},{% endfor %}]}]}}">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-xl-6">
+      <div class="panel panel-primary">
+        <div class="panel-heading" style="text-align:center;">
+          <h6 class="panel-title">Total Patients Data</h6>
+        </div>
+        <div class="panel-body">
+          <div class="d-flex justify-content-center" style="width:100%; overflow-x:auto;">
+            <img src="https://quickchart.io/chart?c={type:'doughnut',data:{labels:['Total Patients','Pending Approval'],datasets:[{label:'Count',data:[{{patientcount}},{{pendingpatientcount}}]}]}}">
+          </div>
+        </div>
+      </div>
+    </div>
 
     <div class="col-md-12">
       <div class="panel panel-primary">
@@ -62,13 +99,14 @@
           <h6 class="panel-title">Recent Patients</h6>
         </div>
         <div class="table-responsive">
-          <table class="table table-hover table-striped">
+        <table  id="dev-patient-table" class="table table-hover table-striped">
             <thead class="thead-dark">
               <tr>
                 <th>Name</th>
                 <th>Symptoms</th>
                 <th>Contact</th>
                 <th>Address</th>
+                <th>Date</th>
                 <th>Status</th>
               </tr>
             </thead>
@@ -79,6 +117,7 @@
                 <td>{{p.symptoms}}</td>
                 <td>{{p.mobile}}</td>
                 <td>{{p.address}}</td>
+                <td>{{p.admit_date}}</td>
                 {% if p.status %}
                 <td><span class="label label-primary">Admitted</span></td>
                 {% else %}
@@ -91,6 +130,12 @@
         </div>
       </div>
     </div>
+   
+
   </div>
 </div>
+<script>
+  let table1 = new DataTable('#dev-doctor-table');
+  let table2 = new DataTable('#dev-patient-table');
+</script>
 {% endblock content %}

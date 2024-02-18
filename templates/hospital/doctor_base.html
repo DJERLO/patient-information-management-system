@@ -13,7 +13,7 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
-
+  
 
 
   <style media="screen">
@@ -111,6 +111,7 @@
       left: 0;
       z-index: 5;
       outline: none;
+      overflow-y: hidden; 
     }
     .menu .avatar {
       background: rgba(0, 0, 0, 0.1);
@@ -175,7 +176,7 @@
       }
       .menu {
         width: 90px;
-        overflow-x: auto;
+        overflow-y: visible; /* Show overflow content */
       }
       .menu .avatar {
         padding: 0.5em;
@@ -209,6 +210,7 @@
       .menu ul li span {
         opacity: 0;
         position: absolute;
+        overflow-y: hidden;
         background: rgba(0, 0, 0, 0.5);
         padding: 0.2em 0.5em;
         border-radius: 4px;
@@ -244,6 +246,7 @@
         box-shadow: 0 0 0 100em rgba(0, 0, 0, 0);
         transform: translate3d(-230px, 0, 0);
         transition: all 0.3s ease-in-out;
+        overflow-y: visible;
       }
       .menu .smartphone-menu-trigger {
         width: 40px;

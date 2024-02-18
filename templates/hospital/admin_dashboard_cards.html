@@ -6,7 +6,9 @@
   <title></title>
 
   <style media="screen">
-  
+    
+    
+
     .market-update-block {
       flex-basis: calc(50% - 1.6em);
       margin-bottom: 1.6em;
@@ -17,6 +19,12 @@
       
     }
 
+    img{
+      max-width: 100%;
+      margin-bottom: 15px;
+      border: 1px solid #f44336;
+      border-radius: 20px;
+    }
   
     .market-update-block h3 {
       color: #fff;
@@ -101,10 +109,12 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
 <body>
   <div class="container-fluid market-updates">
+     
     <div class="row">
       <div class="col-md-4 market-update-gd">
         <div class="market-update-block clr-block-1">
@@ -147,9 +157,12 @@
           <div class="clearfix"> </div>
         </div>
       </div>
+    
     </div>
+    
+
+
   </div>
 </body>
-
 
 </html>

@@ -1,5 +1,6 @@
 
 from django.contrib.auth.models import User
+from django.utils.dateparse import parse_date
 from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import render,redirect
 from django.urls import reverse
@@ -16,6 +17,7 @@ from django.conf import settings
 from django.contrib import messages
 from django.utils import timezone
 from . import forms
+
 
 #   REST API Instances
 from rest_framework import generics
@@ -374,9 +376,11 @@ def afterlogin_view(request):
 #---------------------------------------------------------------------------------
 #------------------------ ADMIN RELATED VIEWS START ------------------------------
 #---------------------------------------------------------------------------------
+from collections import Counter
 @login_required(login_url='adminlogin')
 @user_passes_test(is_admin)
 def admin_dashboard_view(request):
+    
     #for both table in admin dashboard
     doctors=models.Doctor.objects.all().order_by('-id')
     patients=models.Patient.objects.all().order_by('-id')
@@ -386,9 +390,17 @@ def admin_dashboard_view(request):
 
     patientcount=models.Patient.objects.all().filter(status=True).count()
     pendingpatientcount=models.Patient.objects.all().filter(status=False).count()
+    patientadmitdate=models.Patient.objects.all()
 
     appointmentcount=models.Appointment.objects.all().filter(status=True).count()
     pendingappointmentcount=models.Appointment.objects.all().filter(status=False).count()
+    
+    admission_dates = [patient.admit_date for patient in patientadmitdate]
+    admission_counts = Counter(admission_dates)
+
+    # Convert admission_counts to a list of tuples (date, count)
+    admission_counts_list = list(admission_counts.items())
+
     mydict={
     'doctors':doctors,
     'patients':patients,
@@ -396,8 +408,10 @@ def admin_dashboard_view(request):
     'pendingdoctorcount':pendingdoctorcount,
     'patientcount':patientcount,
     'pendingpatientcount':pendingpatientcount,
+    'patientadmitdate':patientadmitdate,
     'appointmentcount':appointmentcount,
     'pendingappointmentcount':pendingappointmentcount,
+    'admission_counts_list': admission_counts_list,
     }
     return render(request,'hospital/admin_dashboard.html',context=mydict)
 

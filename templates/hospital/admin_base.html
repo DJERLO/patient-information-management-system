@@ -45,7 +45,6 @@
 
 
     #ftr {
-
       padding: 20px;
     }
 
@@ -96,13 +95,13 @@
     }
     main {
       position: relative;
+      width:calc(100%-240px) ;
       height: 100vh;
     }
 
     .fixed-top{
       position: absolute;
     }
-
 
     .menu {
       background: #03a9f4;
@@ -113,6 +112,7 @@
       left: 0;
       z-index: 5;
       outline: none;
+      overflow-y: hidden;
     }
     .menu .avatar {
       background: rgba(0, 0, 0, 0.1);
@@ -181,7 +181,7 @@
       }
       .menu {
         width: 90px;
-        overflow-x: auto;
+        overflow-y: visible;
       }
       .menu .avatar {
         padding: 0.5em;
@@ -240,16 +240,73 @@
         transform: translate3d(0px, -50%, 0);
       }
     }
-    @media screen and (max-width: 400px) and (min-width: 334px)  {
+    @media screen and (max-width: 400px) and (min-width: 335px)  {
       body {
         padding-left: 0;
       }
       .menu {
         margin-top: 55px;
+        position: fixed;
         width: 230px;
         box-shadow: 0 0 0 100em rgba(0, 0, 0, 0);
         transform: translate3d(-230px, 0, 0);
         transition: all 0.3s ease-in-out;
+        overflow-y: visible;
+        z-index: 5;
+      }
+
+      .menu .smartphone-menu-trigger {
+        width: 40px;
+        height: 40px;
+        position: absolute;
+        
+        left: 100%;
+        background: #5bc995;
+      }
+      .menu .smartphone-menu-trigger:before,
+      .menu .smartphone-menu-trigger:after {
+        content: '';
+        width: 50%;
+        height: 2px;
+        background: #fff;
+        border-radius: 10px;
+        position: absolute;
+        top: 45%;
+        left: 50%;
+        transform: translate3d(-50%, -50%, 0);
+        
+      }
+      .menu .smartphone-menu-trigger:after {
+        top: 55%;
+        transform: translate3d(-50%, -50%, 0);
+        
+      }
+      .menu ul li {
+        padding: 1em 1em 1em 3em;
+        font-size: 1.2em;
+      }
+      .menu:focus {
+        transform: translate3d(0, 0, 0);
+        box-shadow: 0 0 0 100em rgba(0, 0, 0, 0.6);
+      }
+      .menu:focus .smartphone-menu-trigger {
+        pointer-events: none;
+      }
+    }
+
+    @media screen and (max-width: 334px)  {
+      body {
+        padding-left: 0;
+      }
+      .menu {
+        margin-top: 80px;
+        position: fixed;
+        width: 230px;
+        box-shadow: 0 0 0 100em rgba(0, 0, 0, 0);
+        transform: translate3d(-230px, 0, 0);
+        transition: all 0.3s ease-in-out;
+        overflow-y: visible;
+        z-index: 5;
       }
 
       .menu .smartphone-menu-trigger {
@@ -395,6 +452,7 @@
     <br><br><br><br>
     
     {% include 'hospital/footer.html' %}
+    
 </main>
 </body>
 

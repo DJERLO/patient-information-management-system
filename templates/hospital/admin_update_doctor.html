@@ -3,9 +3,52 @@
 {% block content %}
 
 <head>
+  <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
   <style media="screen">
+    
     a:link {
+      display:inline;
       text-decoration: none;
+      text-wrap: wrap;
+      font-size: 12px;
+    }
+
+    center .photo{
+      display: flex;
+      font-size: 0.8rem;
+    }
+
+    .form-group .photo input[type="checkbox"] {
+      margin-right: 5px;
+    }
+
+    .form-group .photo label {
+      display: inline-block; 
+      vertical-align: middle; 
+      margin-bottom: 10px; 
+    }
+
+    .form-group .photo a {
+      display: block; 
+      margin-bottom: 10px;
+    }
+
+    @media only screen and (max-width: 767px) {
+    .form-group .photo label,
+    .form-group .photo a {
+      font-size: 0.625rem;
+  }
+}
+    
+    
+    .fixed-top{
+      position: absolute;
+    }
+
+    
+
+    .text-wrap a{
+      text-wrap: wrap;
     }
 
     .note {
@@ -18,6 +61,7 @@
     }
 
     .form-content {
+      
       padding: 5%;
       border: 1px solid #ced4da;
       margin-bottom: 2%;
@@ -37,12 +81,9 @@
       color: #fff;
     }
 
-    .menu {
-      top: 50px;
-    }
+    
   </style>
 
-  <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
   <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
   <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 </head>
@@ -86,21 +127,24 @@
                         <label for="{{ profile_form.username.id_for_label }}">Username</label>
                         {% render_field userForm.username class="form-control" placeholder="Username" %}
                       </div>
-                      <div class="form-group">
+                      <div class="form-group input">
                         <label for="{{ profile_form.email.id_for_label }}">Email</label>
+                        
                         {% render_field userForm.email class="form-control" placeholder="Email" %}
                       </div>
                 
                     </div>
                     <div class="col-md-6 p-1">
                       <div class="form-group">
-                        <center>
+                        <center class="font-group">
                           <label for="{{ profile_form.profile_pic.id_for_label }}">Profile Picture</label>
                           <img id="preview" src="{{doctorForm.initial.profile_pic.url}}" alt="Preview" style="max-width: 100%; max-height: 150px; display: block;">
                         </center>
                       </div>
                       <div class="form-group">
+                        <center class="photo">
                         {% render_field doctorForm.profile_pic class="form-control" onchange="previewImage(this)" %}
+                        </center>
                       </div>
                       <div class="form-group">
                         <label for="{{ doctor_form.mobile.id_for_label }}">Mobile</label>

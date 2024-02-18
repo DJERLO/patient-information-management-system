@@ -3,6 +3,10 @@
 {% block content %}
 {%include 'hospital/doctor_dashboard_cards.html'%}
 <br><br><br><br>
+<head>
+  <link rel="stylesheet" href="//cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
+  <script src="//cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+</head>
 <div class="container-fluid">
   <div class="row justify-content-center">
     <div class="col-md-10">
@@ -11,7 +15,7 @@
           <h6 class="panel-title">Recent Appointments For You</h6>
         </div>
         <div class="table-responsive">
-          <table class="table table-hover table-striped">
+          <table class="table table-hover table-striped" id="dev-table">
             <thead class="thead-dark">
               <tr>
                 <th>Patient Name</th>
@@ -38,6 +42,8 @@
     </div>
   </div>
 </div>
-
+<script>
+  let table = new DataTable('#dev-table');
+</script>
 
 {% endblock content %}
