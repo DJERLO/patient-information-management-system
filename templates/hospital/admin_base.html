@@ -428,7 +428,10 @@
           </button>
           <div class="collapse navbar-collapse justify-content-between" id="navbarCollapse">
               <div class="navbar-nav" style="margin-left: 90%;">
-                  <a href="/logout" class="nav-item nav-link" id="logoutLink">Logout</a>
+                <form id="logoutForm" action="{% url 'logout' %}" method="post">
+                  {% csrf_token %}
+                  <a href="#" class="nav-item nav-link" id="logoutLink">Logout</a>
+                </form>
               </div>
           </div>
       </nav>
@@ -457,24 +460,10 @@
 </body>
 
 <script>
-  document.getElementById('logoutLink').addEventListener('click', function(event) {
-      event.preventDefault();  // Prevent the default anchor behavior
-  
-      // Create a form dynamically and submit it
-      var form = document.createElement('form');
-      form.method = 'post';
-      form.action = '/logout';
-  
-      var csrfTokenInput = document.createElement('input');
-      csrfTokenInput.type = 'hidden';
-      csrfTokenInput.name = 'csrfmiddlewaretoken';
-      csrfTokenInput.value = '{{ csrf_token }}';  // Add the CSRF token here
-  
-      form.appendChild(csrfTokenInput);
-  
-      document.body.appendChild(form);
-      form.submit();
-  });
+      document.getElementById('logoutLink').addEventListener('click', function() {
+          document.getElementById('logoutForm').submit();
+        });
+
       document.addEventListener("DOMContentLoaded", function() {
         // Admin Dashboard Icon
         document.getElementById("adminDashboardIcon").addEventListener("click", function() {

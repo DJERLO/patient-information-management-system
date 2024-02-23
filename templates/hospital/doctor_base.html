@@ -157,6 +157,14 @@
       background-image: url("{% static 'images/icon-calendar.webp' %}");
     }
 
+    .menu ul li.icon-eye{
+      background-image: url('{% static "images/eye.svg" %}');
+    }
+
+    .menu ul li.icon-eyeslash{
+      background-image: url('{% static "images/eyeslash.svg" %}');
+    }
+
     .menu ul li:hover {
       background-color: rgba(0, 0, 0, 0.1);
     }
@@ -253,7 +261,7 @@
         height: 40px;
         position: absolute;
         left: 100%;
-        background: #5bc995;
+        background: #5bc995; 
       }
       .menu .smartphone-menu-trigger:before,
       .menu .smartphone-menu-trigger:after {
@@ -334,6 +342,23 @@
           <span>Appointments</span>
         </a>
       </li>
+      <form id="toggleForm" method="post" action="{% url 'toggle-doctor-status' %}">
+        {% csrf_token %}
+        {% if doctor.status == 1 %}
+            <li id="toggleVisibility" class="icon-eye" style="list-style: none; cursor: pointer;">  
+                <a style="color:white; text-decoration:none;" href="#">
+                    <span>Toggle Availability: Available</span>
+                </a>
+            </li>
+            {% elif doctor.status == 2 %}
+            <li id="toggleVisibility" class="icon-eyeslash" style="list-style: none; cursor: pointer;">  
+                <a style="color:white; text-decoration:none;" href="#">
+                    <span>Toggle Availability: Not Available</span>
+                </a>
+            </li>
+            {% endif %}
+      </form>
+    
     </ul>
   </nav>
   <main>
@@ -346,9 +371,10 @@
         </button>
         <div class="collapse navbar-collapse justify-content-between" id="navbarCollapse">
           <div class="navbar-nav" style=" margin-left: 90%;">
-
-            <a href="#" class="nav-item nav-link" id="logoutLink">Logout</a>
-  
+            <form id="logoutForm" action="{% url 'logout' %}" method="post">
+              {% csrf_token %}
+              <a href="#" class="nav-item nav-link" id="logoutLink">Logout</a>
+          </form>
           </div>
         </div>
       </nav>
@@ -366,25 +392,15 @@
    
   </main>
   <script>
-    document.getElementById('logoutLink').addEventListener('click', function(event) {
-        event.preventDefault();  // Prevent the default anchor behavior
-    
-        var form = document.createElement('form');
-        form.method = 'post';
-        form.action = '/logout';
-    
-        var csrfTokenInput = document.createElement('input');
-        csrfTokenInput.type = 'hidden';
-        csrfTokenInput.name = 'csrfmiddlewaretoken';
-        csrfTokenInput.value = '{{ csrf_token }}';  // Add the CSRF token here
-    
-        form.appendChild(csrfTokenInput);
-    
-        document.body.appendChild(form);
-        form.submit();
-    });
+      document.getElementById('toggleVisibility').addEventListener('click', function() {
+          document.getElementById('toggleForm').submit();
+      });
 
-        document.addEventListener("DOMContentLoaded", function() {
+      document.getElementById('logoutLink').addEventListener('click', function() {
+          document.getElementById('logoutForm').submit();
+      });
+
+      document.addEventListener("DOMContentLoaded", function() {
         // Doctor Dashboard Icon
         document.getElementById("doctorDashboardIcon").addEventListener("click", function() {
             window.location.href = "/doctor-dashboard";

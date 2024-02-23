@@ -4,8 +4,11 @@
 
 <head>
   <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+  <link rel="stylesheet" href="//cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
   <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
   <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+  <script src="//cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+  
 
   <style media="screen">
     a:link {
@@ -53,10 +56,11 @@
         <tbody>
           {% for a, p in appointments %}
           <tr>
+            <a href=""></a>
             <td>{{ a.patientName }}</td>
             <td><img src="{{ p.profile_pic.url }}" alt="Profile Pic" height="40px" width="40px" /></td>
             <td>{{ a.description }}</td>
-            <td><a class="btn btn-danger btn-xs" href="{% url 'delete-appointment' a.id %}"><span class="glyphicon glyphicon-trash"></span></a></td>
+            <td><a class="btn btn-danger btn-xs" href="{% url 'delete-appointment' a.appointment_id %}"><span class="glyphicon glyphicon-trash"></span></a></td>
           </tr>
           {% endfor %}
         </tbody>
@@ -64,6 +68,9 @@
     </div>
   </div>
 </div>
-
+<script>
+  let table = new DataTable('#dev-table');
+  var table1 = new Tabulator("#example-table")
+</script>
 
 {% endblock content %}

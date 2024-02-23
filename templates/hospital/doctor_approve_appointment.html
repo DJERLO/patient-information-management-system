@@ -62,12 +62,12 @@
             <td>{{ appointment.description }}</td>
             <td>{{ appointment.appointmentDate }}</td>
             <td>
-              <a class="btn btn-primary btn-xs" href="{% url 'approve-doctor-appointment' appointment.id %}">
+              <a class="btn btn-primary btn-xs" href="{% url 'approve-doctor-appointment' appointment.appointment_id %}">
                 <span class="glyphicon glyphicon-ok"></span>
               </a>
             </td>
             <td>
-              <a class="btn btn-danger btn-xs delete-btn" href="{% url 'reject-doctor-appointment' appointment.id %}">
+              <a class="btn btn-danger btn-xs delete-btn" href="{% url 'reject-doctor-appointment' appointment.appointment_id %}">
                 <span class="glyphicon glyphicon-trash"></span>
               </a>
             </td>

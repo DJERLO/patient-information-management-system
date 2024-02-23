@@ -14,6 +14,12 @@
       flex-wrap: wrap;
     }
 
+    .market-update-right {
+        display: flex;
+        justify-content: start; 
+        align-items: center; 
+    }
+
     .market-update-block {
       flex-basis: calc(50% - 1.6em);
       margin-bottom: 1.6em;
@@ -98,6 +104,35 @@
       -o-transition: 0.5s all;
     }
 
+    .market-update-right i.fas.fa-check-circle{
+      font-size: 3em;
+      color: #68AE00; 
+      width: 80px;
+      height: 80px;
+      background: #fff;
+      text-align: center;
+      border-radius: 50px;
+      -webkit-border-radius: 50px;
+      -moz-border-radius: 50px;
+      -o-border-radius: 50px;
+      line-height: 1.7em;
+      align-self: center;
+    }
+
+    .market-update-right i.fas.fa-times-circle{
+      font-size: 3em;
+      color: #e61409; 
+      width: 80px;
+      height: 80px;
+      background: #fff;
+      text-align: center;
+      border-radius: 50px;
+      -webkit-border-radius: 50px;
+      -moz-border-radius: 50px;
+      -o-border-radius: 50px;
+      line-height: 1.7em;
+      align-self: center;
+    }
     
 
     .market-update-right i.fa.fa-user-o,
@@ -108,11 +143,12 @@
       height: 80px;
       background: #fff;
       text-align: center;
-      border-radius: 49px;
-      -webkit-border-radius: 49px;
-      -moz-border-radius: 49px;
-      -o-border-radius: 49px;
+      border-radius: 50px;
+      -webkit-border-radius: 50px;
+      -moz-border-radius: 50px;
+      -o-border-radius: 50px;
       line-height: 1.7em;
+      align-self: center;
     }
 
     .market-update-right i.fa.fa-info-circle,
@@ -150,6 +186,12 @@
       padding: 0px;
     }
 
+    summary{
+      margin: 0 auto;
+      padding: 0 auto;
+      box-sizing: border-box;
+    }
+
     @media screen and (min-width: 768px) and (max-width: 1130px) {
       .market-update-block{
         width: 100%;
@@ -169,8 +211,28 @@
 </head>
 
 <body>
+  
   <div class="container-fluid market-updates">
-    <div class="row">
+    {% if appointmentStatus == 0 %}
+      <div class="alert alert-info" role="alert">
+        <center><p>Your appointment request is currently under review.</p></center>
+      </div>
+    {% elif appointmentStatus == 1 %}
+      <div class="alert alert-success" role="alert">
+        <center><p>Your appointment has been approved!</p></center>
+      </div>
+    {% elif appointmentStatus == 2 %}
+      <div class="alert alert-danger" role="alert">
+        <center><p>We regret to inform you that your appointment request has been rejected.</p></center>
+        <center><p>If you have any questions or concerns, please feel free to <a href="/contactus">contact us</a>.</p></center>
+      </div>
+    {% else %}
+      <div class="alert alert-info" role="alert">
+        <center><p>No appointment has been scheduled.</p></center>
+        <center><p>Schedule your appointment <a href="/patient-book-appointment">here</a>.</p></center>
+      </div>
+    {% endif %}
+    <div class="row mb-3">
       <div class="col-md-4 market-update-gd">
         <div class="market-update-block clr-block-1">
           <div class="market-update-left">
@@ -195,44 +257,7 @@
           <div class="clearfix"></div>
         </div>
       </div>
-      <div class="col-md-4 market-update-gd">
-        <div class="market-update-block clr-block-3">
-          <div class="market-update-left">
-            <h3>{{doctorMobile}}</h3>
-            <h4>Doctor Contact</h4>
-          </div>
-          <div class="market-update-right">
-            <i class="fa fa-mobile" aria-hidden="true"></i>
-          </div>
-          <div class="clearfix"></div>
-        </div>
-      </div>
-    </div>
-    <div class="row mt-3">
-      <div class="col-md-4 market-update-gd">
-        <div class="market-update-block clr-block-1">
-          <div class="market-update-left">
-            <h3>{{doctorAddress}}</h3>
-            <h4>Doctor Address</h4>
-          </div>
-          <div class="market-update-right">
-            <i class="fa fa-map-marker"></i>
-          </div>
-          <div class="clearfix"></div>
-        </div>
-      </div>
-      <div class="col-md-4 market-update-gd">
-        <div class="market-update-block clr-block-2">
-          <div class="market-update-left">
-            <h3>{{doctorDepartment}}</h3>
-            <h4>Doctor Department</h4>
-          </div>
-          <div class="market-update-right">
-            <i class="fa fa-list-alt"></i>
-          </div>
-          <div class="clearfix"></div>
-        </div>
-      </div>
+      
       <div class="col-md-4 market-update-gd">
         <div class="market-update-block clr-block-3">
           <div class="market-update-left">
@@ -245,6 +270,78 @@
           <div class="clearfix"></div>
         </div>
       </div>
+    
+    
+    </div>
+
+    <div class="row mt-3">
+      
+      {% if doctorAvailability == 1 %}
+      <div class="col-md-4 market-update-gd">
+        <div class="market-update-block clr-block-1">
+          <div class="market-update-left">
+            <h3>Currently Available</h3>
+            <h4>Doctor Status</h4>
+          </div>
+          <div class="market-update-right">
+            <i class="fas fa-check-circle"></i>
+          </div>
+          <div class="clearfix"></div>
+        </div>
+      </div>
+      {% elif doctorAvailability == 2 %}
+      <div class="col-md-4 market-update-gd">
+        <div class="market-update-block clr-block-1">
+          <div class="market-update-left">
+            <h3>Currently Offline</h3>
+            <h4>Doctor Status</h4>
+          </div>
+          <div class="market-update-right">
+            <i class="fas fa-times-circle"></i>
+          </div>
+          <div class="clearfix"></div>
+        </div>
+      </div>
+      {% endif %}
+      
+      <div class="col-md-4 market-update-gd">
+        <div class="market-update-block clr-block-2">
+          <div class="market-update-left">
+            <h3>{{doctorDepartment}}</h3>
+            <h4>Doctor Department</h4>
+          </div>
+          <div class="market-update-right">
+            <i class="fa fa-list-alt"></i>
+          </div>
+          <div class="clearfix"></div>
+        </div>
+      </div>
+      
+      <div class="col-md-4 market-update-gd">
+        <div class="market-update-block clr-block-3">
+            <div class="market-update-left">
+                {% if appointmentStatus == 0 %}
+                    <h3>Currently Pending</h3>
+                    <h4>Appointment Status</h4>
+                {% elif appointmentStatus == 1 %}
+                    <h3>{{ appointmentDate }}</h3>
+                    <h4>Appointment Date</h4>
+                {% elif appointmentStatus == 2 %}
+                    <h3>Rejected</h3>
+                    <h4>Appointment Status</h4>
+                {% else %}
+                    <h3>No Appointment Yet</h3>
+                    <h4>Appointment Status</h4>
+                {% endif %}
+            </div>
+            <div class="market-update-right">
+                <i class="fa fa-calendar-o" aria-hidden="true"></i>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+    </div>
+
+      
     </div>
   </div>
 </body>

@@ -99,7 +99,6 @@
   <br>
   <br><br>
 
-  <!--- login page for doctor by admin(sumit)  ---------->
   <form method="post">
     {% csrf_token %}
     <div class="container register-form">
@@ -110,12 +109,15 @@
 
         <div class="form-content">
           {% for message in messages %}
+          {% if message %}
           <div class="container-fluid p-0">
             <div class="alert {{ message.tags }} alert-dismissible" role="alert" >
               <center>{{ message }}</center>
             </div>
           </div>
+          {% endif %}
           {% endfor %}
+          
           <div class="row">
             <div class="col-md-6">
 

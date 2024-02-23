@@ -57,10 +57,14 @@
             <td>{{ a.description }}</td>
             <td>{{ a.appointmentDate }}</td>
             <td>
-              {% if a.status %}
-              <span class="label label-primary">Confirmed</span>
-              {% else %}
-              <span class="label label-success">Pending</span>
+              {% if a.status == 0 %}
+              <span class="label label-secondary">Pending</span>
+              {% elif a.status == 1 %}
+              <span class="label label-primary">Accepted</span>
+              {% elif a.status == 2 %}
+              <span class="label label-success">Completed</span>
+              {% elif a.status == 3 %}
+              <span class="label label-danger">Rejected</span>
               {% endif %}
             </td>
           </tr>

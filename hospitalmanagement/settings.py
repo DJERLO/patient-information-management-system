@@ -143,14 +143,16 @@ MEDIA_ROOT=os.path.join(BASE_DIR,'media')
 LOGIN_REDIRECT_URL='/afterlogin'
 
 #for contact us give your gmail id and password
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend' #Test on the Console before
-#EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend' #Sends an Emil thru SMTP
-EMAIL_HOST = 'smtp-relay.brevo.com'
+#EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend' #Test on the Console before
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_USE_TLS = True
 EMAIL_PORT = 587
 EMAIL_HOST_USER = 'cresentyt@gmail.com' 
-EMAIL_HOST_PASSWORD = 'mgCPWEDU3rkBa2df'
-EMAIL_RECEIVING_USER = ['to@gmail.com'] # email on which you will receive messages sent from website
+EMAIL_HOST_PASSWORD = 'kaeyrpavldvestat'
+EMAIL_RECEIVING_USER = ['cresentyt2@gmail.com']  # email on which you will receive messages sent from website
+DEFAULT_FROM_EMAIL = 'cresentyt@gmail.com'  # Set the default sender email
+EMAIL_LOGGING_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 LOGGING = {
     'version': 1,

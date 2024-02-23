@@ -16,14 +16,34 @@ class PatientLoginForm(forms.Form):
     username = forms.CharField(max_length=150)
     password = forms.CharField(widget=forms.PasswordInput())
 
-#for admin signup
+# for admin signup
 class StaffAdminSignupForm(UserCreationForm):
+    first_name = forms.CharField(max_length=30, required=True)
+    last_name = forms.CharField(max_length=30, required=True)
+    username = forms.CharField(max_length=150, required=True)
+    email = forms.EmailField(required=True)
+    password1 = forms.CharField(
+        label=("Password"),
+        strip=False,
+        widget=forms.PasswordInput(attrs={'autocomplete': 'new-password'}),
+        required=True,
+    )
+    password2 = forms.CharField(
+        label=("Password confirmation"),
+        widget=forms.PasswordInput(attrs={'autocomplete': 'new-password'}),
+        strip=False,
+        required=True,
+    )
+
     class Meta:
         model = User
         fields = ['first_name', 'last_name', 'username', 'email', 'password1', 'password2']
 
-
 class StaffAdminProfileForm(forms.ModelForm):
+    profile_pic = forms.ImageField(required=True)
+    address = forms.CharField(max_length=100, required=True)
+    mobile = forms.CharField(max_length=12, required=True)
+
     class Meta:
         model = models.HospitalStaffAdmin
         fields = ['profile_pic', 'address', 'mobile']
@@ -41,29 +61,36 @@ class UpdateDoctorUserForm(forms.ModelForm):
 class UpdateDoctorForm(forms.ModelForm):
     class Meta:
         model = models.Doctor
-        fields = ['address', 'mobile', 'department', 'status', 'profile_pic']
+        fields = ['address', 'mobile', 'department', 'profile_pic']
+        widgets = {
+            'profile_pic': forms.FileInput(attrs={'required': 'required'}),
+        }
 
-#Sign Up
+# Sign Up
 class DoctorUserForm(UserCreationForm):
     class Meta:
-        model=User
-        fields=['first_name','last_name','username', 'email', 'password1', 'password2']
+        model = User
+        fields = ['first_name', 'last_name', 'username', 'email', 'password1', 'password2']
         widgets = {
             'password1': forms.PasswordInput(),
             'password2': forms.PasswordInput(),
         }
-        
+
+    def __init__(self, *args, **kwargs):
+        super(DoctorUserForm, self).__init__(*args, **kwargs)
+        for field_name, field in self.fields.items():
+            field.required = True
+
 class DoctorForm(forms.ModelForm):
     class Meta:
         model = models.Doctor
-        fields = ['address', 'mobile', 'department', 'status', 'profile_pic']
+        fields = ['address', 'mobile', 'department', 'profile_pic']
+        widgets = {
+            'mobile': forms.TextInput(attrs={'pattern': r'(^(\+)(\d){12}$)|(^\d{11}$)', 'required': 'required'}),
+            'profile_pic': forms.FileInput(attrs={'required': 'required'}),
+        }
     
-    def __init__(self, *args, **kwargs):
-        super(DoctorForm, self).__init__(*args, **kwargs)
-        self.fields['department'].required = True
-        self.fields['status'].required = False
-        self.fields['address'].required = True
-        self.fields['mobile'].required = True
+    
 
 
 class PatientUserForm(forms.ModelForm):
@@ -72,6 +99,13 @@ class PatientUserForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ['first_name', 'last_name', 'email', 'username', 'password']
+        widgets = {
+            'first_name': forms.TextInput(attrs={'required': 'required'}),
+            'last_name': forms.TextInput(attrs={'required': 'required'}),
+            'email': forms.EmailInput(attrs={'required': 'required'}),
+            'username': forms.TextInput(attrs={'required': 'required'}),
+            'password': forms.PasswordInput(attrs={'required': 'required'}),
+        }
 
 class PatientForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
@@ -83,14 +117,19 @@ class PatientForm(forms.ModelForm):
         self.fields['assigned_doctor'].choices = [(doctor.user_id, str(doctor)) for doctor in doctors]
     
     # Modify queryset to use user_id instead of id
-    assigned_doctor_id = forms.ChoiceField(required=False, widget=forms.Select)
-    assigned_doctor = forms.ChoiceField(required=False, widget=forms.Select)
+    assigned_doctor_id = forms.ChoiceField(required=True, widget=forms.Select(attrs={'required': 'required'}))
+    assigned_doctor = forms.ChoiceField(required=False)
+    
     
     class Meta:
         model = models.Patient
         fields = ['first_name', 'last_name', 'gender', 'date_of_birth', 'address', 'mobile', 'status', 'symptoms', 'profile_pic', 'assigned_doctor', 'assigned_doctor_id']
         widgets = {
-            'date_of_birth': forms.DateInput(attrs={'type': 'date'}),
+            'date_of_birth': forms.DateInput(attrs={'type': 'date', 'required': 'required'}),
+            'address': forms.TextInput(attrs={'required': 'required'}),
+            'mobile': forms.TextInput(attrs={'pattern': r'(^(\+)(\d){12}$)|(^\d{11}$)', 'required': 'required'}),
+            'symptoms': forms.TextInput(attrs={'required': 'required'}),
+            'profile_pic': forms.FileInput(attrs={'required': 'required'}),
         }
 
 
@@ -126,7 +165,7 @@ class UpdatePatientForm(forms.ModelForm):
     
 
 class AppointmentForm(forms.ModelForm):
-    doctorId=forms.ModelChoiceField(queryset=models.Doctor.objects.all().filter(status=True),empty_label="Doctor Name and Department", to_field_name="user_id")
+    doctorId=forms.ModelChoiceField(queryset=models.Doctor.objects.all().filter(status=models.Doctor.STATUS_AVAILABLE),empty_label="Doctor Name and Department", to_field_name="user_id")
     patientId=forms.ModelChoiceField(queryset=models.Patient.objects.all().filter(status=True),empty_label="Patient Name and Symptoms", to_field_name="user_id")
     
     class Meta:
@@ -137,7 +176,7 @@ class AppointmentForm(forms.ModelForm):
         }
 
 class DoctorAppointmentForm(forms.ModelForm):
-    patientId=forms.ModelChoiceField(queryset=models.Patient.objects.all().filter(status=True),empty_label="Patient Name and Symptoms", to_field_name="user_id")
+    patientId=forms.ModelChoiceField(queryset=models.Patient.objects.all().filter(status=models.Doctor.STATUS_AVAILABLE),empty_label="Patient Name and Symptoms", to_field_name="user_id")
     
     def __init__(self, *args, **kwargs):
         doctor_patients = kwargs.pop('doctor_patients', None)

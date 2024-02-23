@@ -46,25 +46,29 @@
       <table class="table table-hover" id="dev-table">
         <thead>
           <tr>
+            <th>Date</th>
             <th>Name</th>
             <th>Profile Picture</th>
             <th>Symptoms</th>
             <th>Contact</th>
             <th>Address</th>
-            <th>Approve</th>
-            <th>Reject</th>
+            <th>Action</th>
           </tr>
         </thead>
         <tbody>
           {% for p in patients %}
           <tr>
+            <td>{{ p.admit_date }}</td>
             <td>{{ p.get_name }}</td>
             <td><img src="{{ p.profile_pic.url }}" alt="Profile Pic" height="40px" width="40px" /></td>
             <td>{{ p.symptoms }}</td>
             <td>{{ p.mobile }}</td>
             <td>{{ p.address }}</td>
-            <td><a class="btn btn-success btn-xs" href="{% url 'approve-patient' p.id %}"><span class="glyphicon glyphicon-ok"></span></a></td>
-            <td><a class="btn btn-danger btn-xs delete-btn" href="{% url 'reject-patient' p.id %}"><span class="glyphicon glyphicon-trash"></span></a></td>
+            <td>
+              <a class="btn btn-success btn-xs" href="{% url 'approve-patient' p.id %}"><span class="glyphicon glyphicon-ok"></span></a>
+              <a class="btn btn-danger btn-xs delete-btn" href="{% url 'reject-patient' p.id %}"><span class="glyphicon glyphicon-remove"></span></a>
+            </td>
+            
           </tr>
           {% endfor %}
         </tbody>

@@ -41,13 +41,31 @@ departments=[('Cardiologist', 'Cardiologist'),
     ('Rheumatologists', 'Rheumatologists')
 ]
 class Doctor(models.Model):
+    #Status Code
+    STATUS_ONHOLD = 0
+    STATUS_AVAILABLE = 1
+    STATUS_NOTAVAILABLE = 2
+    
+    STATUS_CHOICES = [
+        (STATUS_ONHOLD, 'On Hold'),
+        (STATUS_AVAILABLE, 'Available'),
+        (STATUS_NOTAVAILABLE, 'Not Available'),
+    ]
+
     user=models.OneToOneField(User,on_delete=models.CASCADE)
-    profile_pic= models.ImageField(upload_to='profile_pic/DoctorProfilePic/',null=True,blank=True)
     address = models.CharField(max_length=255, blank=False, null=False)
     mobile = models.CharField(max_length=20,blank=False, null=False)
-    department= models.CharField(max_length=50, choices=departments,default='Cardiologist')
-    status=models.BooleanField(default=False)
+    department= models.CharField(max_length=50, choices=departments)
+    status = models.IntegerField(choices=STATUS_CHOICES, default=STATUS_ONHOLD)
+    profile_pic = models.ImageField(blank=True, null=True, upload_to='profile_pic/DoctorProfilePic/')
    
+
+    def toggle_availability(self):
+        if self.status == Doctor.STATUS_AVAILABLE:
+            self.status = Doctor.STATUS_NOTAVAILABLE
+        elif self.status == Doctor.STATUS_NOTAVAILABLE:
+            self.status = Doctor.STATUS_AVAILABLE
+        self.save()
    
     @property
     def get_name(self):
@@ -73,13 +91,13 @@ class Doctor(models.Model):
     def __str__(self):
         return "{} ({})".format(self.user.first_name,self.department)
 
-sex = [('Unspecify', 'Unspecify'),('Male','Male'), ('Female','Female')]
+sex = [('Male','Male'), ('Female','Female')]
 
 class Patient(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
-    gender = models.CharField(max_length=10, choices=sex, default="Choose your Sex")  # New field
+    gender = models.CharField(max_length=10, choices=sex)  # New field
     date_of_birth = models.DateField()
     address = models.CharField(max_length=100)
     mobile = models.CharField(max_length=20)
@@ -140,23 +158,30 @@ class Patient(models.Model):
 
 
 class Appointment(models.Model):
+    #Status Code
     PENDING = 0
     ACCEPTED = 1
-    REJECTED = 2
+    COMPLETED = 2
+    REJECTED = 3
 
     STATUS_CHOICES = [
         (PENDING, 'Pending'),
         (ACCEPTED, 'Accepted'),
+        (COMPLETED, 'Completed'),
         (REJECTED, 'Rejected'),
     ]
-    
+
+    appointment_id = models.AutoField(primary_key=True)
     patientId=models.PositiveIntegerField(null=True)
     doctorId=models.PositiveIntegerField(null=True)
     patientName=models.CharField(max_length=40,null=True)
     doctorName=models.CharField(max_length=40,null=True)
     appointmentDate=models.DateTimeField()
     description=models.TextField(max_length=500)
-    status=models.BooleanField(default=False)
+    status = models.IntegerField(choices=STATUS_CHOICES, default=PENDING)
+
+    def __str__(self):
+        return f'Appointment From {self.doctorName}'
 
 class PatientDischargeDetails(models.Model):
     patientId=models.PositiveIntegerField(null=True)

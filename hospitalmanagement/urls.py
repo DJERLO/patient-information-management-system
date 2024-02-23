@@ -4,7 +4,9 @@ from django.conf import settings
 from django.conf.urls.static import static
 from hospital import views
 from django.contrib.auth.views import LoginView,LogoutView
-from django.urls import path
+
+
+
 
 #-------------REST API
 from hospital.views import PatientListCreate, PatientRetrieveUpdateDestroy
@@ -12,6 +14,7 @@ from hospital.views import PatientListCreate, PatientRetrieveUpdateDestroy
 urlpatterns = [
     path('patients/', PatientListCreate.as_view(), name='patient-list-create'),
     path('patients/id=<int:pk>/', PatientRetrieveUpdateDestroy.as_view(), name='patient-retrieve-update-destroy'),
+    
 ]
 #-------------FOR ADMIN RELATED URLS
 urlpatterns = [
@@ -85,6 +88,7 @@ urlpatterns = [
 
 #---------FOR DOCTOR RELATED URLS-------------------------------------
 urlpatterns +=[
+    path('get-csrf-token', views.get_csrf_token, name='get_csrf_token'),
     path('doctor-wait-for-approval/', views.doctor_wait_for_approval, name='doctor-wait-for-approval'),
     path('doctor-dashboard', views.doctor_dashboard_view,name='doctor-dashboard'),
 
@@ -102,6 +106,7 @@ urlpatterns +=[
     path('doctor-add-appointment', views.doctor_add_appointment_view,name='doctor-add-appointment'),
     path('doctor-delete-appointment',views.doctor_delete_appointment_view,name='doctor-delete-appointment'),
     path('delete-appointment/<int:pk>', views.delete_appointment_view,name='delete-appointment'),
+    path('toggle-doctor-status', views.doctor_toggle_availability, name='toggle-doctor-status'),
 ]   
 
 
@@ -109,7 +114,6 @@ urlpatterns +=[
 
 #---------FOR PATIENT RELATED URLS-------------------------------------
 urlpatterns +=[
-
     path('patient-dashboard', views.patient_dashboard_view,name='patient-dashboard'),
     path('patient-appointment', views.patient_appointment_view,name='patient-appointment'),
     path('patient-book-appointment', views.patient_book_appointment_view,name='patient-book-appointment'),
@@ -122,6 +126,3 @@ urlpatterns +=[
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
-#Developed By : sumit kumar
-#facebook : fb.com/sumit.luv
-#Youtube :youtube.com/lazycoders
