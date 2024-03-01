@@ -1,29 +1,41 @@
 # Patient Information Management System (PIMS)
 
-A comprehensive data management system designed to streamline the processing of patient information. Developed using Django, this project operates within an SQLite environment, providing a robust and efficient solution for managing healthcare-related data.
+Welcome to the Patient Information Management System (PIMS). This project is dedicated to efficiently managing patient information in healthcare settings. Built on Django and powered by SQLite, PIMS offers a robust solution for healthcare data management.
 
-**Note**: This project is an adapted version, and all rights belong to the original developer, Sumit Kumar. It is utilized solely for educational purposes, and all credits go to the original developer.
+**Note**: This project is an adapted version with all credits belonging to the original developer, Sumit Kumar. It is used solely for educational purposes.
 
 ## Features Added:
-
-- **Date & Scheduling Appointment:** Enables appointment scheduling for Admin, Doctors, and Patients (requires approval).
+- **Doctor Status Toggle:** Doctors can now easily update their availability status for appointments.
+- **Profile Picture Customization:** Users can personalize their profile pictures by uploading avatars.
+- **Bootstrap 5 Integration:** The system now utilizes Bootstrap 5 for enhanced design and functionality.
+- **Appointment Scheduling:** Enables scheduling appointments for Admins, Doctors, and Patients (pending approval).
 - **Authentication:** Implemented for Staff, Doctors, and Patients.
-- **Updated Admin(Staff):** Staffs Admin have ability to update doctor and patients.
-- **Doctor Appointment Scheduling:** Doctors can schedule/book appointments for patients within their department.
-- **Doctor Approval Appointment :** Doctors can now accept/reject request appointments from patients within their department.
-- **Patient Appointment Booking:** Patients can request book appointments too, but require some pending approval from assigned Doctor or Staff Members.
-- **About Us Section** Added About Us New Page
+- **Updated Admin Dashboard:** Staff/Admin can manage profiles, update, or delete doctor and patient information.
+- **Doctor Appointment Management:** Doctors can schedule appointments for patients within their department.
+- **Doctor Approval System:** Doctors can accept/reject appointment requests from patients.
+- **Patient Appointment Booking:** Patients can request appointments, pending approval from assigned doctors or staff members.
+- **Doctor Appointment Status Update:** Doctors can update the status of patients' appointments to "COMPLETED."
+- **About Us Section:** Added a new page providing information about the system.
 
 ## Bug Fixes and Improvements:
-- **Adjustments on user's base.html** For Mobile and Tablet Device
-- **Mobile Phones and Tablet UI** Small device can now navigate freely in this update.
-- **Clickable Cards:** Improved user experience by making cards clickable instead of plain text.
-- **Static Icons:** Added static icons to replace deprecated icon links.
-- **SweetAlerts2** SweetAlerts are now integrated on CRUD Operations.
+- **Upgrade to Bootstrap 5:** Replaced Bootstrap 3 with Bootstrap 5, resolving CSS conflicts.
+- **User Interface Adjustments:** Optimized for mobile and tablet devices.
+- **Enhanced User Experience:** Made cards clickable for improved usability.
+- **Integration of Static Icons:** Replaced deprecated icon links with static icons.
+- **SweetAlerts2 Integration:** Improved user interaction with SweetAlerts on CRUD operations.
 
-## Planning to Add:
-- Verification Email (6-digit code)
-- Overhaul of Contact Us Form
+## Planned Additions:
+- Admin Validation/Approval
+- Enhanced Security Measures (Strong Passwords)
+- Password Reset Functionality
+- Email Verification (6-digit code)
+- Notification System for Upcoming Appointments (Email Backend)
+- Contact Us Form Overhaul
+- Session Timeouts
+
+## Drawbacks
+- Lack of Admin Validation (Upcoming Addition)
+- No Sessions Exp
 
 ## Requirements and Installation Instructions
 
@@ -32,7 +44,7 @@ A comprehensive data management system designed to streamline the processing of 
 #### For Windows:
 
 1. Download the latest Python installer for Windows from [python.org](https://www.python.org/downloads/).
-2. Run the installer and check "Add Python to PATH" during installation.
+2. During installation, ensure to check "Add Python to PATH".
 3. Verify the installation by opening a Command Prompt and running:
 
     ```bash
