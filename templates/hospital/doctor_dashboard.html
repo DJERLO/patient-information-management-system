@@ -1,39 +1,69 @@
 {% extends 'hospital/doctor_base.html' %}
 {% load static %}
 {% block content %}
-{%include 'hospital/doctor_dashboard_cards.html'%}
+
 <br><br><br><br>
 <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="//cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
   <script src="//cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
 </head>
+<style>
+  /* Media Query for smaller screens */
+  @media only screen and (max-width: 768px) {
+    /* Adjust table font size for smaller screens */
+    table {
+      font-size: 0.5rem; /* Adjust this value as needed */
+    }
+
+    /* Adjust th and td padding for smaller screens */
+    th,
+    td {
+      padding: 0.10rem; /* Adjust this value as needed */
+    }
+  }
+
+  /* Media Query for larger screens */
+  @media only screen and (min-width: 768px) {
+    /* Adjust table font size for larger screens */
+    table {
+      font-size: 0.825rem; /* Adjust this value as needed */
+    }
+
+    /* Adjust th and td padding for larger screens */
+    th,
+    td {
+      padding: 0.75rem; /* Adjust this value as needed */
+    }
+  }
+</style>
+{%include 'hospital/doctor_dashboard_cards.html'%}
 <div class="container-fluid">
-  <div class="row justify-content-center">
-    <div class="col-md-10">
-      <div class="panel panel-primary">
-        <div class="panel-heading" style="text-align:center;">
-          <h6 class="panel-title">Recent Appointments For You</h6>
+  <div class="row">
+    <div class="col-md-12 col-xl-12">
+      <div class="card border border-dark">
+        <div class="card-header bg-primary text-white" style="text-align:center;">
+          <h6 class="card-title">Recent Appointments For You</h6>
         </div>
-        <div class="table-responsive">
-          <table class="table table-hover table-striped" id="dev-table">
-            <thead class="thead-dark">
+        <div class="table-responsive p-4">
+          <table class="table table-hover table-striped py-3" id="dev-table">
+            <thead class="table-dark">
               <tr>
+                <th>Appointment Date</th>
                 <th>Patient Name</th>
-                <th>Picture</th>
                 <th>Description</th>
                 <th>Contact</th>
                 <th>Address</th>
-                <th>Date</th>
               </tr>
             </thead>
             {% for a,p in appointments %}
             <tr>
+              <td>{{a.appointmentDate}}</td>
               <td>{{a.patientName}}</td>
-              <td> <img src="{{ p.profile_pic.url }}" alt="Profile Pic" height="40px" width="40px" /></td>
               <td>{{a.description}}</td>
               <td>{{p.mobile}}</td>
               <td>{{p.address}}</td>
-              <td>{{a.appointmentDate}}</td>
             </tr>
             {% endfor %}
           </table>

@@ -14,7 +14,6 @@ from hospital.views import PatientListCreate, PatientRetrieveUpdateDestroy
 urlpatterns = [
     path('patients/', PatientListCreate.as_view(), name='patient-list-create'),
     path('patients/id=<int:pk>/', PatientRetrieveUpdateDestroy.as_view(), name='patient-retrieve-update-destroy'),
-    
 ]
 #-------------FOR ADMIN RELATED URLS
 urlpatterns = [
@@ -54,6 +53,8 @@ urlpatterns = [
 
     path('admin-doctor', views.admin_doctor_view,name='admin-doctor'),
     path('admin-view-doctor', views.admin_view_doctor_view,name='admin-view-doctor'),
+    path('view/doctor-details/<int:id>/', views.admin_doctor_details_view, name='admin-doctor-details'),
+    
     path('delete-doctor-from-hospital/<int:pk>', views.delete_doctor_from_hospital_view,name='delete-doctor-from-hospital'),
     path('update-doctor/<int:pk>', views.update_doctor_view,name='update-doctor'),
     path('admin-add-doctor', views.admin_add_doctor_view,name='admin-add-doctor'),
@@ -65,6 +66,7 @@ urlpatterns = [
 
     path('admin-patient', views.admin_patient_view,name='admin-patient'),
     path('admin-view-patient', views.admin_view_patient_view,name='admin-view-patient'),
+    path('view/patient-details/<int:patient_id>/', views.admin_patient_details_view, name='admin-patient-details'),
     
     path('delete-patient-from-hospital/<int:pk>', views.delete_patient_from_hospital_view,name='delete-patient-from-hospital'),
     path('update-patient/<int:pk>', views.update_patient_view,name='update-patient'),
@@ -85,7 +87,6 @@ urlpatterns = [
     path('reject-appointment/<int:pk>', views.reject_appointment_view,name='reject-appointment'),
 ]
 
-
 #---------FOR DOCTOR RELATED URLS-------------------------------------
 urlpatterns +=[
     path('get-csrf-token', views.get_csrf_token, name='get_csrf_token'),
@@ -94,6 +95,7 @@ urlpatterns +=[
 
     path('doctor-patient', views.doctor_patient_view,name='doctor-patient'),
     path('doctor-view-patient', views.doctor_view_patient_view,name='doctor-view-patient'),
+    path('doctor/patient-details/<int:patient_id>/', views.doctor_patient_details_view, name='doctor-patient-details'),
     path('doctor-view-discharge-patient',views.doctor_view_discharge_patient_view,name='doctor-view-discharge-patient'),
 
     path('doctor-appointment', views.doctor_appointment_view,name='doctor-appointment'),
@@ -104,9 +106,9 @@ urlpatterns +=[
     path('reject-doctor-appointment/<int:pk>/', views.reject_doctor_appointment_view, name='reject-doctor-appointment'),
     
     path('doctor-add-appointment', views.doctor_add_appointment_view,name='doctor-add-appointment'),
-    path('doctor-delete-appointment',views.doctor_delete_appointment_view,name='doctor-delete-appointment'),
-    path('delete-appointment/<int:pk>', views.delete_appointment_view,name='delete-appointment'),
-    path('toggle-doctor-status', views.doctor_toggle_availability, name='toggle-doctor-status'),
+    path('doctor-status-appointment',views.doctor_set_status_appointment_view,name='doctor-status-appointment'),
+    path('set-completed-appointment/<int:pk>', views.set_complete_appointment_view,name='complete-appointment'),
+    path('toggle-doctor-status/', views.doctor_toggle_availability, name='toggle-doctor-status'),
 ]   
 
 
@@ -119,7 +121,15 @@ urlpatterns +=[
     path('patient-book-appointment', views.patient_book_appointment_view,name='patient-book-appointment'),
     path('patient-view-appointment', views.patient_view_appointment_view,name='patient-view-appointment'),
     path('patient-discharge', views.patient_discharge_view,name='patient-discharge'),
+    path('patient-insurance', views.patient_insurance_view,name='patient-insurance'),
+]
 
+
+#---------FOR CHANGING PROFILE URL-------------------------------------
+urlpatterns += [
+    path('admin-change-profile-pic/', views.admin_change_profile_pic, name='admin-change-profile-pic'),
+    path('doctor-change-profile-pic/', views.doctor_change_profile_pic, name='doctor-change-profile-pic'),
+    path('patient-change-profile-pic/', views.patient_change_profile_pic, name='patient-change-profile-pic'),
 ]
 
 # Serve media files during development

@@ -4,25 +4,32 @@
 <head>
   <meta charset="utf-8">
   <title></title>
-
+  
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
   <style media="screen">
     
-    
-
     .market-update-block {
+      display: flex;
+      justify-content: space-between;
+      flex-direction: row;
       flex-basis: calc(50% - 1.6em);
       margin-bottom: 1.6em;
       padding: 2em 2em;
       background: #999;
       box-sizing: border-box;
       resize: both;
-      
+      width: 100%;
+      height: auto;
     }
-
+    
+    .fixed-top{
+      position: absolute;
+    }
+    
     img{
       max-width: 100%;
       margin-bottom: 15px;
-      border: 1px solid #f44336;
       border-radius: 20px;
     }
   
@@ -35,7 +42,6 @@
     .market-update-block h4 {
       font-size: 1.2em;
       color: #fff;
-      margin: 0.3em 0em;
       font-family: 'Carrois Gothic', sans-serif;
     }
   
@@ -63,7 +69,8 @@
     }
   
     .market-update-right i {
-      font-size: 2.4em;
+      float: right;
+      font-size: 2.5em;
       width: 80px;
       height: 80px;
       background: #fff;
@@ -72,7 +79,9 @@
       -webkit-border-radius: 50px;
       -moz-border-radius: 50px;
       -o-border-radius: 50px;
-      line-height: 1.7em;
+      line-height: 1.2em; 
+      margin-top: 0.465em;
+      margin-right: 1.0em;
     }
   
     .market-update-right i.fa.fa-user-o {
@@ -88,81 +97,83 @@
     }
   
     .market-update-left {
+      float: left;
       padding: 0px;
+      margin-right: 2em;
+      text-wrap: nowrap;
     }
 
     @media screen and (min-width: 768px) and (max-width: 1130px) {
       .market-update-block{
-        width: 100%;
-        height: 100%;
-        padding: 1.5em 1.5em;
+        height: auto;
+        padding: 2em 2em;
       }
 
         .market-update-right i {
-          margin-right: 2.5rem;
+          margin-right: 1.0rem;
+      }
+    }
+
+    @media screen and (min-width: 200px) and (max-width: 767px) {
+      .market-update-block{
+        height: auto;
+        padding: 0.5em 0.5em;
+      }
+
+        .market-update-right i {
+          margin-right: 0.5rem;
       }
     }
 
   </style>
-
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
-<body>
-  <div class="container-fluid market-updates">
-     
-    <div class="row">
-      <div class="col-md-4 market-update-gd">
-        <div class="market-update-block clr-block-1">
-          <div class="col-md-8 market-update-left">
-            <h3>{{doctorcount}}</h3>
-            <h4>Total Doctor</h4>
-            <p>Approval Required: {{pendingdoctorcount}}</p>
-          </div>
-          <div class="col-md-4 market-update-right">
-            <i class="fa fa-user-md"></i>
-          </div>
-          <div class="clearfix"> </div>
-        </div>
-      </div>
-
-      <div class="col-md-4 market-update-gd">
-        <div class="market-update-block clr-block-2">
-          <div class="col-md-8 market-update-left">
-            <h3>{{patientcount}}</h3>
-            <h4>Total Patient</h4>
-            <p>Wants to Admit: {{pendingpatientcount}}</p>
-          </div>
-          <div class="col-md-4 market-update-right">
-            <i class="fa fa-user-o"></i>
-          </div>
-          <div class="clearfix"> </div>
-        </div>
-      </div>
-
-      <div class="col-md-4 market-update-gd">
-        <div class="market-update-block clr-block-3">
-          <div class="col-md-8 market-update-left">
-            <h3>{{appointmentcount}}</h3>
-            <h4>Total Appointment</h4>
-            <p>Approve Appointments: {{pendingappointmentcount}}</p>
-          </div>
-          <div class="col-md-4 market-update-right">
-            <i class="fa fa-calendar"></i>
-          </div>
-          <div class="clearfix"> </div>
-        </div>
-      </div>
+<div class="container-fluid market-updates">
+  <div class="row">
     
+    <div class="col-xl-4">
+      <div class="market-update-block clr-block-1">
+        <div class="market-update-left col-xl-6">
+          <h3>{{doctorcount}}</h3>
+          <h4>Total Doctor</h4>
+          <p>Approval Required: {{pendingdoctorcount}}</p>
+        </div>
+        <div class="market-update-right col-xl-6">
+          <i class="fa fa-user-md"></i>
+        </div>
+      </div>
     </div>
-    
 
+    <div class="col-xl-4">
+      <div class="market-update-block clr-block-2">
+        <div class="market-update-left col-xl-6">
+          <h3>{{patientcount}}</h3>
+          <h4>Total Patient</h4>
+          <p>Wants to Admit: {{pendingpatientcount}}</p>
+        </div>
+        <div class="market-update-right col-xl-6">
+          <i class="fa fa-user-o"></i>
+        </div>
+      </div>
+    </div>
 
+    <div class="col-xl-4">
+      <div class="market-update-block clr-block-3">
+        <div class="market-update-left col-xl-6">
+          <h3>{{appointmentcount}}</h3>
+          <h4>Total Appointment</h4>
+          <p>Approve Appointments: {{pendingappointmentcount}}</p>
+        </div>
+        <div class="market-update-right col-xl-6">
+          <i class="fa fa-calendar"></i>
+        </div>
+      </div>
+    </div>
   </div>
-</body>
+</div>
 
 </html>

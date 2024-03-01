@@ -4,9 +4,9 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Latest compiled and minified CSS -->
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css">
-  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
   <link rel="stylesheet" href="//cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
   <script src="//cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
   <style type="text/css">
@@ -18,122 +18,157 @@
       position: absolute;
     }
 
-   img{
-    width: 80%;
-    max-width: 200px;
+   .chart{
+    width: 100%;
+    max-width: 768px;
     height: auto;
-    
    }
 
+  /* Media Query for smaller screens */
+  @media only screen and (max-width: 768px) {
+    /* Adjust table font size for smaller screens */
+    table {
+      font-size: 0.5rem; /* Adjust this value as needed */
+    }
 
-  
+    /* Adjust th and td padding for smaller screens */
+    th,
+    td {
+      padding: 0.10rem; /* Adjust this value as needed */
+    }
+  }
+
+  /* Media Query for larger screens */
+  @media only screen and (min-width: 768px) {
+    /* Adjust table font size for larger screens */
+    table {
+      font-size: 0.825rem; /* Adjust this value as needed */
+    }
+
+    /* Adjust th and td padding for larger screens */
+    th,
+    td {
+      padding: 0.75rem; /* Adjust this value as needed */
+    }
+  }
+
   </style>
-  {%include 'hospital/admin_dashboard_cards.html'%}
+  
 <br><br><br>
-
+{%include 'hospital/admin_dashboard_cards.html'%}
 <div class="container-fluid">
   <div class="row">
+    
     <div class="col-md-12">
-      <div class="panel panel-primary">
-        <div class="panel-heading" style="text-align:center;">
-          <h6 class="panel-title">Recent Doctors</h6>
+      <div class="card border border-dark">
+        <div class="card-header bg-primary text-white" style="text-align:center;">
+          <h6 class="card-title">Recent Doctors</h6>
         </div>
-        <div class="table-responsive">
-          <table id="dev-doctor-table" class="table table-hover table-striped">
-            <thead class="thead-dark">
-              <tr>
-                <th>Name</th>
-                <th>Department</th>
-                <th>Contact</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              {% for d in doctors %}
-              <tr>
-                <td>{{d.get_name}}</td>
-                <td>{{d.department}}</td>
-                <td>{{d.mobile}}</td>
-                {% if d.status == 0 %}
-                <td><span class="label label-primary">On Hold</span></td>
-                {% elif d.status == 1 %}
-                <td><span class="label label-success">Availble</span></td>
-                {% elif d.status == 2 %}
-                <td><span class="label label-danger">Not Availble</span></td>
-                {% endif %}
-              </tr>
-              {% endfor %}
-            </tbody>
-          </table>
+        <div class="card-body">
+          <div class="table-responsive p-4">
+            <table id="dev-doctor-table" class="table table-hover table-striped py-3">
+              <thead class="table-dark">
+                <tr>
+                  <th>Name</th>
+                  <th>Department</th>
+                  <th>Contact</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for d in doctors %}
+                <tr>
+                  <td>{{d.get_name}}</td>
+                  <td>{{d.department}}</td>
+                  <td>{{d.mobile}}</td>
+                  {% if d.status == 0 %}
+                  <td><span class="badge bg-primary">On Hold</span></td>
+                  {% elif d.status == 1 %}
+                  <td><span class="badge bg-success">Available</span></td>
+                  {% elif d.status == 2 %}
+                  <td><span class="badge bg-danger">Not Available</span></td>
+                  {% endif %}
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </div>
     
-    <div class="col-xl-6">
-      <div class="panel panel-primary">
-        <div class="panel-heading" style="text-align:center;">
-          <h6 class="panel-title">Patient Admission Timeline</h6>
+    <div class="col-lg-6 col-xl-6">
+      <div class="card border border-dark">
+        <div class="card-header bg-primary text-white" style="text-align:center;">
+          <h6 class="card-title">Patient Admission Timeline</h6>
         </div>
-        <div class="panel-body">
+        <div class="card-body">
           <div class="d-flex justify-content-center" style="width:100%; overflow-x:auto;">
-            <img  src="https://quickchart.io/chart?c={type:'line',data:{labels:[{% for date, count in admission_counts_list %}'{{ date }}',{% endfor %}],datasets:[{label:'Admissions',data:[{% for date, count in admission_counts_list %}{{ count }},{% endfor %}]}]}}">
+            <img class="chart" src="https://quickchart.io/chart?c={type:'line',data:{labels:[{% for date, count in admission_counts_list %}'{{ date }}',{% endfor %}],datasets:[{label:'Admissions',data:[{% for date, count in admission_counts_list %}{{ count }},{% endfor %}]}]}}">
+          </div>
+        </div>
+        <div class="card-footer text-center text-dark">
+          <div class="row"> 
+            <div class="col-12 badge bg-light text-dark">Timeline of Patients Admissions</div>
           </div>
         </div>
       </div>
     </div>
 
-    <div class="col-xl-6">
-      <div class="panel panel-primary">
-        <div class="panel-heading" style="text-align:center;">
-          <h6 class="panel-title">Total Patients Data</h6>
+    <div class="col-lg-6 col-xl-6">
+      <div class="card border border-dark">
+        <div class="card-header bg-primary text-white" style="text-align:center;">
+          <h6 class="card-title">Total Patients Data</h6>
         </div>
-        <div class="panel-body">
+        <div class="card-body">
           <div class="d-flex justify-content-center" style="width:100%; overflow-x:auto;">
-            <img src="https://quickchart.io/chart?c={type:'doughnut',data:{labels:['Total Patients','Pending Approval'],datasets:[{label:'Count',data:[{{patientcount}},{{pendingpatientcount}}]}]}}">
+            <img class="chart" src="https://quickchart.io/chart?c={type:'doughnut',data:{labels:['Total Patients','Pending Approval'],datasets:[{label:'Count',data:[{{patientcount}},{{pendingpatientcount}}]}]}}">
           </div>
+        </div>
+        <div class="card-footer text-center text-dark">
+          <div class="row"> 
+            <div class="col-6 badge bg-primary">Total Patients: {{patientcount}}</div>
+            <div class="col-6 badge bg-warning text-dark">Needs Approval: {{pendingpatientcount}}</div>
+          </div>  
         </div>
       </div>
     </div>
 
     <div class="col-md-12">
-      <div class="panel panel-primary">
-        <div class="panel-heading" style="text-align:center;">
-          <h6 class="panel-title">Recent Patients</h6>
+      <div class="card border border-dark">
+        <div class="card-header bg-primary text-white" style="text-align:center;">
+          <h6 class="card-title">Recent Patients</h6>
         </div>
-        <div class="table-responsive">
-        <table  id="dev-patient-table" class="table table-hover table-striped">
-            <thead class="thead-dark">
-              <tr>
-                <th>Name</th>
-                <th>Symptoms</th>
-                <th>Contact</th>
-                <th>Address</th>
-                <th>Date</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              {% for p in patients %}
-              <tr>
-                <td>{{p.get_name}}</td>
-                <td>{{p.symptoms}}</td>
-                <td>{{p.mobile}}</td>
-                <td>{{p.address}}</td>
-                <td>{{p.admit_date}}</td>
-                {% if p.status %}
-                <td><span class="label label-primary">Admitted</span></td>
-                {% else %}
-                <td><span class="label label-success">On Hold</span></td>
-                {% endif %}
-              </tr>
-              {% endfor %}
-            </tbody>
-          </table>
+        <div class="card-body">
+          <div class="table-responsive  p-4">
+            <table  id="dev-patient-table" class="table table-sm table-hover table-striped py-3">
+              <thead class="table-dark">
+                <tr>
+                  <th>Admission Date</th>
+                  <th>Name</th>
+                  <th>Contact</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for p in patients %}
+                <tr>
+                  <td>{{p.admit_date}}</td>
+                  <td>{{p.get_name}}</td>
+                  <td>{{p.mobile}}</td>
+                  {% if p.status %}
+                  <td><span class="badge bg-success">Admitted</span></td>
+                  {% else %}
+                  <td><span class="badge bg-primary">On Hold</span></td>
+                  {% endif %}
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </div>
-   
-
   </div>
 </div>
 <script>

@@ -141,6 +141,7 @@ MEDIA_ROOT=os.path.join(BASE_DIR,'media')
 
 
 LOGIN_REDIRECT_URL='/afterlogin'
+LOGOUT_REDIRECT_URL='/'
 
 #for contact us give your gmail id and password
 #EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend' #Test on the Console before

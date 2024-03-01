@@ -1,0 +1,42 @@
+{% extends 'hospital/admin_base.html' %}
+{% load static %}
+{% block content %}
+<div class="container">
+    <h2 class="mt-5 mb-4 text-center">Doctor Details</h2>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="card-title mb-0">Doctor Information</h3>
+                </div>
+                <div class="card-body">
+                    <div class="text-center mb-4">
+                        <img src="{{ doctor.profile_pic.url }}" alt="Profile Pic" style="width: 150px; height: 150px;">
+                    </div>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item">First Name: {{ user.first_name }}</li>
+                        <li class="list-group-item">Last Name: {{ user.last_name }}</li>
+                        <li class="list-group-item">Full Name: {{ user.get_full_name }}</li>
+                        <li class="list-group-item">Email: {{ user.email }}</li>
+                        <li class="list-group-item">License Number: {{ doctor.license_num }}</li>
+                        <li class="list-group-item">Contact: {{ doctor.mobile }}</li>
+                        <li class="list-group-item">Address: {{ doctor.address }}</li>
+                        {% if doctor.status == 0 %}
+                            <li class="list-group-item">Status: <span class="badge bg-secondary text-white">ON HOLD</span></li>
+                        {% elif doctor.status == 1 %}
+                            <li class="list-group-item">Status: <span class="badge bg-success text-white">AVAILABLE</span></li>
+                        {% elif doctor.status == 2 %}
+                            <li class="list-group-item">Status: <span class="badge bg-danger text-white">NOT AVAILABLE</span></li>
+                        {% endif %}
+                        <li class="list-group-item">Last Login: {{ user.last_login }}</li>
+                        
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        
+    </div>
+</div>
+{% endblock content %}

@@ -3,41 +3,40 @@
 
 <head>
   <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <title></title>
 
   <style media="screen">
     
-    .market-update-wrapper {
-      display: flex;
-      align-content: center;
-      justify-content: space-between;
-      flex-wrap: wrap;
-    }
-
-    .market-update-right {
-        display: flex;
-        justify-content: start; 
-        align-items: center; 
-    }
-
     .market-update-block {
+      display: flex;
+      grid-template-columns: 1fr 1fr 1fr;
+      justify-content: space-between;
+      flex-direction: row;
       flex-basis: calc(50% - 1.6em);
       margin-bottom: 1.6em;
       padding: 2em 2em;
       background: #999;
       box-sizing: border-box;
+      resize: both;
+      width: 100%;
+      height: auto;
+    }
+
+    .fixed-top{
+      position: absolute;
     }
 
     .market-update-block h3 {
       color: #fff;
-      font-size: 1.5em;
+      font-size: 1.40em;
       font-family: 'Carrois Gothic', sans-serif;
     }
 
     .market-update-block h4 {
       font-size: 1.2em;
       color: #fff;
-      margin: 0.3em 0em;
       font-family: 'Carrois Gothic', sans-serif;
     }
 
@@ -104,7 +103,23 @@
       -o-transition: 0.5s all;
     }
 
-    .market-update-right i.fas.fa-check-circle{
+    .market-update-right i {
+      float: right;
+      font-size: 2.5em;
+      width: 80px;
+      height: 80px;
+      background: #fff;
+      text-align: center;
+      border-radius: 50px;
+      -webkit-border-radius: 50px;
+      -moz-border-radius: 50px;
+      -o-border-radius: 50px;
+      line-height: 1.2em; 
+      margin-top: 0.465em;
+      margin-right: 1.0em;
+    }
+
+    .market-update-right i.fa.fa-check-circle{
       font-size: 3em;
       color: #68AE00; 
       width: 80px;
@@ -117,9 +132,12 @@
       -o-border-radius: 50px;
       line-height: 1.7em;
       align-self: center;
+      line-height: 1.2em; 
+      margin-top: 0.465em;
+      margin-right: 1.0em;
     }
 
-    .market-update-right i.fas.fa-times-circle{
+    .market-update-right i.fa.fa-times-circle{
       font-size: 3em;
       color: #e61409; 
       width: 80px;
@@ -130,8 +148,9 @@
       -webkit-border-radius: 50px;
       -moz-border-radius: 50px;
       -o-border-radius: 50px;
-      line-height: 1.7em;
-      align-self: center;
+      line-height: 1.2em; 
+      margin-top: 0.465em;
+      margin-right: 1.0em;
     }
     
 
@@ -147,8 +166,9 @@
       -webkit-border-radius: 50px;
       -moz-border-radius: 50px;
       -o-border-radius: 50px;
-      line-height: 1.7em;
-      align-self: center;
+      line-height: 1.2em; 
+      margin-top: 0.465em;
+      margin-right: 1.0em;
     }
 
     .market-update-right i.fa.fa-info-circle,
@@ -163,11 +183,13 @@
       -webkit-border-radius: 49px;
       -moz-border-radius: 49px;
       -o-border-radius: 49px;
-      line-height: 1.7em;
+      line-height: 1.2em; 
+      margin-top: 0.465em;
+      margin-right: 1.0em;
     }
 
     .market-update-right i.fa.fa-mobile,
-    i.fa.fa-calendar-o {
+    i.fa.fa-calendar-check, i.fa.fa-calendar-o {
       font-size: 3em;
       color: #337AB7;
       width: 80px;
@@ -178,40 +200,44 @@
       -webkit-border-radius: 49px;
       -moz-border-radius: 49px;
       -o-border-radius: 49px;
-      line-height: 1.7em;
+      line-height: 1.2em; 
+      margin-top: 0.465em;
+      margin-right: 1.0em;
     }
 
 
     .market-update-left {
+      float: left;
       padding: 0px;
-    }
-
-    summary{
-      margin: 0 auto;
-      padding: 0 auto;
-      box-sizing: border-box;
+      margin-right: 2em;
+      text-wrap: nowrap;
     }
 
     @media screen and (min-width: 768px) and (max-width: 1130px) {
       .market-update-block{
-        width: 100%;
-        height: 100%;
-        padding: 1.5em 1.5em;
+        height: auto;
+        padding: 2em 2em;
       }
 
         .market-update-right i {
-          margin-right: 2.5rem;
+          margin-right: 1.0rem;
+      }
+    }
+
+    @media screen and (min-width: 200px) and (max-width: 767px) {
+      .market-update-block{
+        height: auto;
+        padding: 0.5em 0.5em;
+      }
+
+        .market-update-right i {
+          margin-right: 0.5rem;
       }
     }
   </style>
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
-
-<body>
-  
   <div class="container-fluid market-updates">
     {% if appointmentStatus == 0 %}
       <div class="alert alert-info" role="alert">
@@ -224,102 +250,103 @@
     {% elif appointmentStatus == 2 %}
       <div class="alert alert-danger" role="alert">
         <center><p>We regret to inform you that your appointment request has been rejected.</p></center>
-        <center><p>If you have any questions or concerns, please feel free to <a href="/contactus">contact us</a>.</p></center>
+        <center><p>If you have any questions or concerns, please feel free to <a class="link-dark" href="/contactus">contact us</a>.</p></center>
       </div>
     {% else %}
       <div class="alert alert-info" role="alert">
         <center><p>No appointment has been scheduled.</p></center>
-        <center><p>Schedule your appointment <a href="/patient-book-appointment">here</a>.</p></center>
+        <center><p>Schedule your appointment <a class="link-dark" href="/patient-book-appointment">here</a>.</p></center>
       </div>
     {% endif %}
-    <div class="row mb-3">
-      <div class="col-md-4 market-update-gd">
+
+    <div class="row">
+      
+      <div class="col-xl-4">
         <div class="market-update-block clr-block-1">
-          <div class="market-update-left">
+          <div class="market-update-left col-xl-6">
             <h3>{{doctorName}}</h3>
             <h4>Doctor Name</h4>
           </div>
-          <div class="market-update-right">
+          <div class="market-update-right col-xl-6">
             <i class="fa fa-user-o"></i>
           </div>
-          <div class="clearfix"></div>
         </div>
       </div>
-      <div class="col-md-4 market-update-gd">
+      <div class="col-xl-4">
         <div class="market-update-block clr-block-2">
-          <div class="market-update-left">
+          <div class="market-update-left col-xl-6">
             <h3>{{symptoms}}</h3>
             <h4>Symptoms</h4>
           </div>
-          <div class="market-update-right">
+          <div class="market-update-right col-xl-6">
             <i class="fa fa-info-circle"></i>
           </div>
-          <div class="clearfix"></div>
+          
         </div>
       </div>
       
-      <div class="col-md-4 market-update-gd">
+      <div class="col-xl-4">
         <div class="market-update-block clr-block-3">
-          <div class="market-update-left">
+          <div class="market-update-left col-xl-6">
             <h3>{{admit_date}}</h3>
             <h4>Admit Date</h4>
           </div>
-          <div class="market-update-right">
+          <div class="market-update-right col-xl-6">
             <i class="fa fa-calendar-o" aria-hidden="true"></i>
           </div>
-          <div class="clearfix"></div>
+          
         </div>
       </div>
     
     
     </div>
 
-    <div class="row mt-3">
+    <div class="row">
       
       {% if doctorAvailability == 1 %}
-      <div class="col-md-4 market-update-gd">
+      <div class="col-xl-4">
         <div class="market-update-block clr-block-1">
-          <div class="market-update-left">
+          <div class="market-update-left col-xl-6">
             <h3>Currently Available</h3>
             <h4>Doctor Status</h4>
           </div>
-          <div class="market-update-right">
-            <i class="fas fa-check-circle"></i>
+          <div class="market-update-right col-xl-6">
+            <i class="fa fa-check-circle"></i>
           </div>
-          <div class="clearfix"></div>
+         
         </div>
       </div>
       {% elif doctorAvailability == 2 %}
-      <div class="col-md-4 market-update-gd">
+      <div class="col-xl-4">
         <div class="market-update-block clr-block-1">
-          <div class="market-update-left">
+          <div class="market-update-left col-xl-6">
             <h3>Currently Offline</h3>
             <h4>Doctor Status</h4>
           </div>
-          <div class="market-update-right">
-            <i class="fas fa-times-circle"></i>
+          <div class="market-update-right col-xl-6">
+            <i class="fa fa-times-circle"></i>
           </div>
-          <div class="clearfix"></div>
+          
         </div>
       </div>
       {% endif %}
       
-      <div class="col-md-4 market-update-gd">
+      <div class="col-xl-4">
         <div class="market-update-block clr-block-2">
-          <div class="market-update-left">
+          <div class="market-update-left col-xl-6">
             <h3>{{doctorDepartment}}</h3>
             <h4>Doctor Department</h4>
           </div>
-          <div class="market-update-right">
+          <div class="market-update-right col-xl-6">
             <i class="fa fa-list-alt"></i>
           </div>
-          <div class="clearfix"></div>
+          
         </div>
       </div>
       
-      <div class="col-md-4 market-update-gd">
+      <div class="col-xl-4">
         <div class="market-update-block clr-block-3">
-            <div class="market-update-left">
+            <div class="market-update-left col-xl-6">
                 {% if appointmentStatus == 0 %}
                     <h3>Currently Pending</h3>
                     <h4>Appointment Status</h4>
@@ -334,16 +361,15 @@
                     <h4>Appointment Status</h4>
                 {% endif %}
             </div>
-            <div class="market-update-right">
-                <i class="fa fa-calendar-o" aria-hidden="true"></i>
+            <div class="market-update-right col-xl-6">
+                <i class="fa fa-calendar-check" aria-hidden="true"></i>
             </div>
-            <div class="clearfix"></div>
+            
         </div>
     </div>
 
       
     </div>
   </div>
-</body>
 
 </html>

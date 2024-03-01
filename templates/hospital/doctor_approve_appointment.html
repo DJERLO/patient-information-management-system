@@ -3,8 +3,6 @@
 {%load static%}
 
 <head>
-  <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
-  <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
   <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <link rel="stylesheet" href="//cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
@@ -23,8 +21,7 @@
     }
 
     .table-responsive {
-      text-wrap: nowrap;
-      padding: 0 0 0 0;
+      text-wrap: wrap;
     }
 
     .view-your-appointment-approvals-panel{
@@ -32,24 +29,51 @@
       height: 100vw;
       position: relative;
       margin: 1px 1px 1px 1px;
-      text-align: justify;
+      text-align: start;
+    }
+    /* Media Query for smaller screens */
+    @media only screen and (max-width: 768px) {
+      /* Adjust table font size for smaller screens */
+      table {
+        font-size: 0.5rem; /* Adjust this value as needed */
+      }
+
+      /* Adjust th and td padding for smaller screens */
+      th,
+      td {
+        padding: 0.10rem; /* Adjust this value as needed */
+      }
+    }
+
+    /* Media Query for larger screens */
+    @media only screen and (min-width: 768px) {
+      /* Adjust table font size for larger screens */
+      table {
+        font-size: 0.825rem; /* Adjust this value as needed */
+      }
+
+      /* Adjust th and td padding for larger screens */
+      th,
+      td {
+        padding: 0.75rem; /* Adjust this value as needed */
+      }
     }
   </style>
 </head>
-
+<br><br>
 <div class="container-fluid view-your-appointment-approvals-panel">
-  <div class="panel panel-primary">
-    <div class="panel-heading">
-      <h6 class="panel-title">Your Appointment Approvals Required</h6>
+  <div class="card">
+    <div class="card-header bg-primary text-white">
+      <h6 class="card-title">Your Appointment Approvals Required</h6>
     </div>
     <div class="table-responsive">
       <table class="table table-hover" id="approval-table">
-        <thead>
+        <thead class="table-dark">
           <tr>
+            <th>Date Request</th>
             <th>Doctor Name</th>
             <th>Patient Name</th>
             <th>Description</th>
-            <th>Date</th>
             <th>Approve</th>
             <th>Reject</th>
           </tr>
@@ -57,18 +81,18 @@
         <tbody>
           {% for appointment in appointments %}
           <tr>
+            <td>{{ appointment.appointmentDate }}</td>
             <td>{{ appointment.doctorName }}</td>
             <td>{{ appointment.patientName }}</td>
             <td>{{ appointment.description }}</td>
-            <td>{{ appointment.appointmentDate }}</td>
             <td>
-              <a class="btn btn-primary btn-xs" href="{% url 'approve-doctor-appointment' appointment.appointment_id %}">
-                <span class="glyphicon glyphicon-ok"></span>
+              <a class="btn btn-primary btn-sm" href="{% url 'approve-doctor-appointment' appointment.appointment_id %}">
+                <i class="bi bi-check"></i>
               </a>
             </td>
             <td>
-              <a class="btn btn-danger btn-xs delete-btn" href="{% url 'reject-doctor-appointment' appointment.appointment_id %}">
-                <span class="glyphicon glyphicon-trash"></span>
+              <a class="btn btn-danger btn-sm delete-btn" href="{% url 'reject-doctor-appointment' appointment.appointment_id %}">
+                <i class="bi bi-trash"></i>
               </a>
             </td>
           </tr>

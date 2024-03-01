@@ -1,11 +1,9 @@
 {% extends 'hospital/admin_base.html' %}
 {% block content %}
-{%load static%}
+{% load static %}
 
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
-  <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
   <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <link rel="stylesheet" href="//cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
@@ -24,9 +22,10 @@
       margin: 10px auto;
     }
 
+
     .table-responsive {
-      text-wrap: nowrap;
-      padding: 0 0 0 0;
+      text-wrap: wrap;
+      
     }
 
     .view-doctor-panel{
@@ -34,40 +33,68 @@
       height: 100%;
       position: relative;
       margin: 1px 1px 1px 1px;
-      text-align: justify;
     }
-    
+
+    /* Media Query for smaller screens */
+    @media only screen and (max-width: 768px) {
+      /* Adjust table font size for smaller screens */
+      table {
+        font-size: 0.5rem; /* Adjust this value as needed */
+      }
+
+      /* Adjust th and td padding for smaller screens */
+      th,
+      td {
+        padding: 0.10rem; /* Adjust this value as needed */
+      }
+    }
+
+    /* Media Query for larger screens */
+    @media only screen and (min-width: 768px) {
+      /* Adjust table font size for larger screens */
+      table {
+        font-size: 0.825rem; /* Adjust this value as needed */
+      }
+
+      /* Adjust th and td padding for larger screens */
+      th,
+      td {
+        padding: 0.75rem; /* Adjust this value as needed */
+      }
+    }
+
   </style>
 </head>
-
-<div class="container-fluid view-doctor-panel">
-  <div class="panel panel-primary">
-    <div class="panel-heading">
-      <h6 class="panel-title">Doctors</h6>
+<br><br>
+<div class="container-fluid">
+  <div class="card border border-dark">
+    <div class="card-header bg-primary text-white">
+      <h6 class="card-title">Doctors</h6>
     </div>
-    <div class="table-responsive">
-      <table class="table table-hover table-responsive" id="dev-table">
-        <thead>
+    <div class="table-responsive p-4">
+      <table class="table table-hover py-3" id="dev-table">
+        <thead class="table-dark">
           <tr>
-            <th class="col-xs-2 col-sm-1">Name</th>
-            <th class="col-xs-2 col-sm-1">Profile Picture</th>
-            <th class="col-xs-2 col-sm-1">Contact</th>
-            <th class="col-xs-2 col-sm-3">Address</th>
-            <th class="col-xs-2 col-sm-2">Department</th>
-            <th class="col-xs-2 col-sm-1">Update</th>
-            <th class="col-xs-2 col-sm-1">Delete</th>
+            <th>Name</th>
+            <th>Contact</th>
+            <th>Address</th>
+            <th>Department</th>
+            <th>View</th>
+            <th>Update</th>
+            <th>Delete</th>
           </tr>
         </thead>
         <tbody>
           {% for d in doctors %}
           <tr>
-            <td class="col-xs-2 col-sm-1">{{ d.get_name }}</td>
-            <td class="col-xs-2 col-sm-1"><img src="{{ d.profile_pic.url }}" alt="Profile Pic" height="40px" width="40px" /></td>
-            <td class="col-xs-2 col-sm-1">{{ d.mobile }}</td>
-            <td class="col-xs-2 col-sm-3">{{ d.address }}</td>
-            <td class="col-xs-2 col-sm-2">{{ d.department }}</td>
-            <td class="col-xs-2 col-sm-1"><a class="btn btn-primary btn-xs" href="{% url 'update-doctor' d.id  %}"><span class="glyphicon glyphicon-edit"></span></a></td>
-            <td class="col-xs-2 col-sm-1"><a class="btn btn-danger btn-xs delete-btn" href="{% url 'delete-doctor-from-hospital' d.id  %}"><span class="glyphicon glyphicon-trash"></span></a></td>
+            
+            <td>{{ d.get_name }}</td>
+            <td>{{ d.mobile }}</td>
+            <td>{{ d.address }}</td>
+            <td>{{ d.department }}</td>
+            <td><a class="btn btn-primary btn-sm" href="{% url 'admin-doctor-details' d.id %}"><i class="bi bi-eye"></i></a></td>
+            <td><a class="btn btn-secondary btn-sm" href="{% url 'update-doctor' d.id  %}"><i class="bi bi-pencil"></i></a></td>
+            <td><a class="btn btn-danger btn-sm delete-btn" href="{% url 'delete-doctor-from-hospital' d.id  %}"><i class="bi bi-trash"></i></a></td>
           </tr>
           {% endfor %}
         </tbody>

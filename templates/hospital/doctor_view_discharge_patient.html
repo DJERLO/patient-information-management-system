@@ -3,8 +3,6 @@
 {%load static%}
 
 <head>
-  <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
-  <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
   <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
   <link rel="stylesheet" href="//cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
   <script src="//cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
@@ -20,17 +18,46 @@
     .row {
       margin: 100px;
     }
+
+    /* Media Query for smaller screens */
+  @media only screen and (max-width: 768px) {
+    /* Adjust table font size for smaller screens */
+    table {
+      font-size: 0.5rem; /* Adjust this value as needed */
+    }
+
+    /* Adjust th and td padding for smaller screens */
+    th,
+    td {
+      padding: 0.10rem; /* Adjust this value as needed */
+    }
+  }
+
+  /* Media Query for larger screens */
+  @media only screen and (min-width: 768px) {
+    /* Adjust table font size for larger screens */
+    table {
+      font-size: 0.825rem; /* Adjust this value as needed */
+    }
+
+    /* Adjust th and td padding for larger screens */
+    th,
+    td {
+      padding: 0.75rem; /* Adjust this value as needed */
+    }
+  }
+
   </style>
 </head>
 
 <div class="container-fluid">
-  <div class="panel panel-primary">
-    <div class="panel-heading">
-      <h6 class="panel-title">Your Discharged Patient List</h6>
+  <div class="card">
+    <div class="card-header bg-primary text-white">
+      <h6 class="card-title">Your Discharged Patient List</h6>
     </div>
-    <div class="table-responsive">
-      <table class="table table-hover" id="dev-table">
-        <thead>
+    <div class="table-responsive p-3">
+      <table class="table table-hover py-3" id="dev-table">
+        <thead class="table-dark">
           <tr>
             <th>Name</th>
             <th>Admit Date</th>
@@ -59,5 +86,4 @@
 <script>
   let table = new DataTable('#dev-table');
 </script>
-
 {% endblock content %}

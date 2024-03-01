@@ -1,0 +1,63 @@
+{% extends 'hospital/admin_base.html' %}
+{% block content %}
+<div class="container">
+    <h2 class="mt-5 mb-4 text-center">Patient Details</h2>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="card-title mb-0">Patient Information</h3>
+                </div>
+                <div class="card-body">
+                    <div class="text-center mb-4">
+                        <img src="{{ patient.profile_pic.url }}" alt="Profile Pic" style="width: 150px; height: 150px;">
+                    </div>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item">First Name: {{ user.first_name }}</li>
+                        <li class="list-group-item">Last Name: {{ user.last_name }}</li>
+                        <li class="list-group-item">Full Name: {{ user.get_full_name }}</li>
+                        <li class="list-group-item">Email: {{ user.email }}</li>
+                        <li class="list-group-item">Symptoms: {{ patient.symptoms }}</li>
+                        <li class="list-group-item">Contact: {{ patient.mobile }}</li>
+                        <li class="list-group-item">Address: {{ patient.address }}</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            {% if insurance %}
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="card-title mb-0">Insurance Information</h3>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item">Insurance Provider: {{ insurance.insurance_provider }}</li>
+                        <li class="list-group-item">Policy Number: {{ insurance.policy_number }}</li>
+                        <li class="list-group-item">Group Number: {{ insurance.group_number }}</li>
+                        <li class="list-group-item">Effective Date: {{ insurance.effective_date }}</li>
+                        <li class="list-group-item">Expiration Date: {{ insurance.expiration_date }}</li>
+                        <li class="list-group-item">
+                            Status: 
+                            {% if insurance.status %}
+                                <span class="badge bg-success">Active</span>
+                            {% else %}
+                                <span class="badge bg-danger">Expired</span>
+                            {% endif %}
+                        </li>
+                        <li class="list-group-item">Copayment Info: {{ insurance.copayment_info }}</li>
+                        <!-- Render other insurance details here -->
+                    </ul>
+                </div>
+            </div>
+            {% else %}
+            <div class="alert alert-warning" role="alert">
+                No insurance information available.
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock content %}

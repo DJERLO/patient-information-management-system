@@ -6,11 +6,6 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
-  <link href="http://netdna.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" rel="stylesheet">
-  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
-  
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css">
-
     <style type="text/css">
       a:link {
         text-decoration: none;
@@ -81,7 +76,7 @@
   <div class="container-fluid">
     <div class="row">
       
-      <div class="col-md-4 col-xl-4">
+      <div class="col-md-3 col-xl-3">
         <div class="card bg-c-blue order-card">
           <div class="card-block" id="doctorViewAppointment">
             <a href="/doctor-view-appointment">
@@ -94,7 +89,7 @@
         </div>
       </div>
 
-      <div class="col-md-4 col-xl-4">
+      <div class="col-md-3 col-xl-3">
         <div class="card bg-c-green order-card">
           <div class="card-block" id="doctorAddAppointment">
             <a href="/doctor-add-appointment">
@@ -107,7 +102,7 @@
         </div>
       </div>
 
-      <div class="col-md-4 col-xl-4">
+      <div class="col-md-3 col-xl-3">
         <div class="card bg-c-pink order-card">
           <div class="card-block" id="doctorApproveAppointment">
             <a href="/doctor-approve-appointment">
@@ -120,14 +115,14 @@
         </div>
       </div>
 
-      <div class="col-md-4 col-xl-4">
+      <div class="col-md-3 col-xl-3">
         <div class="card bg-c-yellow order-card">
-          <div class="card-block" id="doctorDeleteAppointment">
-            <a href="/doctor-delete-appointment">
-              <h6 class="m-b-20">Delete Appointment</h6>
+          <div class="card-block" id="doctorStatusAppointment">
+            <a href="/doctor-status-appointment">
+              <h6 class="m-b-20">Appointment Status</h6>
             </a>
             <br>
-            <h2 class="text-right"><i class="fas fa-eject f-left"></i></h2>
+            <h2 class="text-right"><i class="fas fa-sync-alt f-left"></i></h2>
           </div>
         </div>
       </div>
@@ -139,7 +134,7 @@
     let doctorViewAppointment = document.getElementById("doctorViewAppointment")
     let doctorAddAppointment = document.getElementById("doctorAddAppointment")
     let doctorApproveAppointment = document.getElementById("doctorApproveAppointment")
-    let doctorDeleteAppointment = document.getElementById("doctorDeleteAppointment")
+    let doctorDeleteAppointment = document.getElementById("doctorStatusAppointment")
     
     doctorViewAppointment.addEventListener("click", function() {
       window.location.href = "/doctor-view-appointment";
@@ -154,7 +149,7 @@
     });
 
     doctorDeleteAppointment.addEventListener("click", function() {
-      window.location.href = "/doctor-delete-appointment";
+      window.location.href = "/doctor-status-appointment";
     });
 
   </script>

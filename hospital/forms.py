@@ -1,7 +1,24 @@
+from datetime import timezone
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from . import models
+
+#Modal Forms
+class AdminChangeProfilePicForm(forms.ModelForm):
+    class Meta:
+        model = models.HospitalStaffAdmin
+        fields = ['profile_pic']
+
+class DoctorChangeProfilePicForm(forms.ModelForm):
+    class Meta:
+        model = models.Doctor
+        fields = ['profile_pic']
+
+class PatientChangeProfilePicForm(forms.ModelForm):
+    class Meta:
+        model = models.Patient
+        fields = ['profile_pic']
 
 #Login Forms
 class AdminLoginForm(forms.Form):
@@ -61,7 +78,7 @@ class UpdateDoctorUserForm(forms.ModelForm):
 class UpdateDoctorForm(forms.ModelForm):
     class Meta:
         model = models.Doctor
-        fields = ['address', 'mobile', 'department', 'profile_pic']
+        fields = ['address', 'mobile', 'department', 'profile_pic', 'license_num']
         widgets = {
             'profile_pic': forms.FileInput(attrs={'required': 'required'}),
         }
@@ -84,9 +101,10 @@ class DoctorUserForm(UserCreationForm):
 class DoctorForm(forms.ModelForm):
     class Meta:
         model = models.Doctor
-        fields = ['address', 'mobile', 'department', 'profile_pic']
+        fields = ['address', 'mobile', 'department', 'profile_pic', 'license_num']
         widgets = {
             'mobile': forms.TextInput(attrs={'pattern': r'(^(\+)(\d){12}$)|(^\d{11}$)', 'required': 'required'}),
+            'license_num': forms.TextInput(attrs={'pattern': r'^\d{7}$', 'required': 'required'}),
             'profile_pic': forms.FileInput(attrs={'required': 'required'}),
         }
     
@@ -162,7 +180,6 @@ class UpdatePatientForm(forms.ModelForm):
         }
 
 
-    
 
 class AppointmentForm(forms.ModelForm):
     doctorId=forms.ModelChoiceField(queryset=models.Doctor.objects.all().filter(status=models.Doctor.STATUS_AVAILABLE),empty_label="Doctor Name and Department", to_field_name="user_id")
@@ -188,20 +205,24 @@ class DoctorAppointmentForm(forms.ModelForm):
 
     class Meta:
         model = models.Appointment
-        fields = ['description', 'status', 'appointmentDate']
+        fields = ['description', 'appointmentDate']
         widgets = {
             'appointmentDate': forms.DateInput(attrs={'type': 'datetime-local'}),
         }
 
 class PatientAppointmentForm(forms.ModelForm):
-    doctorId = forms.ModelChoiceField(queryset=models.Doctor.objects.all().filter(status=True), empty_label="Doctor Name and Department", to_field_name="user_id")
-
+    doctorId = forms.ModelChoiceField(queryset=models.Doctor.objects.none(), empty_label="Your Doctor Is Not Available", to_field_name="user_id")
+    
     def __init__(self, *args, **kwargs):
         patient_doctors = kwargs.pop('patient_doctors', None)
         super(PatientAppointmentForm, self).__init__(*args, **kwargs)
-
+        
         if patient_doctors:
-            self.fields['doctorId'].queryset = patient_doctors
+            self.fields['doctorId'].queryset = patient_doctors.filter(status=models.Doctor.STATUS_AVAILABLE)
+            self.fields['doctorId'].empty_label = "Doctor Name and Department"
+            if not self.fields['doctorId'].queryset.exists():
+                self.fields['doctorId'].empty_label = "No available doctors"
+                self.fields['doctorId'].widget.attrs['disabled'] = 'disabled'
 
     class Meta:
         model = models.Appointment
@@ -210,7 +231,14 @@ class PatientAppointmentForm(forms.ModelForm):
             'appointmentDate': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
         }
 
-
+class InsuranceForm(forms.ModelForm):
+    class Meta:
+        model = models.Insurance
+        fields = ['insurance_provider', 'policy_number', 'group_number', 'effective_date', 'expiration_date', 'copayment_info']
+        widgets = {
+            'effective_date': forms.DateInput(attrs={'type': 'date'}),
+            'expiration_date': forms.DateInput(attrs={'type': 'date'}),
+        }
 
 #for contact us page
 class ContactusForm(forms.Form):
@@ -220,7 +248,3 @@ class ContactusForm(forms.Form):
     Message = forms.CharField(max_length=500, widget=forms.Textarea(attrs={'rows': 3, 'cols': 30}), required=True)
 
 
-
-#Developed By : sumit kumar
-#facebook : fb.com/sumit.luv
-#Youtube :youtube.com/lazycoders

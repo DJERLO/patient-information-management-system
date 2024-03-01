@@ -43,6 +43,8 @@
 
     .form-control {
       border-radius: 1.5rem;
+      margin: 4px 0 0 0;
+      font-size: 12.8px;
     }
 
     .btnSubmit {
@@ -161,20 +163,20 @@
                           </div>
                         </div>
                         <div class="form-floating">
-                          {% render_field form.password1 class="form-control" placeholder="Password" %}
+                          {% render_field form.password1 class="form-control" pattern="^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*\W)(?!.* ).{8,16}$" placeholder="Password" %}
                           <label for="floatingPassword1">Password</label>
                           <div class="valid-feedback">
                             Looks good!
                           </div>
                           <div class="invalid-feedback">
-                              Provide a Password
+                            Password must contain at least one digit, one lowercase letter, one uppercase letter, one special character, and be 8-16 characters long.
                           </div>
                         </div>
                         <div class="form-floating">
-                          {% render_field form.password2 class="form-control" placeholder="Repeat Password" %}
+                          {% render_field form.password2 class="form-control" pattern="^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*\W)(?!.* ).{8,16}$" placeholder="Repeat Password" %}
                           <label for="floatingPassword2">Repeat Password</label>
                           <div class="valid-feedback">
-                            Looks good!
+                            Looks Good!
                           </div>
                           <div class="invalid-feedback">
                               Repeat your Password
@@ -213,6 +215,16 @@
                           </div>
                           <div class="invalid-feedback">
                               Provide your Department(Specialty)
+                          </div>
+                        </div>
+                        <div class="form-floating">
+                          {% render_field profile_form.license_num class="form-control" placeholder="1234567"%}
+                          <label for="{{ profile_form.license_num.id_for_label }}">License Number:</label>
+                          <div class="valid-feedback">
+                            Looks great!
+                          </div>
+                          <div class="invalid-feedback">
+                              Provide your PRC License Number.
                           </div>
                         </div>
                         <div class="form-floating">

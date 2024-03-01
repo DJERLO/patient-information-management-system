@@ -1,6 +1,7 @@
+from django.utils import timezone
 from django.db import models
 from django.contrib.auth.models import User
-from django.core.validators import validate_email
+from django.core.validators import validate_email, RegexValidator
 
 class HospitalStaffAdmin(models.Model):
     staff_id = models.AutoField(primary_key=True)  
@@ -14,6 +15,10 @@ class HospitalStaffAdmin(models.Model):
     @property
     def get_name(self):
         return f"{self.user.first_name} {self.user.last_name}"
+
+    @property
+    def get_staff_id(self):
+        return self.staff_id
 
     @property
     def get_id(self):
@@ -54,9 +59,15 @@ class Doctor(models.Model):
 
     user=models.OneToOneField(User,on_delete=models.CASCADE)
     address = models.CharField(max_length=255, blank=False, null=False)
-    mobile = models.CharField(max_length=20,blank=False, null=False)
+    mobile_validator = RegexValidator(regex=r'(^(\+)(\d){12}$)|(^\d{11}$)', message= 'Provide a valid Contact Number (e,g: 09172464146 or +639172464146)')
+    mobile = models.CharField(max_length=20, validators=[mobile_validator], blank=False, null=False)
     department= models.CharField(max_length=50, choices=departments)
     status = models.IntegerField(choices=STATUS_CHOICES, default=STATUS_ONHOLD)
+    
+    # New field for license number
+    license_num_validator = RegexValidator(regex=r'^\d{7}$', message="License number must be 7 digits.")
+    license_num = models.CharField(max_length=7, validators=[license_num_validator])
+    
     profile_pic = models.ImageField(blank=True, null=True, upload_to='profile_pic/DoctorProfilePic/')
    
 
@@ -83,6 +94,10 @@ class Doctor(models.Model):
     @property
     def get_department(self):
         return self.department
+    
+    @property
+    def get_licenseNum(self):
+        return self.license_num
     
     @property
     def get_assigned_doctor(self):
@@ -182,6 +197,35 @@ class Appointment(models.Model):
 
     def __str__(self):
         return f'Appointment From {self.doctorName}'
+    
+    
+class Insurance(models.Model):
+    patient = models.OneToOneField(Patient, on_delete=models.CASCADE, null=True, blank=True)
+    insurance_provider = models.CharField(max_length=100, blank=True)
+    policy_number = models.CharField(max_length=100, blank=True)
+    group_number = models.CharField(max_length=100, blank=True)
+    effective_date = models.DateField(null=True, blank=True)
+    expiration_date = models.DateField(null=True, blank=True)
+    copayment_info = models.CharField(max_length=100, blank=True)
+    status = models.BooleanField(default=True)  # True for active, False for expired
+
+    def save(self, *args, **kwargs):
+        # Calculate today's date
+        today = timezone.now().date()
+
+        # Check if the expiration date is before today's date
+        if self.expiration_date and self.expiration_date < today:
+            self.status = False  # Set status to False (expired)
+        else:
+            self.status = True  # Set status to True (active)
+
+        # Call the original save() method
+        super().save(*args, **kwargs)
+
+
+    def __str__(self):
+        return f"Insurance for {self.patient}"
+
 
 class PatientDischargeDetails(models.Model):
     patientId=models.PositiveIntegerField(null=True)
@@ -201,7 +245,3 @@ class PatientDischargeDetails(models.Model):
     OtherCharge=models.PositiveIntegerField(null=False)
     total=models.PositiveIntegerField(null=False)
 
-
-#Developed By : sumit kumar
-#facebook : fb.com/sumit.luv
-#Youtube :youtube.com/lazycoders
