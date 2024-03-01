@@ -35,7 +35,7 @@ Welcome to the Patient Information Management System (PIMS). This project is ded
 
 ## Drawbacks
 - Lack of Admin Validation (Upcoming Addition)
-- No Sessions Exp
+- No Sessions Timeouts 
 
 ## Requirements and Installation Instructions
 
