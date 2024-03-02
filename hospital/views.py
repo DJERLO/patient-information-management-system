@@ -19,6 +19,8 @@ from django.utils import timezone
 from . import forms
 from django.middleware.csrf import get_token
 from django.shortcuts import get_object_or_404
+from datetime import date
+
 
 #   REST API Instances
 from rest_framework import generics
@@ -292,6 +294,7 @@ def patient_signup_view(request):
                     doctor = models.Doctor.objects.get(user_id=assigned_doctor_id)
                     patient.assigned_doctor_id = assigned_doctor_id
                     patient.assigned_doctor = str(doctor)
+                    patient.admit_date = date.today()
                 except models.Doctor.DoesNotExist:
                     messages.error(request, "Invalid doctor ID provided")
                     return render(request, 'hospital/patientsignup.html', {'userForm': userForm, 'patientForm': patientForm})

@@ -13,7 +13,7 @@
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
-
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 
 
@@ -457,7 +457,7 @@
               <div class="modal-body d-flex flex-column align-items-center">
                 <img id="preview" class="border border-dark rounded-circle mb-3" src="{% if patient.profile_pic %}{{ patient.profile_pic.url }}{% else %}{% static 'images/adminpropic.png' %}{% endif %}" alt="Profile Pic" width="150px" height="150px"/>
                 <form id="profilePicForm" method="post" enctype="multipart/form-data" action="/patient-change-profile-pic" class="w-100">
-                  {% csrf_token %}
+                  {% csrf_token %}  
                   <input type="hidden" name="user_id" value="{{ request.user.id }}">
                   <input type="file" name="profile_pic" id="profilePicInput" onchange="previewImage(this)" class="form-control mb-3" placeholder="No file chosen">
                   <center><button type="submit" class="btn btn-primary">Save Changes</button></center>

@@ -16,8 +16,6 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   
-
-
   <style media="screen">
     a:link {
       text-decoration: none;
@@ -594,7 +592,7 @@
         event.preventDefault(); // Prevent the default form submission
 
         // Get the form data
-        let formData = new FormData(this);
+        let formData = new FormData(document.getElementById('profilePicForm'));
 
         // Send a POST request to the server
         fetch('/doctor-change-profile-pic/', {

@@ -13,6 +13,7 @@ class HospitalStaffAdmin(models.Model):
     email = models.EmailField(validators=[validate_email], blank=False, null=False)
 
     @property
+
     def get_name(self):
         return f"{self.user.first_name} {self.user.last_name}"
 
@@ -117,7 +118,7 @@ class Patient(models.Model):
     address = models.CharField(max_length=100)
     mobile = models.CharField(max_length=20)
     status = models.BooleanField(default=False)
-    admit_date = models.DateField(auto_now=True)
+    admit_date = models.DateField(auto_now=False)
     profile_pic = models.ImageField(upload_to='profile_pic/PatientProfilePic/', null=True, blank=True)
     
     # Change assigned_doctor_id to reference user_id of hospital_doctor table
@@ -135,6 +136,10 @@ class Patient(models.Model):
     @property
     def get_id(self):
         return self.user.id
+    
+    @property
+    def get_admission_date(self):
+        return self.admit_date
     
     @property
     def get_gender(self):
