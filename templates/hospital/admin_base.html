@@ -32,7 +32,6 @@
       color: white;
     }
 
-
     /*---------------------------------------
        Social section
     -----------------------------------------*/
@@ -177,6 +176,7 @@
       body {
         padding-left: 90px;
       }
+      
       .menu {
         width: 90px;
         overflow-y: visible;
@@ -425,8 +425,8 @@
             </a>
         </li>
         <li tabindex="0" id="djangoAdminIcon" class="icon-admin nav-item">
-            <a class="nav-link text-white" href="/admin/">
-                <span>Admin</span>
+            <a class="nav-link text-white" href="/admin-panel">
+                <span>Staff</span>
             </a>
         </li>
         <li tabindex="0" id="adminDoctorIcon" class="icon-customers nav-item {% if 'doctor' in request.path %}active{% endif %}">
@@ -476,7 +476,7 @@
     <nav class="navbar navbar-expand-md navbar-dark fixed-top" style="background:#337AB7;">
         <div class="container-fluid">
             <a href="/admin-dashboard" class="navbar-brand">HOSPITAL MANAGEMENT</a>
-            <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+            <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse justify-content-end" id="navbarCollapse">
@@ -491,7 +491,7 @@
             </div>
         </div>
     </nav>
-  </div>
+</div>
     <!-- nav end -->
 
     <br><br>
@@ -509,8 +509,8 @@
     <!-- content end -->
     
     <br><br><br><br>
-    {% include 'hospital/footer.html' %}
     
+  {% include 'hospital/footer.html' %}    
 </main>
 </body>
 
@@ -543,7 +543,7 @@
         
         // Admin Administrative Icon
         document.getElementById("djangoAdminIcon").addEventListener("click", function() {
-            window.location.href = "/admin/";
+            window.location.href = "/admin-panel";
         });
         
     });

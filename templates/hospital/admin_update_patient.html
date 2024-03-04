@@ -50,7 +50,7 @@
 
 </head>
 <br><br>
-<form method="post" enctype="multipart/form-data">
+<form method="post" enctype="multipart/form-data" novalidate>
   {% csrf_token %}
   <div class="container register-form">
     <div class="form">
@@ -73,13 +73,19 @@
           <img id="preview" src="{{patientForm.initial.profile_pic.url}}" alt="Preview" style="max-width: 100%; max-height: 9.5em;">
         </center>
         <div class="row">
+          <div class="form-group">
+            <label for="{{ patientForm.profile_pic.id_for_label }}">Profile Picture:</label>
+            {% render_field patientForm.profile_pic class="form-control" onchange="previewImage(this)" %}
+          </div>
+        </div>
+        <div class="row">
           <div class="col-md-6">
             <div class="form-group">
               <label for="{{ patientForm.assigned_doctor_id.id_for_label }}">Update Doctor:</label>
               {% render_field patientForm.assigned_doctor_id class="form-control" placeholder="Doctor" %}
             </div>
             <div class="form-group">
-              <label for="{{ patientForm.symptoms.id_for_label }}">Symptoms:</label>
+              <label for="{{ patientForm.symptoms.id_for_label }}">Change Symptoms:</label>
               {% render_field patientForm.symptoms class="form-control" placeholder="Symptoms" %}
             </div>
             <div class="form-group">
@@ -100,16 +106,13 @@
             </div>
           </div>
           <div class="col-md-6">
-            <div class="form-group">
-              <label for="{{ patientForm.profile_pic.id_for_label }}">Profile Picture:</label>
-              {% render_field patientForm.profile_pic class="form-control" onchange="previewImage(this)" %}
-            </div>
+            
             <div class="form-group">
               <label for="{{ userForm.username.id_for_label }}">Username:</label>
               {% render_field userForm.username class="form-control" placeholder="Username" %}
             </div>
             <div class="form-group">
-              <label for="{{ userForm.password.id_for_label }}">Change Password:</label>
+              <label for="{{ userForm.password.id_for_label }}">Reset Password:</label>
               {% render_field userForm.password class="form-control" placeholder="Reset Password" %}
             </div>
             <div class="form-group">

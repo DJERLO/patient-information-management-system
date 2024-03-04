@@ -11,9 +11,9 @@ class HospitalStaffAdmin(models.Model):
     address = models.CharField(max_length=40, blank=False, null=False)
     mobile = models.CharField(max_length=20, null=True, blank=False)
     email = models.EmailField(validators=[validate_email], blank=False, null=False)
-
+    status = models.BooleanField(default=False)
+    
     @property
-
     def get_name(self):
         return f"{self.user.first_name} {self.user.last_name}"
 

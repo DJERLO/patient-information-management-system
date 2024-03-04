@@ -71,7 +71,6 @@
   <form method="post">
     {% csrf_token %}
     <div class="container register-form">
-      
       <div class="form">
         <div class="note">
           <p>Staff Login Page</p>
@@ -87,19 +86,18 @@
           {% endfor %}
           
           <div class="row">
-            
-            <div class="col-md-6">
+            <div class="col-md-12">
               <div class="form-group">
                 {% render_field form.username class="form-control" placeholder="Username" name="Username" %}
               </div>
             </div>
-            
-            <div class="col-md-6">
+          </div>
+          <div class="row">
+            <div class="col-md-12">
               <div class="form-group">
                 {% render_field form.password class="form-control" placeholder="Password" name="Password" %}
               </div>
             </div>
-            
           </div>
               <center><button type="submit" class="btnSubmit">Login</button></center>
           <div class="text-center">Do not have an account? <a href="adminsignup">Signup here</a></div>

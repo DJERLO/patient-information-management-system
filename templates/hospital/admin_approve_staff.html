@@ -3,40 +3,35 @@
 {% load static %}
 
 <head>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <link rel="stylesheet" href="//cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
   <script src="//cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
-  <style>
+  
+  <style media="screen">
     a:link {
       text-decoration: none;
     }
 
     h6 {
       text-align: center;
-      font-size: 1.2em;
     }
 
     .row {
       margin: 10px auto;
     }
 
-    table{
-      width: 100%;
-      table-layout: fixed;
-    }
-
     .table-responsive {
       text-wrap: wrap;
-      table-layout: fixed;
+      
     }
 
-    .view-doctor-panel{
+    .view-doctors-applied-panel{
       width: 100%;
-      height: 100%;
+      height: 100vh;
       position: relative;
       margin: 1px 1px 1px 1px;
+      text-align: start;
     }
 
     /* Media Query for smaller screens */
@@ -70,39 +65,38 @@
   </style>
 </head>
 <br><br>
-<div class="container-fluid">
+<div class="view-doctors-applied-panel">
   <div class="card border border-dark">
     <div class="card-header bg-primary text-white">
-      <h6 class="card-title">Doctors</h6>
+      <h6 class="card-title">Staff Needs Approval</h6>
     </div>
-    <div class="table-responsive p-4">
-      <table class="table table-hover py-3" id="dev-table">
-        <thead class="table-dark">
-          <tr>
-            <th>Name</th>
-            <th>Contact</th>
-            <th>Address</th>
-            <th>Department</th>
-            <th>View</th>
-            <th>Update</th>
-            <th>Delete</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for d in doctors %}
-          <tr>
-            
-            <td>{{ d.get_name }}</td>
-            <td>{{ d.mobile }}</td>
-            <td>{{ d.address }}</td>
-            <td>{{ d.department }}</td>
-            <td><a class="btn btn-primary btn-sm" href="{% url 'admin-doctor-details' d.id %}"><i class="bi bi-eye"></i></a></td>
-            <td><a class="btn btn-secondary btn-sm" href="{% url 'update-doctor' d.id  %}"><i class="bi bi-pencil"></i></a></td>
-            <td><a class="btn btn-danger btn-sm delete-btn" href="{% url 'delete-doctor-from-hospital' d.id  %}"><i class="bi bi-trash"></i></a></td>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
+    <div class="card-body">
+      <div class="table-responsive p-4">
+        <table class="table table-hover py-3" id="dev-table">
+          <thead class="table-dark">
+            <tr>
+              <th>Name</th>
+              <th>Contact</th>
+              <th>Address</th>
+              <th>View</th>
+              <th>Approve</th>
+              <th>Reject</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for a in admins %}
+            <tr>
+              <td>{{ a.get_name }}</td>
+              <td>{{ a.mobile }}</td>
+              <td>{{ a.address }}</td>
+              <td><a class="btn btn-primary btn-sm" href="{% url 'admin-staff-details' a.user_id %}"><i class="bi bi-eye"></i></a></td>
+              <td><a class="btn btn-success btn-sm" href="{% url 'approve-staff' a.user_id  %}"><i class="bi bi-check"></i></a></td>
+              <td><a class="btn btn-danger btn-sm delete-btn" href="{% url 'staff-delete' a.user_id  %}"><i class="bi bi-x"></i></a></td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
 </div>
@@ -115,12 +109,12 @@
               const url = this.getAttribute('href');
               Swal.fire({
                   title: 'Are you sure?',
-                  text: 'You are about to delete this doctor.',
+                  text: 'You are about to reject this Staff?.',
                   icon: 'warning',
                   showCancelButton: true,
                   confirmButtonColor: '#3085d6',
                   cancelButtonColor: '#d33',
-                  confirmButtonText: 'Yes, delete it!'
+                  confirmButtonText: 'Yes, reject it!'
               }).then((result) => {
                   if (result.isConfirmed) {
                       window.location.href = url;
@@ -129,10 +123,7 @@
           });
       });
   });
-
-  function callDoctor(number) {
-        window.location.href = "tel:" + number;
-    }
   </script>
+
 
 {% endblock content %}

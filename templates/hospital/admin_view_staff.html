@@ -22,14 +22,10 @@
       margin: 10px auto;
     }
 
-    table{
-      width: 100%;
-      table-layout: fixed;
-    }
 
     .table-responsive {
       text-wrap: wrap;
-      table-layout: fixed;
+      
     }
 
     .view-doctor-panel{
@@ -73,7 +69,7 @@
 <div class="container-fluid">
   <div class="card border border-dark">
     <div class="card-header bg-primary text-white">
-      <h6 class="card-title">Doctors</h6>
+      <h6 class="card-title">Staffs</h6>
     </div>
     <div class="table-responsive p-4">
       <table class="table table-hover py-3" id="dev-table">
@@ -82,23 +78,18 @@
             <th>Name</th>
             <th>Contact</th>
             <th>Address</th>
-            <th>Department</th>
             <th>View</th>
-            <th>Update</th>
             <th>Delete</th>
           </tr>
         </thead>
         <tbody>
-          {% for d in doctors %}
+          {% for a in admins %}
           <tr>
-            
-            <td>{{ d.get_name }}</td>
-            <td>{{ d.mobile }}</td>
-            <td>{{ d.address }}</td>
-            <td>{{ d.department }}</td>
-            <td><a class="btn btn-primary btn-sm" href="{% url 'admin-doctor-details' d.id %}"><i class="bi bi-eye"></i></a></td>
-            <td><a class="btn btn-secondary btn-sm" href="{% url 'update-doctor' d.id  %}"><i class="bi bi-pencil"></i></a></td>
-            <td><a class="btn btn-danger btn-sm delete-btn" href="{% url 'delete-doctor-from-hospital' d.id  %}"><i class="bi bi-trash"></i></a></td>
+            <td>{{ a.get_name }}</td>
+            <td>{{ a.mobile }}</td>
+            <td>{{ a.address }}</td>
+            <td><a class="btn btn-primary btn-sm" href="{% url 'admin-staff-details' a.user_id  %}"><i class="bi bi-eye"></i></a></td>
+            <td><a class="btn btn-danger btn-sm delete-btn" href="{% url 'staff-delete' a.user_id  %}"><i class="bi bi-trash"></i></a></td>
           </tr>
           {% endfor %}
         </tbody>
@@ -115,7 +106,7 @@
               const url = this.getAttribute('href');
               Swal.fire({
                   title: 'Are you sure?',
-                  text: 'You are about to delete this doctor.',
+                  text: 'You are about to delete this Staff?.',
                   icon: 'warning',
                   showCancelButton: true,
                   confirmButtonColor: '#3085d6',
@@ -129,10 +120,6 @@
           });
       });
   });
-
-  function callDoctor(number) {
-        window.location.href = "tel:" + number;
-    }
   </script>
 
 {% endblock content %}

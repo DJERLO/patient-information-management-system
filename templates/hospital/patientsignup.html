@@ -97,7 +97,7 @@
   <br>
   <br>
 
-  <form class="need-validation" method="post" enctype="multipart/form-data">
+  <form class="was-validated" method="post" enctype="multipart/form-data" novalidate>
     {% csrf_token %}
     <div class="container register-form">
         <div class="form">
@@ -107,18 +107,34 @@
             
             <div class="form-content">
                 <!-- Alert Messages -->
-                {% if messages %}
-                <div class="alert alert-dismissible {% if messages.tags %}alert-{{ messages.tags }}{% endif %}" role="alert">
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    {% for message in messages %}
-                    {{ message }}
-                    {% endfor %}
-                </div>
-                {% endif %}
+                <div class="alert-container">
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                {{ message }}
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                  </div>
                 <center>
                     <img id="preview" src="{% static 'images/profile.webp' %}" alt="Preview" style="max-width: 100%; max-height: 9.5em;">
                 </center>
                 <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            {% render_field patientForm.profile_pic class="form-control mb-1" onchange="previewImage(this)" %}
+                            <div class="invalid-feedback">
+                                Please upload your profile picture.
+                            </div>
+                            <div class="valid-feedback">
+                                Looks nice!
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="col-md-6">
                         <div class="form-floating">
                             {% render_field patientForm.assigned_doctor_id class="form-control" placeholder="Doctor" %}
@@ -181,16 +197,8 @@
                             </div>
                         </div>
                     </div>
+                    
                     <div class="col-md-6">
-                        <div class="form-group">
-                            {% render_field patientForm.profile_pic class="form-control mb-1" onchange="previewImage(this)" %}
-                            <div class="invalid-feedback">
-                                Please upload your profile picture.
-                            </div>
-                            <div class="valid-feedback">
-                                Looks nice!
-                            </div>
-                        </div>
                         <div class="form-floating">
                             {% render_field userForm.username class="form-control" placeholder="Username" %}
                             <label for="floatingUsername">Username:</label>
@@ -202,10 +210,20 @@
                             </div>
                         </div>
                         <div class="form-floating">
-                            {% render_field userForm.password class="form-control" placeholder="Password" %}
+                            {% render_field userForm.password1 class="form-control" placeholder="Password" %}
                             <label for="floatingPassword">Password:</label>
                             <div class="invalid-feedback">
-                                Please provide a password.
+                                Password must have a digit, lowercase letter, uppercase letter, special character
+                            </div>
+                            <div class="valid-feedback">
+                                Looks good!
+                            </div>
+                        </div>
+                        <div class="form-floating">
+                            {% render_field userForm.password2 class="form-control" placeholder="Repeat Password" %}
+                            <label for="floatingPassword">Repeat Password:</label>
+                            <div class="invalid-feedback">
+                                Repeat your Password
                             </div>
                             <div class="valid-feedback">
                                 Looks good!

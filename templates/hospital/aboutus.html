@@ -8,10 +8,25 @@
   <title>About Us</title>
   <link rel="icon" type="image/x-icon" href={% static "images/favicon.ico"%}>
   <style media="screen">
+    .blur-background {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background-image: url('{% static "images/back.jpg" %}');
+      background-size: cover;
+      background-repeat: no-repeat;
+      filter: blur(3px); /* Adjust the blur amount as needed */
+      z-index: -1; /* Ensure the blur layer is behind other content */
+    }
+    
     .aboutus {
       text-align: center;
       margin-top: 0px;
       margin-bottom: 0px;
+      width: 100vw;
+      height: 100vh;
     }
 
     .text-content{
@@ -115,7 +130,7 @@
 
 <body>
   {% include "hospital/navbar.html" %}
-  <br><br><br><br>
+  <br><br><br>
   <center>
     <h3 class='alert alert-success' style="margin-bottom:0px;">About Us!</h3>
   </center>

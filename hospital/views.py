@@ -238,8 +238,6 @@ def doctor_signup_view(request):
             messages.success(request, "User registered successfully!")
             return HttpResponseRedirect('doctorlogin')
         else:
-            print("Doctor Form Errors:", doctorForm.errors)
-            print("Profile Form Errors:", profile_form.errors)
             for field, errors in doctorForm.errors.items():
                 for error in errors:
                     messages.error(request, f"{error}")
@@ -278,7 +276,7 @@ def patient_signup_view(request):
 
         if userForm.is_valid() and patientForm.is_valid():
             user = userForm.save(commit=False)
-            user.set_password(userForm.cleaned_data['password'])  # Set password for the user
+            user.set_password(userForm.cleaned_data['password1'])  # Set password for the user
             user.save()
             
             patient = patientForm.save(commit=False)
@@ -358,7 +356,11 @@ from django.http import HttpResponseRedirect
 
 def afterlogin_view(request):
     if is_admin(request.user):
-        return redirect('admin-dashboard')
+        account_approval = models.HospitalStaffAdmin.objects.filter(user_id=request.user.id, status=True).exists()
+        if account_approval:
+            return redirect('admin-dashboard')
+        else:
+            return render(request, 'hospital/admin_wait_for_approval.html')
     elif is_doctor(request.user):
         account_approval = models.Doctor.objects.filter(user_id=request.user.id, status__in=[models.Doctor.STATUS_AVAILABLE, models.Doctor.STATUS_NOTAVAILABLE]).exists()
         if account_approval:
@@ -451,7 +453,6 @@ from django.db.models import Q
 @login_required(login_url='adminlogin')
 @user_passes_test(is_admin)
 def admin_dashboard_view(request):
-    
     #for both table in admin dashboard
     doctors=models.Doctor.objects.all().order_by('-id')
     patients=models.Patient.objects.all().order_by('-id')
@@ -488,8 +489,83 @@ def admin_dashboard_view(request):
     }
     return render(request,'hospital/admin_dashboard.html',context=mydict)
 
-
 # this view for sidebar click on admin page
+@login_required(login_url='adminlogin')
+@user_passes_test(is_admin)
+def admin_panel_view(request):
+    admin = models.HospitalStaffAdmin.objects.get(user_id=request.user.id)
+    context = {
+        'admin': admin,
+    }
+    return render(request,'hospital/admin_panel.html', context)
+
+
+login_required(login_url='adminlogin')
+@user_passes_test(is_admin)
+def admin_view_staff(request):
+    admin = models.HospitalStaffAdmin.objects.get(user_id=request.user.id)
+    admins = models.HospitalStaffAdmin.objects.all().filter(status=True)
+    context = {
+        'admin': admin,
+        'admins': admins,
+    }
+    return render(request,'hospital/admin_view_staff.html', context)
+
+@login_required(login_url='adminlogin')
+@user_passes_test(is_admin)
+def admin_staff_details_view(request, pk):
+    # Get the patient object
+    admins = get_object_or_404(models.HospitalStaffAdmin, user_id=pk)
+    admin = models.HospitalStaffAdmin.objects.get(user_id=request.user.id)
+    
+    # Get the associated user object
+    user = admins.user
+    
+    # Prepare the context dictionary
+    context = {
+        "user": user,
+        "admin": admin,
+        "admins": admins,
+    }
+
+    return render(request, 'hospital/admin_staff_details.html', context)
+
+@login_required(login_url='adminlogin')
+@user_passes_test(is_admin)
+def approve_staff_view(request,pk):
+    admin=models.HospitalStaffAdmin.objects.get(user_id=pk)
+    admin.status= True
+    admin.save()
+    return redirect(reverse('admin-approve-staff'))
+
+@login_required(login_url='adminlogin')
+@user_passes_test(is_admin)
+def delete_staff_view(request,pk):
+    admin=models.HospitalStaffAdmin.objects.get(user_id=pk)
+    user=models.User.objects.get(id=pk)
+    #send email soon
+    user.delete()
+    admin.delete()
+    return redirect('admin-view-staff')
+
+@login_required(login_url='adminlogin')
+@user_passes_test(is_admin)
+def admin_approve_staff_view(request):
+    #those whose approval are needed
+    admin = models.HospitalStaffAdmin.objects.get(user_id=request.user.id)
+    admins=models.HospitalStaffAdmin.objects.all().filter(status=False)
+    context = {
+        'admins':admins,
+        'admin': admin,
+    }
+    return render(request,'hospital/admin_approve_staff.html', context)
+
+
+
+#def admin-add-staff
+#def admin-approve-staff
+#def admin-staff-specialization
+
 @login_required(login_url='adminlogin')
 @user_passes_test(is_admin)
 def admin_doctor_view(request):
@@ -639,8 +715,8 @@ def approve_doctor_view(request,pk):
 def admin_doctor_details_view(request, id):
     # Get the patient object
     admin = models.HospitalStaffAdmin.objects.get(user_id=request.user.id)
-    doctor = models.Doctor.objects.get(id=id)
-    #doctor = get_object_or_404(models.Doctor, id=id)
+
+    doctor = get_object_or_404(models.Doctor, id=id)
     
     # Get the associated user object
     user = doctor.user
@@ -761,7 +837,7 @@ def update_patient_view(request, pk):
         patientForm = forms.UpdatePatientForm(request.POST, request.FILES, instance=patient)
 
         if userForm.is_valid() and patientForm.is_valid():
-            user = userForm.save()
+            user = userForm.save(commit=False)
             email = request.POST.get('email')
             user.email = email
             # Check if a new password is provided in the form
@@ -1086,7 +1162,7 @@ def reject_appointment_view(request,pk):
 def doctor_dashboard_view(request):
     #for three cards
     patientcount=models.Patient.objects.all().filter(status=True,assigned_doctor_id=request.user.id).count()
-    appointmentcount=models.Appointment.objects.all().filter(status=models.Appointment.ACCEPTED ,doctorId=request.user.id).count()
+    appointmentcount=models.Appointment.objects.all().filter(status=models.Appointment.ACCEPTED, doctorId=request.user.id).count()
     patientdischarged=models.PatientDischargeDetails.objects.all().distinct().filter(assignedDoctorName=request.user.first_name).count()
 
     #for table in doctor dashboard

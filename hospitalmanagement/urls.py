@@ -48,13 +48,23 @@ urlpatterns = [
     path('logout', LogoutView.as_view(template_name='hospital/index.html'),name='logout'),
     
 
-
     path('admin-dashboard', views.admin_dashboard_view,name='admin-dashboard'),
+
+    path('admin-panel', views.admin_panel_view,name='admin-panel'),
+    path('admin-view-staff', views.admin_view_staff,name='admin-view-staff'),
+    path('admin-approve-staff', views.admin_approve_staff_view,name='admin-approve-staff'),
+    
+    path('view/staff-details/<int:pk>/', views.admin_staff_details_view, name='admin-staff-details'),
+    path('approve-staff/<int:pk>', views.approve_staff_view,name='approve-staff'),
+    path('staff-delete/<int:pk>', views.delete_staff_view,name='staff-delete'),
+
+
+
 
     path('admin-doctor', views.admin_doctor_view,name='admin-doctor'),
     path('admin-view-doctor', views.admin_view_doctor_view,name='admin-view-doctor'),
     path('view/doctor-details/<int:id>/', views.admin_doctor_details_view, name='admin-doctor-details'),
-    
+
     path('delete-doctor-from-hospital/<int:pk>', views.delete_doctor_from_hospital_view,name='delete-doctor-from-hospital'),
     path('update-doctor/<int:pk>', views.update_doctor_view,name='update-doctor'),
     path('admin-add-doctor', views.admin_add_doctor_view,name='admin-add-doctor'),

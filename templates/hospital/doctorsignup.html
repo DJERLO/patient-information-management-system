@@ -43,7 +43,7 @@
 
     .form-control {
       border-radius: 1.5rem;
-      margin: 4px 0 0 0;
+      margin: 4px 0 4px 0;
       font-size: 12.8px;
     }
 
@@ -99,7 +99,7 @@
   <br>
   <br>
 
-  <form class="need-validation" method="post" enctype="multipart/form-data">
+  <form class="was-validated" method="post" enctype="multipart/form-data" novalidate>
     {% csrf_token %}
     <div class="container register-form">
         <div class="form">
@@ -169,7 +169,7 @@
                             Looks good!
                           </div>
                           <div class="invalid-feedback">
-                            Password must contain at least one digit, one lowercase letter, one uppercase letter, one special character, and be 8-16 characters long.
+                              Password must have a digit, lowercase letter, uppercase letter, special character
                           </div>
                         </div>
                         <div class="form-floating">
@@ -199,7 +199,7 @@
                           <img class="mb-1" id="preview" src="{% static 'images/profile.webp' %}" alt="Preview" style="max-width: 100%; max-height: 150px; display: block;">
                         </center>
                         <div class="form-group">
-                          {% render_field profile_form.profile_pic class="form-control" onchange="previewImage(this)" %}
+                          {% render_field profile_form.profile_pic class="form-control form-control-lg" onchange="previewImage(this)" %}
                           <div class="valid-feedback">
                             Looks nice!
                           </div>
