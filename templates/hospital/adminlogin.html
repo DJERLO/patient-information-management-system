@@ -9,6 +9,7 @@
   <title>PIMS - Staff Login Page</title>
   <link rel="icon" type="image/x-icon" href={% static "images/favicon.ico"%}>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
   <script src="https://code.jquery.com/jquery-3.7.1.slim.min.js" integrity="sha256-kmHvs0B+OpCW5GVHUNjv9rOmY0IvSIRcf7zGUDTDQM8=" crossorigin="anonymous"></script>
   <style type="text/css">
@@ -16,13 +17,9 @@
       color: #aa082e;
       background-color: #b6bde7;
       font-family: 'Roboto', sans-serif;
-      overflow-x: hidden;
-      height: 100vh;
+      font-size: 1rem;
     }
 
-    form{
-      padding: 10% 10% 10% 10%
-    }
 
     a:link {
       text-decoration: none;
@@ -60,6 +57,36 @@
       background: #0062cc;
       color: #fff;
     }
+
+    /* Media query for larger devices */
+    @media (min-width: 768px) {
+      body {
+        font-size: 1.1rem; /* Adjust font size for larger devices */
+      }
+    }
+
+    /* Media query for smaller devices */
+    @media (max-width: 767px) {
+      body {
+        font-size: 0.9rem; /* Adjust font size for smaller devices */
+      }
+      .btnSubmit {
+        width: 50%;
+        padding: 1%;
+      }
+
+      .form-control {
+        width: 50%;
+        border-radius: 1.5rem;
+    }
+      
+      #preview{
+        flex-basis: content;
+        aspect-ratio: 1/1;
+        margin-bottom: 1.2rem;
+      }
+    }
+
   </style>
 </head>
 
@@ -85,17 +112,20 @@
           </div>
           {% endfor %}
           
-          <div class="row">
+          <div class="row d-flex flex-column">
             <div class="col-md-12">
               <div class="form-group">
+                <label for="username">Username:</label>
                 {% render_field form.username class="form-control" placeholder="Username" name="Username" %}
               </div>
             </div>
-          </div>
-          <div class="row">
             <div class="col-md-12">
-              <div class="form-group">
-                {% render_field form.password class="form-control" placeholder="Password" name="Password" %}
+              <label for="username">Password:</label>
+              <div class="form-group input-group">
+                {% render_field form.password class="form-control" id="passwordField" placeholder="Password" name="Password" %}
+                <button class="btn btn-outline-primary" type="button" id="togglePassword">
+                  <i class="bi bi-eye-fill"></i>
+                </button>
               </div>
             </div>
           </div>
@@ -110,6 +140,18 @@
         $(".alert").fadeTo(3000, 0).slideUp(300, function(){
             $(this).remove();
         });
+    });
+
+    document.addEventListener("DOMContentLoaded", function() {
+      const passwordField = document.getElementById('passwordField');
+      const togglePassword = document.getElementById('togglePassword');
+      const eyeIcon = document.querySelector('i');
+  
+      togglePassword.addEventListener('click', function() {
+        const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
+        passwordField.setAttribute('type', type);
+        this.innerHTML = type === 'password' ? '<i class="bi bi-eye-fill"></i>' : '<i class="bi bi-eye-slash-fill"></i>';
+      });
     });
 </script>
   <br><br><br>

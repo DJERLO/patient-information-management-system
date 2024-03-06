@@ -96,6 +96,13 @@
       height: 100vh;
     }
 
+    img, #preview{
+      -webkit-user-select: none; /* Safari */
+      -ms-user-select: none; /* IE 10 and IE 11 */
+      user-select: none; /* Standard syntax */
+      pointer-events: none; /* Disable mouse events on the image */
+    }
+
     .fixed-top{
       position: absolute;
     }
@@ -110,6 +117,9 @@
       z-index: 5;
       outline: none;
       overflow-y: hidden;
+      -webkit-user-select: none; /* Safari */
+      -ms-user-select: none; /* IE 10 and IE 11 */
+      user-select: none; /* Standard syntax */
     }
     .menu .avatar {
       background: rgba(0, 0, 0, 0.1);
@@ -220,6 +230,7 @@
         left: 80px;
         transform: translate3d(-15px, -50%, 0);
         transition: all 0.15s ease-in-out;
+        
       }
       .menu ul li span:before {
         content: '';
@@ -424,11 +435,13 @@
                 <span>Dashboard</span>
             </a>
         </li>
-        <li tabindex="0" id="djangoAdminIcon" class="icon-admin nav-item">
+        {% if user.is_superuser %}
+          <li tabindex="0" id="djangoAdminIcon" class="icon-admin nav-item">
             <a class="nav-link text-white" href="/admin-panel">
                 <span>Staff</span>
             </a>
-        </li>
+          </li>
+        {% endif %}
         <li tabindex="0" id="adminDoctorIcon" class="icon-customers nav-item {% if 'doctor' in request.path %}active{% endif %}">
             <a class="nav-link text-white" href="/admin-doctor">
                 <span>Doctor</span>
@@ -482,7 +495,7 @@
             <div class="collapse navbar-collapse justify-content-end" id="navbarCollapse">
                 <ul class="navbar-nav">
                     <li class="nav-item">
-                        <form id="logoutForm" action="{% url 'logout' %}" method="post">
+                        <form id="logoutForm" action="{% url 'logout/' %}" method="post">
                             {% csrf_token %}
                             <a href="#" class="nav-link" id="logoutLink">Logout</a>
                         </form>
@@ -541,11 +554,12 @@
           window.location.href = "/admin-appointment";
         });
         
+        {% if user.is_superuser %}
         // Admin Administrative Icon
         document.getElementById("djangoAdminIcon").addEventListener("click", function() {
             window.location.href = "/admin-panel";
         });
-        
+        {% endif %}
     });
 
     function previewImage(input) {

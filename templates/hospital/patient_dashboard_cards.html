@@ -240,24 +240,35 @@
 </head>
   <div class="container-fluid market-updates">
     {% if appointmentStatus == 0 %}
-      <div class="alert alert-info" role="alert">
+      <div class="alert alert-info alert-dismissible fade show" role="alert">
         <center><p>Your appointment request is currently under review.</p></center>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
       </div>
     {% elif appointmentStatus == 1 %}
-      <div class="alert alert-success" role="alert">
+      <div class="alert alert-primary alert-dismissible fade show" role="alert">
         <center><p>Your appointment has been approved!</p></center>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
       </div>
     {% elif appointmentStatus == 2 %}
-      <div class="alert alert-danger" role="alert">
+      <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <center><p>Your appointment has been successfully completed!</p></center>
+        <center><p>If you have any follow-up questions or need further assistance, please feel free to <a class="link-dark" href="/contactus">contact us</a>.</p></center>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+    {% elif appointmentStatus == 3 %}
+      <div class="alert alert-danger alert-dismissible fade show" role="alert">
         <center><p>We regret to inform you that your appointment request has been rejected.</p></center>
         <center><p>If you have any questions or concerns, please feel free to <a class="link-dark" href="/contactus">contact us</a>.</p></center>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
       </div>
     {% else %}
-      <div class="alert alert-info" role="alert">
+      <div class="alert alert-info alert-dismissible fade show" role="alert">
         <center><p>No appointment has been scheduled.</p></center>
         <center><p>Schedule your appointment <a class="link-dark" href="/patient-book-appointment">here</a>.</p></center>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
       </div>
     {% endif %}
+  </div>
 
     <div class="row">
       

@@ -66,8 +66,8 @@
     <div class="card-header bg-primary text-white">
       <h6 class="card-title">Your Appointment Approvals Required</h6>
     </div>
-    <div class="table-responsive">
-      <table class="table table-hover" id="approval-table">
+    <div class="table-responsive p-4">
+      <table class="table table-hover py-3" id="approval-table">
         <thead class="table-dark">
           <tr>
             <th>Date Request</th>
@@ -81,7 +81,7 @@
         <tbody>
           {% for appointment in appointments %}
           <tr>
-            <td>{{ appointment.appointmentDate }}</td>
+            <td>{{ appointment.appointmentDate|date:"F d, Y - g:iA" }}</td>
             <td>{{ appointment.doctorName }}</td>
             <td>{{ appointment.patientName }}</td>
             <td>{{ appointment.description }}</td>

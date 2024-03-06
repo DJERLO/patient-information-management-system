@@ -1,14 +1,13 @@
-{% extends 'hospital/doctor_base.html' %}
+{% extends 'hospital/admin_base.html' %}
 {% block content %}
 {%load static%}
 
 <head>
+  
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.min.css">
   <link rel="stylesheet" href="//cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
   <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
   <script src="//cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
-  
-
   <style media="screen">
     a:link {
       text-decoration: none;
@@ -100,7 +99,6 @@
 
 <script>
   let table = new DataTable('#dev-table');
-
   // Function to handle completion confirmation
   function completeAppointment(appointmentId) {
       // Show confirmation dialog
@@ -120,7 +118,7 @@
                   icon: 'success'
               });
               // Redirect to the URL to complete the appointment
-              window.location.href = `set-completed-appointment/${appointmentId}`;
+              window.location.href = `/completed-appointment-admin/${appointmentId}`;
           }
       });
   }

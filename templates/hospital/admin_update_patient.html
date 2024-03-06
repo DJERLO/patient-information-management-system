@@ -25,7 +25,8 @@
     }
 
     .form-control {
-      border-radius: 1.5rem;
+      border-radius: 10px;
+      margin-bottom: 14px;
     }
 
     .btnSubmit {
@@ -43,8 +44,6 @@
     }
   </style>
 
-  <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
-  <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
   <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
 
@@ -113,7 +112,7 @@
             </div>
             <div class="form-group">
               <label for="{{ userForm.password.id_for_label }}">Reset Password:</label>
-              {% render_field userForm.password class="form-control" placeholder="Reset Password" %}
+              {% render_field userForm.password  class="form-control" placeholder="Reset Password" %}
             </div>
             <div class="form-group">
               <label for="{{ patientForm.address.id_for_label }}">Address:</label>

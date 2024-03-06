@@ -36,6 +36,7 @@ urlpatterns = [
     
     path('adminlogin', views.adminlogin_view, name='adminlogin'),
     path('adminlogin', LoginView.as_view(template_name='hospital/adminlogin.html')),
+    path('adminlogin', LogoutView.as_view(template_name='hospital/adminlogin.html')), # For is_admin logout
     
     path('doctorlogin', views.doctorlogin_view, name='doctorlogin'),
     path('doctorlogin', LoginView.as_view(template_name='hospital/doctorlogin.html')),
@@ -43,14 +44,15 @@ urlpatterns = [
     path('patientlogin', views.patientlogin_view, name='patientlogin'),
     path('patientlogin', LoginView.as_view(template_name='hospital/patientlogin.html')),
 
+    path('logout', LogoutView.as_view(template_name='hospital/index.html'),name='logout'),
+    path('logout/', views.logout_view, name='logout/'),
 
     path('afterlogin', views.afterlogin_view,name='afterlogin'),
-    path('logout', LogoutView.as_view(template_name='hospital/index.html'),name='logout'),
     
 
     path('admin-dashboard', views.admin_dashboard_view,name='admin-dashboard'),
 
-    path('admin-panel', views.admin_panel_view,name='admin-panel'),
+    path('admin-panel', views.admin_panel_view, name='admin-panel'),
     path('admin-view-staff', views.admin_view_staff,name='admin-view-staff'),
     path('admin-approve-staff', views.admin_approve_staff_view,name='admin-approve-staff'),
     
@@ -95,7 +97,10 @@ urlpatterns = [
     path('admin-approve-appointment', views.admin_approve_appointment_view,name='admin-approve-appointment'),
     path('approve-appointment/<int:pk>', views.approve_appointment_view,name='approve-appointment'),
     path('reject-appointment/<int:pk>', views.reject_appointment_view,name='reject-appointment'),
-]
+
+    path('admin-status-appointment',views.admin_set_status_appointment_view,name='admin-status-appointment'),
+    path('completed-appointment-admin/<int:pk>', views.set_admin_complete_appointment_view, name='complete-appointment-admin'),
+]   
 
 #---------FOR DOCTOR RELATED URLS-------------------------------------
 urlpatterns +=[

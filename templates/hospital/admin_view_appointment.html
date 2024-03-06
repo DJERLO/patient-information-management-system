@@ -66,7 +66,7 @@
 <div class="view-appointment-panel">
   <div class="card border border-dark">
     <div class="card-header bg-primary text-white">
-      <h6 class="card-title h5">Appointments</h6>
+      <h6 class="card-title h5">Upcoming Appointments</h6>
     </div>
     <div class="card-body">
       <div class="table-responsive p-4">
@@ -83,13 +83,13 @@
           <tbody>
             {% for a in appointments %}
             <tr>
-              <td>{{ a.appointmentDate }}</td>
+              <td>{{ a.appointmentDate|date:"F d, Y : g:iA" }}</td>
               <td>{{ a.doctorName }}</td>
               <td>{{ a.patientName }}</td>
               <td>{{ a.description }}</td>
               <td>
                 {% if a.status == 0 %}
-                  <span class="badge bg-seccondary">Pending</span>
+                  <span class="badge bg-warning text-dark">Pending</span>
                 {% elif a.status == 1 %}
                   <span class="badge bg-primary">Accepted</span>
                 {% elif a.status == 2 %}
@@ -107,7 +107,9 @@
   </div>
 </div>
 <script>
-  let table = new DataTable('#dev-table');
+  let table = new DataTable('#dev-table',{
+    "order": [[0, "desc"]]  // Sort by the first column (index 0) in descending order by default
+  });
 </script>
 
 {% endblock content %}

@@ -138,7 +138,7 @@ class PatientUserForm(forms.ModelForm):
             'last_name': forms.TextInput(attrs={'required': 'required'}),
             'email': forms.EmailInput(attrs={'required': 'required'}),
             'username': forms.TextInput(attrs={'required': 'required'}),
-            'password': forms.PasswordInput(attrs={'required': 'required'}),
+            'password1': forms.PasswordInput(attrs={'required': 'required'}),
         }
 
 class PatientForm(forms.ModelForm):
@@ -203,7 +203,7 @@ class AppointmentForm(forms.ModelForm):
     
     class Meta:
         model=models.Appointment
-        fields=['description','status', 'appointmentDate']
+        fields=['description', 'appointmentDate']
         widgets = {
             'appointmentDate': forms.DateInput(attrs={'type': 'datetime-local'}),
         }
@@ -242,7 +242,7 @@ class PatientAppointmentForm(forms.ModelForm):
 
     class Meta:
         model = models.Appointment
-        fields = ['description', 'status', 'appointmentDate']
+        fields = ['description', 'appointmentDate']
         widgets = {
             'appointmentDate': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
         }

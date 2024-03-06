@@ -79,7 +79,7 @@
 <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
 <div class="container-fluid">
   <div class="row">
-    <div class="col-md-4 col-xl-4">
+    <div class="col-md-3 col-xl-3">
       <div class="card bg-c-blue order-card">
         <div class="card-block" id="appointmentView">
           <h6 class="m-b-20">View Appointment</h6>
@@ -89,7 +89,7 @@
       </div>
     </div>
 
-    <div class="col-md-4 col-xl-4">
+    <div class="col-md-3 col-xl-3">
       <div class="card bg-c-green order-card">
         <div class="card-block" id="appointmentBook">
           <h6 class="m-b-20">Book Appointment</h6>
@@ -99,12 +99,22 @@
       </div>
     </div>
 
-    <div class="col-md-4 col-xl-4">
+    <div class="col-md-3 col-xl-3">
       <div class="card bg-c-yellow order-card">
         <div class="card-block" id="appointmentApprove">
           <h6 class="m-b-20">Approve Appointment</h6>
           <br>
           <h2 class="text-right"><i class="fas fa-check-circle f-left"></i></h2>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-3 col-xl-3">
+      <div class="card bg-c-pink order-card">
+        <div class="card-block" id="appointmentStatus">
+            <h6 class="m-b-20">Appointment Status</h6>
+          <br>
+          <h2 class="text-right"><i class="fas fa-sync-alt f-left"></i></h2>
         </div>
       </div>
     </div>
@@ -116,6 +126,7 @@
   let appointmentView = document.getElementById("appointmentView")
   let appointmentBook = document.getElementById("appointmentBook")
   let appointmentApprove = document.getElementById("appointmentApprove")
+  let appointmentStatus = document.getElementById("appointmentStatus")
   
   //EventListener
     appointmentView.addEventListener("click", function() {
@@ -129,6 +140,11 @@
   appointmentApprove.addEventListener("click", function() {
       window.location.href = "/admin-approve-appointment";
   });
+
+  appointmentStatus.addEventListener("click", function() {
+    window.location.href = "/admin-status-appointment";
+  });
+
 </script>
 
 <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
