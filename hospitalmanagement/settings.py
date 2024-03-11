@@ -150,10 +150,10 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_USE_TLS = True
 EMAIL_PORT = 587
-EMAIL_HOST_USER = 'cresentyt@gmail.com' 
-EMAIL_HOST_PASSWORD = ''
-EMAIL_RECEIVING_USER = ['cresentyt2@gmail.com']  # email on which you will receive messages sent from website
-DEFAULT_FROM_EMAIL = 'cresentyt@gmail.com'  # Set the default sender email
+EMAIL_HOST_USER = 'jhaicayetano143@gmail.com' 
+EMAIL_HOST_PASSWORD = 'fzqkqnxpuwekowsd'
+EMAIL_RECEIVING_USER = ['juvelyncayetano61@gmail.com']  # email on which you will receive messages sent from website
+DEFAULT_FROM_EMAIL = 'jhaicayetano143@gmail.com'  # Set the default sender email
 EMAIL_LOGGING_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 LOGGING = {

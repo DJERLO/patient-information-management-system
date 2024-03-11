@@ -84,7 +84,7 @@
               <td>{{ p.get_name }}</td>
               <td>{{ p.symptoms }}</td>
               <td>{{ p.mobile }}</td>
-              <td><a class="btn btn-danger btn-sm" href="{% url 'discharge-patient' p.id %}"><i class="bi bi-box-arrow-right"></i></a></td>
+              <td><a class="btn btn-danger btn-sm w-100 h-100" href="{% url 'discharge-patient' p.id %}"><i class="bi bi-box-arrow-right"></i></a></td>
             </tr>
             {% endfor %}
           </tbody>

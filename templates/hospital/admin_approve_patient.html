@@ -93,13 +93,13 @@
               <td>{{ p.mobile }}</td>
               <td>{{ p.address }}</td>
               <td>
-                <a class="btn btn-primary btn-sm" href="{% url 'admin-patient-details' p.id %}"><i class="bi bi-eye"></i></a>
+                <a class="btn btn-primary btn-sm w-100 h-100" href="{% url 'admin-patient-details' p.id %}"><i class="bi bi-eye"></i></a>
               </td>
               <td>
-                <a class="btn btn-success btn-sm" href="{% url 'approve-patient' p.id %}"><i class="bi bi-check"></i></a>
+                <a class="btn btn-success btn-sm w-100 h-100" href="{% url 'approve-patient' p.id %}"><i class="bi bi-check"></i></a>
               </td>
               <td>
-                <a class="btn btn-danger btn-sm delete-btn" href="{% url 'reject-patient' p.id %}"><i class="bi bi-x"></i></a>
+                <a class="btn btn-danger btn-sm w-100 h-100 delete-btn" href="{% url 'reject-patient' p.id %}"><i class="bi bi-x"></i></a>
               </td>
             </tr>
             {% endfor %}

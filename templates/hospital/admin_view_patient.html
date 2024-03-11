@@ -82,7 +82,6 @@
               <th>Address</th>
               <th>View</th>
               <th>Update</th>
-              <th>Delete</th>
             </tr>
           </thead>
           <tbody>
@@ -92,9 +91,8 @@
               <td>{{ p.symptoms }}</td>
               <td>{{ p.mobile }}</td>
               <td>{{ p.address }}</td>
-              <td><a class="btn btn-primary btn-sm" href="{% url 'admin-patient-details' p.id %}"><i class="bi bi-eye"></i></a></td>
-              <td><a class="btn btn-secondary btn-sm" href="{% url 'update-patient' p.id  %}"><i class="bi bi-pencil"></i></a></td>
-              <td><a class="btn btn-danger btn-sm delete-btn" href="{% url 'delete-patient-from-hospital' p.id  %}"><i class="bi bi-trash"></i></a></td>
+              <td><a class="btn btn-primary btn-sm w-100 h-100" href="{% url 'admin-patient-details' p.id %}"><i class="bi bi-eye"></i></a></td>
+              <td><a class="btn btn-secondary btn-sm w-100 h-100" href="{% url 'update-patient' p.id  %}"><i class="bi bi-pencil"></i></a></td>
             </tr>
             {% endfor %}
           </tbody>

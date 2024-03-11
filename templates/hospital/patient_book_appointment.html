@@ -64,7 +64,7 @@
       <div class="form-content">
         {% if messages %}
           {% for message in messages %}
-              <div class="alert alert-{{ messages.tags }}">
+              <div class="alert {{ messages.tags }}" role="alert">
                   {{ message }}
               </div>
           {% endfor %}

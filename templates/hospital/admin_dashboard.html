@@ -86,11 +86,11 @@
                   <td>{{d.department}}</td>
                   <td>{{d.mobile}}</td>
                   {% if d.status == 0 %}
-                  <td><span class="badge bg-primary">On Hold</span></td>
+                  <td><span class="badge bg-primary w-100">On Hold</span></td>
                   {% elif d.status == 1 %}
-                  <td><span class="badge bg-success">Available</span></td>
+                  <td><span class="badge bg-success w-100">Available</span></td>
                   {% elif d.status == 2 %}
-                  <td><span class="badge bg-danger">Not Available</span></td>
+                  <td><span class="badge bg-danger w-100">Not Available</span></td>
                   {% endif %}
                 </tr>
                 {% endfor %}
@@ -183,9 +183,9 @@
                   <td>{{p.get_name}}</td>
                   <td>{{p.mobile}}</td>
                   {% if p.status %}
-                  <td><span class="badge bg-success">Admitted</span></td>
+                  <td><span class="badge bg-success w-100">Admitted</span></td>
                   {% else %}
-                  <td><span class="badge bg-primary">On Hold</span></td>
+                  <td><span class="badge bg-primary w-100">On Hold</span></td>
                   {% endif %}
                 </tr>
                 {% endfor %}
@@ -197,6 +197,7 @@
     </div>
   </div>
 </div>
+
 <script>
   let table1 = new DataTable('#dev-doctor-table');
   let table2 = new DataTable('#dev-patient-table',{

@@ -20,7 +20,9 @@ from . import forms
 from django.middleware.csrf import get_token
 from django.shortcuts import get_object_or_404
 from datetime import date
-
+from django.db.models import Max
+from django.utils.html import strip_tags
+from django.template.loader import render_to_string
 
 #   REST API Instances
 from rest_framework import generics
@@ -63,21 +65,21 @@ def home_view(request):
 def doctor_wait_for_approval(request):
     return render(request, 'hospital/doctor_wait_for_approval.html')
 
-#for showing signup/login button for admin(by sumit)
+#for showing signup/login button for admin
 def adminclick_view(request):
     if request.user.is_authenticated:
         return HttpResponseRedirect('afterlogin')
     return render(request,'hospital/adminclick.html')
 
 
-#for showing signup/login button for doctor(by sumit)
+#for showing signup/login button for doctor
 def doctorclick_view(request):
     if request.user.is_authenticated:
         return HttpResponseRedirect('afterlogin')
     return render(request,'hospital/doctorclick.html')
 
 
-#for showing signup/login button for patient(by sumit)
+#for showing signup/login button for patient
 def patientclick_view(request):
     if request.user.is_authenticated:
         return HttpResponseRedirect('afterlogin')
@@ -100,7 +102,7 @@ def adminlogin_view(request):
             username = form.cleaned_data['username']
             password = form.cleaned_data['password']
 
-            print(f"Attempting login with username: {username}, password: {password}")
+            print("Attempting login with username: {username}")
 
             user = authenticate(request, username=username, password=password)
 
@@ -110,9 +112,6 @@ def adminlogin_view(request):
                 if is_admin(user):
                     login(request, user)
                     return redirect('afterlogin')
-                else:
-                    # User is not an admin or maybe a superuser
-                    return redirect('superadmin')
             else:
                 # Authentication failed
                 messages.error(request, "Invalid username or password.")
@@ -309,7 +308,8 @@ def is_doctor(user):
     return user.groups.filter(name='DOCTOR').exists()
 def is_patient(user):
     return user.groups.filter(name='PATIENT').exists()
-
+def is_superuser(user):
+    return user.is_superuser
 
 #---------AFTER ENTERING CREDENTIALS WE CHECK WHETHER USERNAME AND PASSWORD IS OF ADMIN,DOCTOR OR PATIENT
 
@@ -322,18 +322,42 @@ def afterlogin_view(request):
         if account_approval:
             return redirect('admin-dashboard')
         else:
+            # Sending email notification to admin for account approval
+            admin_email = request.user.email
+            subject = 'Account Approval Required'
+            message = 'Your account is awaiting approval. Please wait for the administrator to approve your account. \n\nBest Regards: The Hospital Management'
+            from_email = settings.EMAIL_HOST_USER  # Update with your sender email
+            to = [admin_email]
+            send_mail(subject, message, from_email, to)
+
             return render(request, 'hospital/admin_wait_for_approval.html')
     elif is_doctor(request.user):
         account_approval = models.Doctor.objects.filter(user_id=request.user.id, status__in=[models.Doctor.STATUS_AVAILABLE, models.Doctor.STATUS_NOTAVAILABLE]).exists()
         if account_approval:
             return redirect('doctor-dashboard')
         else:
+            # Sending email notification to doctor for account approval
+            doctor_email = request.user.email
+            subject = 'Account Approval Required'
+            message = 'Your  account is awaiting approval Doctor. Please wait for the administrator to approve your account. \n\nBest Regards: The Hospital Management'
+            from_email = settings.EMAIL_HOST_USER  # Update with your sender email
+            to = [doctor_email]
+            send_mail(subject, message, from_email, to)
+            
             return render(request, 'hospital/doctor_wait_for_approval.html')
     elif is_patient(request.user):
         account_approval = models.Patient.objects.filter(user_id=request.user.id, status=True).exists()
         if account_approval:
             return redirect('patient-dashboard')
         else:
+            # Sending email notification to patient for account approval
+            patient_email = request.user.email
+            subject = 'Account Approval Required'
+            message = 'Your account is awaiting approval. Please wait for the administrator to approve your account.\n\nBest Regards: The Hospital Management'
+            from_email = settings.EMAIL_HOST_USER  # Update with your sender email
+            to = [patient_email]
+            send_mail(subject, message, from_email, to)
+
             return render(request, 'hospital/patient_wait_for_approval.html')
     else:
         # Use the existing functions to determine the login type
@@ -432,9 +456,9 @@ from django.db.models import Q
 @login_required(login_url='adminlogin')
 @user_passes_test(is_admin)
 def admin_dashboard_view(request):
-    #for both table in admin dashboard
-    doctors=models.Doctor.objects.all().order_by('-id')
-    patients=models.Patient.objects.all().order_by('-id')
+    #for both table in admin dashboard and make sure their accounts is active
+    doctors = models.Doctor.objects.filter(user__is_active=True).order_by('-id')
+    patients = models.Patient.objects.filter(user__is_active=True).order_by('-id')
     #for three cards
     doctorcount = models.Doctor.objects.filter(Q(status=models.Doctor.STATUS_AVAILABLE) | Q(status=models.Doctor.STATUS_NOTAVAILABLE)).count()
     pendingdoctorcount=models.Doctor.objects.all().filter(status=models.Doctor.STATUS_ONHOLD).count()
@@ -477,7 +501,7 @@ def admin_dashboard_view(request):
 
 # this view for sidebar click on admin page
 @login_required(login_url='adminlogin')
-@user_passes_test(is_admin)
+@user_passes_test(is_superuser)
 def admin_panel_view(request):
     admin = models.HospitalStaffAdmin.objects.get(user_id=request.user.id)
     context = {
@@ -487,7 +511,7 @@ def admin_panel_view(request):
 
 
 login_required(login_url='adminlogin')
-@user_passes_test(is_admin)
+@user_passes_test(is_superuser)
 def admin_view_staff(request):
     admin = models.HospitalStaffAdmin.objects.get(user_id=request.user.id)
     admins = models.HospitalStaffAdmin.objects.all().filter(status=True)
@@ -498,7 +522,7 @@ def admin_view_staff(request):
     return render(request,'hospital/admin_view_staff.html', context)
 
 @login_required(login_url='adminlogin')
-@user_passes_test(is_admin)
+@user_passes_test(is_superuser)
 def admin_staff_details_view(request, pk):
     # Get the patient object
     admins = get_object_or_404(models.HospitalStaffAdmin, user_id=pk)
@@ -517,25 +541,42 @@ def admin_staff_details_view(request, pk):
     return render(request, 'hospital/admin_staff_details.html', context)
 
 @login_required(login_url='adminlogin')
-@user_passes_test(is_admin)
+@user_passes_test(is_superuser)
 def approve_staff_view(request,pk):
-    admin=models.HospitalStaffAdmin.objects.get(user_id=pk)
-    admin.status= True
+    admin = models.HospitalStaffAdmin.objects.get(user_id=pk)
+    admin.status = True
     admin.save()
+
+    # Send approval email
+    user_email = admin.user.email
+    subject = 'Approval on Hospital Management'
+    message = 'Hello, You have been approved as a staff member on our hospital management system.'
+    sender_email = settings.EMAIL_HOST_USER
+    receiver_email = [user_email]
+    send_mail(subject, message, sender_email, receiver_email)
+
     return redirect(reverse('admin-approve-staff'))
 
 @login_required(login_url='adminlogin')
-@user_passes_test(is_admin)
+@user_passes_test(is_superuser)
 def delete_staff_view(request,pk):
-    admin=models.HospitalStaffAdmin.objects.get(user_id=pk)
-    user=models.User.objects.get(id=pk)
-    #send email soon
+    admin = models.HospitalStaffAdmin.objects.get(user_id=pk)
+    user = models.User.objects.get(id=pk)
+
+    # Send rejection email
+    user_email = user.email
+    subject = 'Rejection on Hospital Management'
+    message = 'Hello, Your request to join as a staff member on our hospital management system has been rejected.'
+    sender_email = settings.EMAIL_HOST_USER
+    receiver_email = [user_email]
+    send_mail(subject, message, sender_email, receiver_email)
+
     user.delete()
     admin.delete()
     return redirect('admin-view-staff')
 
 @login_required(login_url='adminlogin')
-@user_passes_test(is_admin)
+@user_passes_test(is_superuser)
 def admin_approve_staff_view(request):
     #those whose approval are needed
     admin = models.HospitalStaffAdmin.objects.get(user_id=request.user.id)
@@ -548,9 +589,6 @@ def admin_approve_staff_view(request):
 
 
 
-#def admin-add-staff
-#def admin-approve-staff
-#def admin-staff-specialization
 
 @login_required(login_url='adminlogin')
 @user_passes_test(is_admin)
@@ -690,14 +728,6 @@ def admin_approve_doctor_view(request):
 
 @login_required(login_url='adminlogin')
 @user_passes_test(is_admin)
-def approve_doctor_view(request,pk):
-    doctor=models.Doctor.objects.get(id=pk)
-    doctor.status= models.Doctor.STATUS_AVAILABLE
-    doctor.save()
-    return redirect(reverse('admin-approve-doctor'))
-
-@login_required(login_url='adminlogin')
-@user_passes_test(is_admin)
 def admin_doctor_details_view(request, id):
     # Get the patient object
     admin = models.HospitalStaffAdmin.objects.get(user_id=request.user.id)
@@ -705,12 +735,10 @@ def admin_doctor_details_view(request, id):
     doctor = get_object_or_404(models.Doctor, id=id)
     
     # Get the associated user object
-    user = doctor.user
     
     # Prepare the context dictionary
     context = {
         "doctor": doctor,
-        "user": user,
         "admin": admin,
     }
 
@@ -719,9 +747,35 @@ def admin_doctor_details_view(request, id):
 
 @login_required(login_url='adminlogin')
 @user_passes_test(is_admin)
+def approve_doctor_view(request,pk):
+    doctor = models.Doctor.objects.get(id=pk)
+    doctor.status = models.Doctor.STATUS_AVAILABLE
+    doctor.save()
+
+    # Send approval email
+    user_email = doctor.user.email
+    subject = 'Approval on Hospital Management'
+    message = 'Hello, You have been approved as a doctor on our hospital management system.'
+    sender_email = settings.EMAIL_HOST_USER
+    receiver_email = [user_email]
+    send_mail(subject, message, sender_email, receiver_email)
+
+    return redirect(reverse('admin-approve-doctor'))
+
+@login_required(login_url='adminlogin')
+@user_passes_test(is_admin)
 def reject_doctor_view(request,pk):
-    doctor=models.Doctor.objects.get(id=pk)
-    user=models.User.objects.get(id=doctor.user_id)
+    doctor = models.Doctor.objects.get(id=pk)
+    user = models.User.objects.get(id=doctor.user_id)
+
+    # Send rejection email
+    user_email = doctor.user.email
+    subject = 'Rejection on Hospital Management'
+    message = 'Hello, Your request to join as a doctor on our hospital management system has been rejected.'
+    sender_email = settings.EMAIL_HOST_USER
+    receiver_email = [user_email]
+    send_mail(subject, message, sender_email, receiver_email)
+
     user.delete()
     doctor.delete()
     return redirect('admin-approve-doctor')
@@ -768,27 +822,38 @@ def admin_view_patient_view(request):
 @user_passes_test(is_admin)
 def admin_patient_details_view(request, patient_id):
     admin = models.HospitalStaffAdmin.objects.get(user_id=request.user.id)
+    
     # Get the patient object
     patient = get_object_or_404(models.Patient, id=patient_id)
     
-    # Get the associated user object
-    user = patient.user
+    # Get the last discharge date for the patient
+    last_discharge_date = models.PatientDischargeDetails.objects.filter(patientId=patient_id).aggregate(last_discharge=Max('releaseDate'))['last_discharge']
     
-    # Get the insurance object related to the patient
+    if last_discharge_date:
+        try:
+            # Get the discharge details corresponding to the last discharge date
+            last_discharge = models.PatientDischargeDetails.objects.get(patientId=patient_id, releaseDate=last_discharge_date) 
+        except models.PatientDischargeDetails.DoesNotExist:
+            last_discharge = None
+    else:
+        last_discharge = None
+
     try:
+        # Get the insurance object related to the patient
         insurance = models.Insurance.objects.get(patient=patient)
     except models.Insurance.DoesNotExist:
         insurance = None
     
     # Prepare the context dictionary
     context = {
-        "patient": patient,
-        "user": user,
-        "insurance": insurance,
         "admin": admin,
+        "patient": patient,
+        "insurance": insurance,
+        "last_discharge": last_discharge,  
     }
 
     return render(request, 'hospital/admin_patient_details.html', context)
+
 
 @login_required(login_url='adminlogin')
 @user_passes_test(is_admin)
@@ -935,19 +1000,35 @@ def admin_approve_patient_view(request):
 
 @login_required(login_url='adminlogin')
 @user_passes_test(is_admin)
-def approve_patient_view(request,pk):
-    patient=models.Patient.objects.get(id=pk)
-    patient.status=True
+def approve_patient_view(request, pk):
+    patient = models.Patient.objects.get(id=pk)
+    patient.status = True
     patient.save()
+
+    # Send approval email
+    user_email = patient.user.email
+    subject = 'Approval on Hospital Management'
+    message = 'Hello, Your registration request for our hospital management system has been approved.'
+    sender_email = settings.EMAIL_HOST_USER
+    receiver_email = [user_email]
+    send_mail(subject, message, sender_email, receiver_email)
+
     return redirect(reverse('admin-approve-patient'))
-
-
 
 @login_required(login_url='adminlogin')
 @user_passes_test(is_admin)
-def reject_patient_view(request,pk):
-    patient=models.Patient.objects.get(id=pk)
-    user=models.User.objects.get(id=patient.user_id)
+def reject_patient_view(request, pk):
+    patient = models.Patient.objects.get(id=pk)
+    user = models.User.objects.get(id=patient.user_id)
+
+    # Send rejection email
+    user_email = user.email
+    subject = 'Rejection on Hospital Management'
+    message = 'Hello, Your registration request for our hospital management system has been rejected.'
+    sender_email = settings.EMAIL_HOST_USER
+    receiver_email = [user_email]
+    send_mail(subject, message, sender_email, receiver_email)
+
     user.delete()
     patient.delete()
     return redirect('admin-approve-patient')
@@ -970,7 +1051,7 @@ def admin_discharge_patient_view(request):
 
 @login_required(login_url='adminlogin')
 @user_passes_test(is_admin)
-def discharge_patient_view(request,pk):
+def discharge_patient_view(request, pk):
     admin = models.HospitalStaffAdmin.objects.get(user_id=request.user.id)
     patient=models.Patient.objects.get(id=pk)
     days=(date.today()-patient.admit_date) #2 days, 0:00:00
@@ -1001,7 +1082,7 @@ def discharge_patient_view(request,pk):
         pDD=models.PatientDischargeDetails()
         pDD.patientId=pk
         pDD.patientName=patient.get_name
-        pDD.assignedDoctorName=assignedDoctor[0].first_name
+        pDD.assignedDoctorName=assignedDoctor[0].get_full_name()
         pDD.address=patient.address
         pDD.mobile=patient.mobile
         pDD.symptoms=patient.symptoms
@@ -1014,6 +1095,8 @@ def discharge_patient_view(request,pk):
         pDD.OtherCharge=int(request.POST['OtherCharge'])
         pDD.total=(int(request.POST['roomCharge'])*int(d))+int(request.POST['doctorFee'])+int(request.POST['medicineCost'])+int(request.POST['OtherCharge'])
         pDD.save()
+        # Pass the ID of the saved object to the template
+        patientDict['discharge_id'] = pDD.id
         return render(request,'hospital/patient_final_bill.html',context=patientDict)
     return render(request,'hospital/patient_generate_bill.html',context=patientDict)
 
@@ -1037,29 +1120,34 @@ def render_to_pdf(template_src, context_dict):
     return
 
 
+def download_pdf_view(request, pk, discharge_id):
+    try:
+        discharge_detail = models.PatientDischargeDetails.objects.get(patientId=pk, id=discharge_id)
+    except models.PatientDischargeDetails.DoesNotExist:
+        return HttpResponse("Discharge details not found", status=404)
 
-def download_pdf_view(request,pk):
-    dischargeDetails=models.PatientDischargeDetails.objects.all().filter(patientId=pk).order_by('-id')[:1]
-    dict={
-        'patientName':dischargeDetails[0].patientName,
-        'assignedDoctorName':dischargeDetails[0].assignedDoctorName,
-        'address':dischargeDetails[0].address,
-        'mobile':dischargeDetails[0].mobile,
-        'symptoms':dischargeDetails[0].symptoms,
-        'admitDate':dischargeDetails[0].admitDate,
-        'releaseDate':dischargeDetails[0].releaseDate,
-        'daySpent':dischargeDetails[0].daySpent,
-        'medicineCost':dischargeDetails[0].medicineCost,
-        'roomCharge':dischargeDetails[0].roomCharge,
-        'doctorFee':dischargeDetails[0].doctorFee,
-        'OtherCharge':dischargeDetails[0].OtherCharge,
-        'total':dischargeDetails[0].total,
+    dict = {
+        'patientName': discharge_detail.patientName,
+        'assignedDoctorName': discharge_detail.assignedDoctorName,
+        'address': discharge_detail.address,
+        'mobile': discharge_detail.mobile,
+        'symptoms': discharge_detail.symptoms,
+        'admitDate': discharge_detail.admitDate,
+        'releaseDate': discharge_detail.releaseDate,
+        'daySpent': discharge_detail.daySpent,
+        'medicineCost': discharge_detail.medicineCost,
+        'roomCharge': discharge_detail.roomCharge,
+        'doctorFee': discharge_detail.doctorFee,
+        'OtherCharge': discharge_detail.OtherCharge,
+        'total': discharge_detail.total,
     }
-    return render_to_pdf('hospital/download_bill.html',dict)
+    return render_to_pdf('hospital/download_bill.html', dict)
+
 
 
 
 #-----------------APPOINTMENT START--------------------------------------------------------------------
+import datetime
 @login_required(login_url='adminlogin')
 @user_passes_test(is_admin)
 def admin_appointment_view(request):
@@ -1086,26 +1174,40 @@ def admin_view_appointment_view(request):
 @user_passes_test(is_admin)
 def admin_add_appointment_view(request):
     admin = models.HospitalStaffAdmin.objects.get(user_id=request.user.id)
-    appointmentForm=forms.AppointmentForm()
-    mydict={'appointmentForm':appointmentForm, 'admin': admin}
-    if request.method=='POST':
-        appointmentForm=forms.AppointmentForm(request.POST)
+    appointmentForm = forms.AppointmentForm()
+    mydict = {'appointmentForm': appointmentForm, 'admin': admin}
+    
+    if request.method == 'POST':
+        appointmentForm = forms.AppointmentForm(request.POST)
         if appointmentForm.is_valid():
-            appointment=appointmentForm.save(commit=False)
-            appointment.doctorId=request.POST.get('doctorId')
-            appointment.patientId=request.POST.get('patientId')
+            appointment = appointmentForm.save(commit=False)
+            appointment.doctorId = request.POST.get('doctorId')
+            appointment.patientId = request.POST.get('patientId')
             doctor = models.User.objects.get(id=request.POST.get('doctorId'))
             patient = models.User.objects.get(id=request.POST.get('patientId'))
-            appointment.doctorName= doctor.get_full_name()
-            appointment.patientName= patient.get_full_name()
-            appointment.status= models.Appointment.ACCEPTED
+            appointment.doctorName = doctor.get_full_name()
+            appointment.patientName = patient.get_full_name()
+            appointment.status = models.Appointment.ACCEPTED
             appointment.save()
+            
+            # Send email notifications to patient and doctor
+            patient_email = patient.email
+            doctor_email = doctor.email
+            subject = 'Appointment Confirmation'
+            patient_message = f'Hello {patient.get_full_name()},\n\nYour appointment with Dr. {appointment.doctorName} on {appointment.appointmentDate.date()} has been confirmed.\n\nPlease arrive at least 15 minutes before the scheduled time.\n\nThank you!'
+            doctor_message = f'Hello Dr. {doctor.get_full_name()},\n\nYou have a new appointment scheduled with {appointment.patientName} on {appointment.appointmentDate.date()}.\n\nPlease be available at the clinic.\n\nThank you!'
+            sender_email = settings.EMAIL_HOST_USER
+            patient_receiver_email = [patient_email]
+            doctor_receiver_email = [doctor_email]
+            send_mail(subject, patient_message, sender_email, patient_receiver_email)
+            send_mail(subject, doctor_message, sender_email, doctor_receiver_email)
+            
             return HttpResponseRedirect(reverse('admin-view-appointment'))
         else:
-           for field, errors in appointmentForm.errors.items():
+            for field, errors in appointmentForm.errors.items():
                 for error in errors:
                     messages.error(request, f"{field}: {error}")
-    return render(request,'hospital/admin_add_appointment.html',context=mydict)
+    return render(request, 'hospital/admin_add_appointment.html', context=mydict)
 
 
 
@@ -1128,6 +1230,16 @@ def approve_appointment_view(request,pk):
     appointment=models.Appointment.objects.get(appointment_id=pk)
     appointment.status= models.Appointment.ACCEPTED
     appointment.save()
+
+    # Send email notification to patient
+    patient = models.Patient.objects.get(id=appointment.patientId)
+    patient_email = patient.user.email
+    subject = 'Appointment Confirmation'
+    patient_message = f'Hello {patient.user.get_full_name()},\n\nYour appointment with Dr. {appointment.doctorName} on {appointment.appointmentDate.strftime("%Y-%m-%d")} at {appointment.appointmentTime.strftime("%H:%M")} has been confirmed.\n\nPlease arrive at least 15 minutes before the scheduled time.\n\nThank you!'
+    sender_email = settings.EMAIL_HOST_USER
+    receiver_email = [patient_email]
+    send_mail(subject, patient_message, sender_email, receiver_email)
+
     return redirect(reverse('admin-approve-appointment'))
 
 
@@ -1138,6 +1250,16 @@ def reject_appointment_view(request,pk):
     appointment=models.Appointment.objects.get(appointment_id=pk)
     appointment.status = models.Appointment.REJECTED
     appointment.save()
+
+    # Send email notification to patient
+    patient = models.Patient.objects.get(id=appointment.patientId)
+    patient_email = patient.user.email
+    subject = 'Appointment Rejection'
+    patient_message = f'Hello {patient.user.get_full_name()},\n\nYour appointment request with Dr. {appointment.doctorName} on {appointment.appointmentDate.strftime("%Y-%m-%d")} at {appointment.appointmentTime.strftime("%H:%M")} has been rejected.\n\nPlease contact the hospital for further details.\n\nThank you!'
+    sender_email = settings.EMAIL_HOST_USER
+    receiver_email = [patient_email]
+    send_mail(subject, patient_message, sender_email, receiver_email)
+
     return redirect('admin-approve-appointment')
 
 
@@ -1145,29 +1267,38 @@ def reject_appointment_view(request,pk):
 @login_required(login_url='adminlogin')
 @user_passes_test(is_admin)
 def admin_set_status_appointment_view(request):
-    admin=models.HospitalStaffAdmin.objects.get(user_id=request.user.id) #for profile picture of doctor in sidebar
-    appointments=models.Appointment.objects.all().filter(status=models.Appointment.ACCEPTED)
-    patientid=[]
-    for a in appointments:
-        patientid.append(a.patientId)
-    patients=models.Patient.objects.all().filter(status=models.Appointment.ACCEPTED, user_id__in=patientid)
-    appointments=zip(appointments,patients)
-    return render(request,'hospital/admin_status_appointment.html',{'appointments':appointments,'admin':admin})
+    admin = models.HospitalStaffAdmin.objects.get(user_id=request.user.id)
+    current_datetime = datetime.datetime.now()
+    appointments = models.Appointment.objects.filter(status=models.Appointment.ACCEPTED, appointmentDate__lte=current_datetime)
+    patient_ids = appointments.values_list('patientId', flat=True)
+    patients = models.Patient.objects.filter(status=models.Appointment.ACCEPTED, user_id__in=patient_ids)
+    appointments_with_patients = zip(appointments, patients)
+    return render(request, 'hospital/admin_status_appointment.html', {'appointments': appointments_with_patients, 'admin': admin})
 
 
 
 @login_required(login_url='adminlogin')
 @user_passes_test(is_admin)
 def set_admin_complete_appointment_view(request,pk):
-    appointment = models.Appointment.objects.get(appointment_id=pk)
+
+    appointment = get_object_or_404(models.Appointment, appointment_id=pk)
+    patient_id = appointment.patientId
+    print(patient_id)
+    patient = models.Patient.objects.get(user_id=patient_id)
+    
+    #Send Email
+    patient_email = patient.user.email
+    subject = 'Appointment Completion'
+    patient_message = f'Hello {patient.user.get_full_name()},\n\nWe would like to inform you that your appointment with Dr. {appointment.doctorName} on {appointment.appointmentDate.strftime("%Y-%m-%d")} has been completed.\n\nWe hope you had a pleasant experience at our hospital.\n\nThank you!'
+    sender_email = settings.EMAIL_HOST_USER
+    receiver_email = [patient_email]
+    send_mail(subject, patient_message, sender_email, receiver_email)
     
     if appointment.ACCEPTED:
         appointment.status = models.Appointment.COMPLETED
         appointment.save()
+
         return redirect('admin-status-appointment')
-    else:
-        # Delete appointment if set completed
-        appointment.delete()
     
     admin = models.HospitalStaffAdmin.objects.get(user_id=request.user.id)
     appointments = models.Appointment.objects.filter(status=models.Appointment.COMPLETED)
@@ -1176,6 +1307,213 @@ def set_admin_complete_appointment_view(request,pk):
     appointments = zip(appointments, patients)
     
     return render(request, 'hospital/admin_status_appointment.html', {'appointments': appointments, 'admin': admin})
+
+#----------For Handling Billing/Invoice Section
+@login_required(login_url='adminlogin')
+@user_passes_test(is_admin)
+def admin_billing_view(request):
+    admin = models.HospitalStaffAdmin.objects.get(user_id=request.user.id)
+    context = {
+        'admin': admin,
+    }
+    return render(request,'hospital/admin_billing_section.html', context)
+
+#---------Billing Management Section
+@login_required(login_url='adminlogin')
+@user_passes_test(is_admin)
+def admin_unpaid_bills_view(request):
+    admin = models.HospitalStaffAdmin.objects.get(user_id=request.user.id)
+    patients_with_unpaid_bills = models.PatientDischargeDetails.objects.filter(is_Paid=False)
+    context = {
+        'admin': admin,
+        'patients_with_unpaid_bills': patients_with_unpaid_bills,
+    }
+    return render(request,'hospital/admin_view_unpaid_bills.html', context)
+
+
+from django.shortcuts import render, get_object_or_404
+from . import models
+
+@login_required(login_url='adminlogin')
+@user_passes_test(is_admin)
+def admin_view_patient_invoice(request, patientId, discharge_id):
+    admin = models.HospitalStaffAdmin.objects.get(user_id=request.user.id)
+    
+    # Fetch the patient's discharge details and create a copy for the that invoice
+    patient= get_object_or_404(models.PatientDischargeDetails, id=discharge_id, patientId=patientId)
+    
+    
+    if patient:
+        context = {
+            'admin': admin,
+            'patient': patient,
+            'is_discharged': True,
+        }
+    else:
+        context = {
+            'admin': admin,
+            'patient': patient,
+            'is_discharged': False,
+        }    
+    return render(request, 'hospital/admin_view_patient_invoice.html', context)
+
+#---- Mark Patient Paid His Bill and deactivate his/her Account
+@login_required(login_url='adminlogin')
+@user_passes_test(is_admin)
+def mark_pay_patient_bill(request, patientId, discharge_id):
+    bill = get_object_or_404(models.PatientDischargeDetails, patientId = patientId, id=discharge_id)
+    patient = get_object_or_404(models.Patient, id = patientId)
+   
+    if bill:
+        # Get Patient User to set the isActive to False
+        user = patient.user
+        user.is_active = False
+        user.save() # Save changes
+
+        bill.is_Paid = True #Mark Bill as Paid
+        bill.save() # Save Record
+
+        # Send email notification to the patient
+        subject = 'Your Hospital Bill has been Paid'
+        message = f'Hello {patient.user.get_full_name()},\n\nWe are pleased to inform you that your hospital bill has been successfully paid.\n\nThank you for choosing our hospital.\n\nBest regards,\nHospital Management Team'
+        sender_email = settings.EMAIL_HOST_USER
+        receiver_email = [patient.user.email]
+        send_mail(subject, message, sender_email, receiver_email)
+
+        return JsonResponse({'success': True}) # Success 
+    
+    return JsonResponse({'success': False})    # Return Reponse to False
+
+#-----Patient Discharge Records Section
+@login_required(login_url='adminlogin')
+@user_passes_test(is_admin)
+def admin_patient_discharge_records_view(request):
+    admin = models.HospitalStaffAdmin.objects.get(user_id=request.user.id)
+    # Fetch all patients in this model
+    patients = models.Patient.objects.all()
+
+    # Initialize a list to store discharge records for patients who have been discharged and paid their bills
+    patientDischargeRecords = []
+
+    # Iterate over each patient to check if they have a discharge record
+    for patient in patients:
+        # Filter discharge records for the current patient already paid his/her bills
+        patientRecord = models.PatientDischargeDetails.objects.filter(patientId=patient.id, is_Paid=True).first()
+        if patientRecord:
+            # If a discharge record exists for the patient, we add it to the list
+            patientDischargeRecords.append(patientRecord)
+
+    context = {
+        'admin': admin,
+        'patientDischargeRecords': patientDischargeRecords,
+    }
+    return render(request, 'hospital/admin_view_paid_bills.html', context)
+
+#---For Viewing Records History Invoices of that Patient inside of a Ptient Discharge Model
+@login_required(login_url='adminlogin')
+@user_passes_test(is_admin)
+def admin_patient_view_records(request, patientId):
+    admin = models.HospitalStaffAdmin.objects.get(user_id=request.user.id)
+    # Get all discharge records for the patient
+    patient_records = models.PatientDischargeDetails.objects.filter(patientId=patientId)
+    
+    # Check if any records exist for a given patient
+    if patient_records.exists():
+        context = {
+            'admin': admin,
+            'patient_records': patient_records,
+        }
+    else:
+        context = {
+            'admin': admin,
+            'patient_records': None,  # No records found for the patient
+        }
+    
+    return render(request, 'hospital/admin_patient_view_records.html', context)
+    
+
+#----------------Admission Start
+@login_required(login_url='adminlogin')
+@user_passes_test(is_admin)
+def admin_admission_view(request):
+    admin = models.HospitalStaffAdmin.objects.get(user=request.user)
+    deactivated_patients = models.Patient.objects.filter(user__is_active=False)
+    return render(request, 'hospital/admin_admission.html', {'admin': admin, 'deactivated_patients': deactivated_patients})
+
+
+#----------------Activate Patient Account During Admission Process.
+@login_required(login_url='adminlogin')
+@user_passes_test(is_admin)
+def reactivate_patient_view(request, pk):
+    admin = models.HospitalStaffAdmin.objects.get(user_id=request.user.id)
+    patient = models.Patient.objects.get(id=pk)
+    user = models.User.objects.get(id=patient.user_id)
+
+    userForm = forms.UpdatePatientUserForm(instance=user)
+    patientForm = forms.UpdatePatientForm(instance=patient)
+
+    # Set initial values for form fields
+    patientForm.fields['address'].initial = patient.get_address
+    patientForm.fields['mobile'].initial = patient.get_mobile
+    patientForm.fields['date_of_birth'].initial = patient.get_DOB.strftime('%Y-%m-%d')
+    patientForm.fields['gender'].initial = patient.get_gender
+    patientForm.fields['symptoms'].initial = patient.get_symptoms
+   
+    if request.method == 'POST':
+        userForm = forms.UpdatePatientUserForm(request.POST, instance=user)
+        patientForm = forms.UpdatePatientForm(request.POST, request.FILES, instance=patient)
+
+        if userForm.is_valid() and patientForm.is_valid():
+            user = userForm.save(commit=False)
+            email = request.POST.get('email')
+            user.email = email
+            user.is_active = True
+            # Check if a new password is provided in the form
+            new_password = request.POST.get('password')
+            if new_password:
+                # Set the new password
+                user.set_password(new_password)
+            user.save()
+
+            patient = patientForm.save(commit=False)
+            patient.status = True
+            patient.admit_date = date.today()
+            # Get the assigned doctor ID from the form data
+            assigned_doctor_id = request.POST.get('assigned_doctor_id')
+            doctor = models.Doctor.objects.get(user_id=assigned_doctor_id)
+            print("Assigned Doctor ID:", assigned_doctor_id)
+            if assigned_doctor_id:
+                assigned_doctor_id = int(assigned_doctor_id)  # Convert to integer
+                try:
+                    # Fetch the doctor object based on the ID
+                    patient.assigned_doctor_id = assigned_doctor_id
+                    patient.assigned_doctor = str(doctor)
+                except models.Doctor.DoesNotExist:
+                    messages.error(request, "Invalid doctor ID provided")
+                    return render(request, 'hospital/admin_update_patient.html', {'userForm': userForm, 'patientForm': patientForm})
+            
+            patient.save()
+            
+            # Sending email notification
+            subject = 'Your account has been reactivated!'
+            html_message = render_to_string('hospital/reactivate_account_email.html', {'user': user})
+            plain_message = strip_tags(html_message)
+            from_email = settings.EMAIL_HOST_USER
+            to = [user.email]
+            send_mail(subject, plain_message, from_email, to, html_message=html_message)
+
+            return redirect('admin-view-patient')
+        else:
+            for field, errors in userForm.errors.items():
+                for error in errors:
+                    messages.error(request, f"User Form: {field.capitalize()} - {error}")
+            for field, errors in patientForm.errors.items():
+                for error in errors:
+                    messages.error(request, f"Patient Form: {field.capitalize()} - {error}")
+
+    mydict = {'userForm': userForm, 'patientForm': patientForm, 'admin': admin,}
+    return render(request, 'hospital/admin_reactivate_patient.html', context=mydict)
+
 #---------------------------------------------------------------------------------
 #------------------------ ADMIN RELATED VIEWS END ------------------------------
 #---------------------------------------------------------------------------------
@@ -1280,6 +1618,19 @@ def approve_doctor_appointment_view(request,pk):
     appointment=models.Appointment.objects.get(appointment_id=pk)
     appointment.status= models.Appointment.ACCEPTED
     appointment.save()
+
+    # Format the appointment date and time
+    appointment_date = appointment.appointmentDate.strftime('%B %d, %Y')  # Full month name, day, full year
+    appointment_time = appointment.appointmentDate.strftime('%I:%M %p')   # Time with AM or PM
+
+    # Sending email notification to patient
+    patient = models.Patient.objects.get(user_id = appointment.patientId)
+    subject = 'Your appointment has been approved!'
+    message = f"Dear {patient.user.get_full_name()},\n\nWe're delighted to inform you that your appointment with Dr. {appointment.doctorName} is scheduled for {appointment_date} at {appointment_time}.\n\nPlease arrive at least 15 minutes before the scheduled time.\n\nLooking forward to seeing you!\n\nBest regards,\nDr. {appointment.doctorName}"
+    from_email = settings.EMAIL_HOST_USER  # Update with your sender email
+    to = [patient.user.email]
+    send_mail(subject, message, from_email, to)
+
     return redirect(reverse('doctor-approve-appointment'))
 
 
@@ -1290,6 +1641,14 @@ def reject_doctor_appointment_view(request,pk):
     appointment=models.Appointment.objects.get(appointment_id=pk)
     appointment.status= models.Appointment.REJECTED
     appointment.save()
+
+    # Sending email notification to patient
+    patient = models.Patient.objects.get(user_id = appointment.patientId)
+    subject = 'Your appointment has been rejected'
+    message = f"Dear {patient.user.get_full_name()},\n\nWe regret to inform you that your appointment with Dr. {appointment.doctorName} has been rejected.\n\nIf you have any questions or concerns, please feel free to contact us.\n\nBest regards,\nDr. {appointment.doctorName}"
+    from_email = settings.EMAIL_HOST_USER  # Update with your sender email
+    to = [patient.user.email]
+    send_mail(subject, message, from_email, to)
     return redirect('doctor-approve-appointment')
 
 
@@ -1349,10 +1708,16 @@ def set_complete_appointment_view(request, pk):
     if appointment.ACCEPTED:
         appointment.status = models.Appointment.COMPLETED
         appointment.save()
+
+        # Sending email notification to patient
+        patient = models.Patient.objects.get(id = appointment.patientId)
+        subject = 'Your appointment has been completed!'
+        message= f'Hello {patient.user.get_full_name()},\n\nWe would like to inform you that your appointment with Dr. {appointment.doctorName} on {appointment.appointmentDate.strftime("%Y-%m-%d")} at {appointment.appointmentTime.strftime("%H:%M")} has been completed.\n\nWe hope you had a pleasant experience at our hospital.\n\nThank you!'
+        from_email = settings.EMAIL_HOST_USER  # Update with your sender email
+        to = [patient.email]
+        send_mail(subject, message, from_email, to)
+
         return redirect('doctor-status-appointment')
-    else:
-        # Delete appointment if set completed
-        appointment.delete()
         
 
     doctor = models.Doctor.objects.get(user_id=request.user.id) #for profile picture of doctor in sidebar
@@ -1532,35 +1897,37 @@ def patient_view_appointment_view(request):
 @login_required(login_url='patientlogin')
 @user_passes_test(is_patient)
 def patient_discharge_view(request):
-    patient=models.Patient.objects.get(user_id=request.user.id) #for profile picture of patient in sidebar
-    dischargeDetails=models.PatientDischargeDetails.objects.all().filter(patientId=patient.id).order_by('-id')[:1]
-    patientDict=None
-    if dischargeDetails:
-        patientDict ={
-        'is_discharged':True,
-        'patient':patient,
-        'patientId':patient.id,
-        'patientName':patient.get_name,
-        'assignedDoctorName':dischargeDetails[0].assignedDoctorName,
-        'address':patient.address,
-        'mobile':patient.mobile,
-        'symptoms':patient.symptoms,
-        'admit_date':patient.admit_date,
-        'releaseDate':dischargeDetails[0].releaseDate,
-        'daySpent':dischargeDetails[0].daySpent,
-        'medicineCost':dischargeDetails[0].medicineCost,
-        'roomCharge':dischargeDetails[0].roomCharge,
-        'doctorFee':dischargeDetails[0].doctorFee,
-        'OtherCharge':dischargeDetails[0].OtherCharge,
-        'total':dischargeDetails[0].total,
+    patient = models.Patient.objects.get(user_id=request.user.id)  # for profile picture of patient in sidebar
+    discharge_detail = models.PatientDischargeDetails.objects.filter(patientId=patient.id).last()
+    patient_dict = None
+    if discharge_detail:
+        patient_dict = {
+            'is_discharged': True,
+            'patient': patient,
+            'patientId': patient.id,
+            'patientName': patient.get_name,
+            'assignedDoctorName': discharge_detail.assignedDoctorName,
+            'address': patient.address,
+            'mobile': patient.mobile,
+            'symptoms': patient.symptoms,
+            'admit_date': patient.admit_date,
+            'releaseDate': discharge_detail.releaseDate,
+            'daySpent': discharge_detail.daySpent,
+            'medicineCost': discharge_detail.medicineCost,
+            'roomCharge': discharge_detail.roomCharge,
+            'doctorFee': discharge_detail.doctorFee,
+            'OtherCharge': discharge_detail.OtherCharge,
+            'total': discharge_detail.total,
+            'discharge_id': discharge_detail.id,  # Add discharge_id to the context
+            'isPaid': discharge_detail.is_Paid,
         }
     else:
-        patientDict={
-            'is_discharged':False,
-            'patient':patient,
-            'patientId':request.user.id,
+        patient_dict = {
+            'is_discharged': False,
+            'patient': patient,
+            'patientId': request.user.id,
         }
-    return render(request,'hospital/patient_discharge.html',context=patientDict)
+    return render(request, 'hospital/patient_discharge.html', context=patient_dict)
 
 @login_required(login_url='patientlogin')
 @user_passes_test(is_patient)

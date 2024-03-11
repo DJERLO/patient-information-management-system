@@ -52,6 +52,17 @@ urlpatterns = [
 
     path('admin-dashboard', views.admin_dashboard_view,name='admin-dashboard'),
 
+    path('admin-admission',views.admin_admission_view,name='admin-admission'),
+    path('admin-activate-patient/<int:pk>',views.reactivate_patient_view,name='admin-activate-patient'),
+
+    path('admin-billing-invoice', views.admin_billing_view, name='admin-billing-invoice'),
+    path('admin-view-unpaid-bills', views.admin_unpaid_bills_view, name='admin-view-unpaid-bills'),
+    path('admin-view-patient-invoice/<int:patientId>/<int:discharge_id>', views.admin_view_patient_invoice, name='admin-view-patient-invoice'),
+    path('mark-as-paid/<int:patientId>/<int:discharge_id>',views.mark_pay_patient_bill,name='mark-as-paid'),
+
+    path('admin-view-paid-bills', views.admin_patient_discharge_records_view, name='admin-view-paid-bills'),
+    path('admin-view-invoice-records/<int:patientId>', views.admin_patient_view_records, name='admin-view-invoice-records'),
+
     path('admin-panel', views.admin_panel_view, name='admin-panel'),
     path('admin-view-staff', views.admin_view_staff,name='admin-view-staff'),
     path('admin-approve-staff', views.admin_approve_staff_view,name='admin-approve-staff'),
@@ -59,8 +70,6 @@ urlpatterns = [
     path('view/staff-details/<int:pk>/', views.admin_staff_details_view, name='admin-staff-details'),
     path('approve-staff/<int:pk>', views.approve_staff_view,name='approve-staff'),
     path('staff-delete/<int:pk>', views.delete_staff_view,name='staff-delete'),
-
-
 
 
     path('admin-doctor', views.admin_doctor_view,name='admin-doctor'),
@@ -88,8 +97,7 @@ urlpatterns = [
     path('reject-patient/<int:pk>', views.reject_patient_view,name='reject-patient'),
     path('admin-discharge-patient', views.admin_discharge_patient_view,name='admin-discharge-patient'),
     path('discharge-patient/<int:pk>', views.discharge_patient_view,name='discharge-patient'),
-    path('download-pdf/<int:pk>', views.download_pdf_view,name='download-pdf'),
-
+    path('download-pdf/<int:pk>/<int:discharge_id>/', views.download_pdf_view, name='download-pdf'),
 
     path('admin-appointment', views.admin_appointment_view,name='admin-appointment'),
     path('admin-view-appointment', views.admin_view_appointment_view,name='admin-view-appointment'),

@@ -251,8 +251,8 @@
       </div>
     {% elif appointmentStatus == 2 %}
       <div class="alert alert-success alert-dismissible fade show" role="alert">
-        <center><p>Your appointment has been successfully completed!</p></center>
-        <center><p>If you have any follow-up questions or need further assistance, please feel free to <a class="link-dark" href="/contactus">contact us</a>.</p></center>
+        <center><p>Your Appointment is Complete</p></center>
+        <center><p>Thank you for attending your appointment. If you have any follow-up questions or need further assistance, please feel free to <a class="link-dark" href="/contactus">contact us</a>.</p></center>
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
       </div>
     {% elif appointmentStatus == 3 %}
@@ -365,6 +365,9 @@
                     <h3>{{ appointmentDate }}</h3>
                     <h4>Appointment Date</h4>
                 {% elif appointmentStatus == 2 %}
+                    <h3>Complete</h3>
+                    <h4>Appointment Status</h4>
+                {% elif appointmentStatus == 3 %}
                     <h3>Rejected</h3>
                     <h4>Appointment Status</h4>
                 {% else %}

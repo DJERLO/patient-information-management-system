@@ -1,0 +1,154 @@
+{% extends 'hospital/admin_base.html' %}
+{% block content %}
+{%load static%}
+
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <link rel="stylesheet" href="//cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
+  <script src="//cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+
+  <style media="screen">
+    a:link {
+      text-decoration: none;
+    }
+
+    h6 {
+      text-align: center;
+      font-size: 1.2em;
+    }
+    
+
+    .row {
+      margin: 10px auto;
+    }
+
+    .table-responsive {
+      text-wrap: wrap;
+      text-overflow: clip;
+      
+    }
+
+    .view-patient-panel{
+      width: 100%;
+      height: 100%;
+      position: relative;
+      margin: 1px 1px 1px 1px;
+    }
+    /* Media Query for smaller screens */
+    @media only screen and (max-width: 768px) {
+      /* Adjust table font size for smaller screens */
+      table {
+        font-size: 0.5rem; /* Adjust this value as needed */
+      }
+
+      /* Adjust th and td padding for smaller screens */
+      th,
+      td {
+        padding: 0.10rem; /* Adjust this value as needed */
+      }
+    }
+
+    /* Media Query for larger screens */
+    @media only screen and (min-width: 768px) {
+      /* Adjust table font size for larger screens */
+      table {
+        font-size: 0.825rem; /* Adjust this value as needed */
+      }
+
+      /* Adjust th and td padding for larger screens */
+      th,
+      td {
+        padding: 0.75rem; /* Adjust this value as needed */
+      }
+    }
+  </style>
+</head>
+<br><br>
+<div class="view-patient-panel">
+  <div class="card border border-dark">
+    <div class="card-header bg-primary text-white">
+      <h6 class="card-title">Patient Unpaid Bills</h6>
+    </div>
+    <div class="card-body">
+      <div class="table-responsive p-3">
+        <table class="table table-hover py-3" id="dev-table">
+          <thead class="table-dark">
+            <tr>
+              <th>Name</th>
+              <th>Contact</th>
+              <th>Address</th>
+              <th>View Profile</th>
+              <th>Invoice</th>
+              <th>Mark Paid</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for p in patients_with_unpaid_bills %}
+            <tr>
+              <td>{{ p.patientName }}</td>
+              <td>{{ p.mobile }}</td>
+              <td>{{ p.address }}</td>
+              <td><a class="btn btn-primary btn-sm w-100 h-100" href="{% url 'admin-patient-details' p.patientId %}"><i class="bi bi-eye"></i></a></td>
+              <td><a class="btn btn-secondary btn-sm w-100 h-100" href="{% url 'admin-view-patient-invoice' patientId=p.patientId discharge_id=p.id %}"><i class="bi bi-file-earmark-text"></i></a></td>              
+              <td><a class="btn btn-success btn-sm pay-btn w-100 h-100" href="{% url 'mark-as-paid' patientId=p.patientId discharge_id=p.id %}"><i class="bi bi-check2"></i></a></td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  let table = new DataTable('#dev-table');
+  
+  document.addEventListener("DOMContentLoaded", function() {
+    document.querySelectorAll('.pay-btn').forEach(item => {
+        item.addEventListener('click', function(event) {
+            event.preventDefault();
+            const url = this.getAttribute('href');
+            Swal.fire({
+                title: 'Mark Bill as Paid',
+                text: 'Are you sure you want to mark this bill as paid?',
+                icon: 'info',
+                showCancelButton: true,
+                confirmButtonColor: '#28a745', // Green color for confirmation button
+                cancelButtonColor: '#dc3545', // Red color for cancel button
+                confirmButtonText: 'Yes, mark it as paid'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    fetch(url)
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                              Swal.fire({
+                                  title: "Payment Successful!",
+                                  text: "The bill has marked as Paid.",
+                                  icon: "success"
+                                }).then(() => {
+                                  // Reload the page or perform any other action upon success
+                                  location.reload();
+                                }); 
+                            } else {
+                                // Handle the case when marking as paid fails
+                                Swal.fire({
+                                    title: 'Error',
+                                    text: 'Failed to mark bill as paid.',
+                                    icon: 'error',
+                                    confirmButtonColor: '#28a745' // Green color for OK button
+                                });
+                            }
+                        })
+                        .catch(error => {
+                            // Handle any errors that occur during the fetch request
+                            console.error('Error:', error);
+                        });
+                }
+            });
+        });
+    });
+}); 
+  </script>
+{% endblock content %}

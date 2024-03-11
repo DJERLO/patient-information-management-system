@@ -114,7 +114,7 @@
 
 <br><br><br>
 
-{%if is_discharged%}
+{%if is_discharged and not isPaid %}
 <div class="container invoice-box">
   <table cellpadding="0" cellspacing="0">
     <tr class="top">
@@ -233,7 +233,7 @@
 </div>
 <br><br>
 <div class="download">
-  <a class="btn btn-danger" href="{% url 'download-pdf' patientId  %}"><i class="bi bi-download"></i> Download </a>
+  <a class="btn btn-danger" href="{% url 'download-pdf' pk=patientId discharge_id=discharge_id %}"><i class="bi bi-download"></i> Download </a>
 </div>
 
 

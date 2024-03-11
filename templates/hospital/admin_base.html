@@ -6,8 +6,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <title>PIMS - Staff {{request.user.first_name}} {{request.user.last_name}}</title>
+  {% if user.is_superuser %}
+    <title>PIMS - Admin {{request.user.first_name}} {{request.user.last_name}}</title>
+  {% else %}
+    <title>PIMS - Staff {{request.user.first_name}} {{request.user.last_name}}</title>
+  {% endif %}
+  
   <link rel="icon" type="image/x-icon" href={% static "images/favicon.ico"%}>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
@@ -163,6 +167,14 @@
     }
     .menu ul li.icon-calendar {
       background-image: url("{% static 'images/icon-calendar.webp' %}");
+    }
+
+    .menu ul li.icon-invoice {
+      background-image: url("{% static 'images/icon-discharge.svg' %}");
+    }
+
+    .menu ul li.icon-admission {
+      background-image: url("{% static 'images/icon-admission.png' %}");
     }
 
     .menu ul li.icon-admin {
@@ -425,7 +437,11 @@
         {% endif %}
       </a>
       <br><br>
+      {% if user.is_superuser %}
         <h6 class="text-white">Admin</h6>
+      {% else %}
+        <h6 class="text-white">Receptionist</h6>
+      {% endif %}
         <h2>{{ request.user.first_name }}</h2>
     </header>
 
@@ -435,28 +451,39 @@
                 <span>Dashboard</span>
             </a>
         </li>
+        <li tabindex="0" id="adminAdmissionIcon" class="icon-admission nav-item {% if 'admission' in request.path %}active{% endif %}">
+          <a class="nav-link text-white" href="/admin-admission">
+              <span>Admission</span>
+          </a>
+        </li>
         {% if user.is_superuser %}
           <li tabindex="0" id="djangoAdminIcon" class="icon-admin nav-item">
             <a class="nav-link text-white" href="/admin-panel">
-                <span>Staff</span>
+                <span>Staffs</span>
             </a>
           </li>
         {% endif %}
         <li tabindex="0" id="adminDoctorIcon" class="icon-customers nav-item {% if 'doctor' in request.path %}active{% endif %}">
             <a class="nav-link text-white" href="/admin-doctor">
-                <span>Doctor</span>
+                <span>Doctors</span>
             </a>
         </li>
         <li tabindex="0" id="adminPatientIcon" class="icon-users nav-item {% if 'patient' in request.path %}active{% endif %}">
             <a class="nav-link text-white" href="/admin-patient">
-                <span>Patient</span>
+                <span>Patients</span>
             </a>
         </li>
         <li tabindex="0" id="adminAppointmentIcon" class="icon-calendar nav-item {% if 'appointment' in request.path %}active{% endif %}">
             <a class="nav-link text-white" href="/admin-appointment">
-                <span>Appointment</span>
+                <span>Appointments</span>
             </a>
         </li>
+        <li tabindex="0" id="adminInvoiceIcon" class="icon-invoice nav-item {% if 'bill' in request.path or 'invoice' in request.path %}active{% endif %}">
+          <a class="nav-link text-white" href="#">
+              <span>Billing/Invoice</span>
+          </a>
+      </li>
+      
     </ul>
 </nav>
 {% endwith %}
@@ -537,6 +564,10 @@
         document.getElementById("adminDashboardIcon").addEventListener("click", function() {
             window.location.href = "/admin-dashboard";
         });
+
+        document.getElementById("adminAdmissionIcon").addEventListener("click", function() {
+          window.location.href = "/admin-admission";
+        });
         
         
         // Admin Doctor Icon
@@ -552,6 +583,10 @@
         // Admin Appointment Icon
         document.getElementById("adminAppointmentIcon").addEventListener("click", function() {
           window.location.href = "/admin-appointment";
+        });
+
+        document.getElementById("adminInvoiceIcon").addEventListener("click", function() {
+          window.location.href = "/admin-billing-invoice";
         });
         
         {% if user.is_superuser %}

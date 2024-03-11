@@ -27,6 +27,7 @@
       margin-bottom: 0px;
       width: 100vw;
       height: 100vh;
+      overflow-x: hidden;
     }
 
     .text-content{
@@ -130,16 +131,13 @@
 
 <body>
   {% include "hospital/navbar.html" %}
-  <br><br><br>
-  <center>
-    <h3 class='alert alert-success' style="margin-bottom:0px;">About Us!</h3>
-  </center>
-  <div class="aboutus" style="margin-bottom: 0px;margin-top: 0px;">
+  <br><br><br><br><br>
+  <div class="aboutus w-100 h-100" style="margin-bottom: 0px;margin-top: 0px;">
     <div class="text-content">
       <h1 class=" display-4 text-center">Welcome to Our PIMS Portal</h1>
       <p class="lead">A comprehensive system dedicated to managing patient information effectively.</p>
     </div>
-    <hr class="col-md-8 px-5">
+    <hr class="col-md-8">
     <h1 class="display-6">Features</h1>
     {% include "hospital/admin_doctor_patient_card.html" %}
       <div class="text-content">
@@ -150,5 +148,6 @@
     <hr>
   </div>
 </body>
-{% include 'hospital/footer.html' %}
+
 </html>
+{% include 'hospital/footer.html' %}

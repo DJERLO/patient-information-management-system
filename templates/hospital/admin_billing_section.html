@@ -6,18 +6,17 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css">
-
   <style type="text/css">
     a:link {
       text-decoration: none;
     }
 
-    
-
     .fixed-top{
       position: absolute;
     }
+  
   
     h6 {
       color: white;
@@ -59,8 +58,6 @@
     }
   
     .card-block:hover {
-      cursor: pointer;
-      border-radius: 5px;
       background-color: #1f88de; /* Optional: Change background color on hover */
     }
   
@@ -78,73 +75,42 @@
   </style>
 </head>
 
+<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
 <div class="container-fluid">
   <div class="row">
-    
-    <div class="col-md-4 col-xl-3">
+    <div class="col-md-6 col-xl-6">
       <div class="card bg-c-blue order-card">
-        <div class="card-block" id="patientRecordBtn">
-          <h6 class="m-b-20">Patient Record</h6>
+        <div class="card-block" id="billingPaymentManagement">
+          <h6 class="m-b-20">Billing/Payment Management</h6>
           <br>
-          <h2 class="text-right"><i class="fas fa-user-injured f-left"></i></h2>
+          <h2 class="text-right"><i class="fas fa-money-bill-alt f-left"></i></h2>
         </div>
       </div>
     </div>
 
-    <div class="col-md-4 col-xl-3">
+    <div class="col-md-6 col-xl-6">
       <div class="card bg-c-green order-card">
-        <div class="card-block" id="patientAdmitBtn">
-          <h6 class="m-b-20">Admit New Patient</h6>
+        <div class="card-block" id="patientDischargeRecords">
+          <h6 class="m-b-20">Patient Discharge Records</h6>
           <br>
-          <h2 class="text-right"><i class="fas fa-user-plus f-left"></i></h2>
-        </div>
-      </div>
-    </div>
-
-    <div class="col-md-4 col-xl-3">
-      <div class="card bg-c-yellow order-card">
-        <div class="card-block" id="patientApproveBtn">
-          <h6 class="m-b-20">Approve Patient</h6>
-          <br>
-          <h2 class="text-right"><i class="fas fa-check-circle f-left"></i></h2>
-        </div>
-      </div>
-    </div>
-
-    <div class="col-md-4 col-xl-3">
-      <div class="card bg-c-pink order-card">
-        <div class="card-block" id="patientDischargeBtn">
-          <h6 class="m-b-20">Discharge Patient</h6>
-          <br>
-          <h2 class="text-right"><i class="fas fa-eject f-left"></i></h2>
+          <h2 class="text-right"><i class="fas fa-file-medical f-left"></i></h2>
         </div>
       </div>
     </div>
 
   </div>
 </div>
-
 <script>
-  let patientRecord = document.getElementById("patientRecordBtn")
-  let patientAdmit = document.getElementById("patientAdmitBtn")
-  let patientApprove = document.getElementById("patientApproveBtn")
-  let patientDischarge = document.getElementById("patientDischargeBtn")
+  let patientDischargeRecordsView = document.getElementById("patientDischargeRecords")
+  let billingPaymentManagementView = document.getElementById("billingPaymentManagement")
   
   //EventListener
-    patientRecord.addEventListener("click", function() {
-      window.location.href = "/admin-view-patient";
+  patientDischargeRecordsView.addEventListener("click", function() {
+      window.location.href = "admin-view-paid-bills";
   });
 
-  patientAdmit.addEventListener("click", function() {
-      window.location.href = "/admin-add-patient";
-  });
-
-  patientApprove.addEventListener("click", function() {
-      window.location.href = "/admin-approve-patient";
-  });
-
-  patientDischarge.addEventListener("click", function() {
-      window.location.href = "/admin-discharge-patient";
+  billingPaymentManagementView.addEventListener("click", function() {
+      window.location.href = "/admin-view-unpaid-bills";
   });
 
 </script>

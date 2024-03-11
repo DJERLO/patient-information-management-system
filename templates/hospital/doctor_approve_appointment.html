@@ -86,12 +86,12 @@
             <td>{{ appointment.patientName }}</td>
             <td>{{ appointment.description }}</td>
             <td>
-              <a class="btn btn-primary btn-sm" href="{% url 'approve-doctor-appointment' appointment.appointment_id %}">
+              <a class="btn btn-primary btn-sm w-100 h-100" href="{% url 'approve-doctor-appointment' appointment.appointment_id %}">
                 <i class="bi bi-check"></i>
               </a>
             </td>
             <td>
-              <a class="btn btn-danger btn-sm delete-btn" href="{% url 'reject-doctor-appointment' appointment.appointment_id %}">
+              <a class="btn btn-danger btn-sm delete-btn w-100 h-100" href="{% url 'reject-doctor-appointment' appointment.appointment_id %}">
                 <i class="bi bi-trash"></i>
               </a>
             </td>

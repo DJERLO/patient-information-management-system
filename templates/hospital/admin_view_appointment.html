@@ -89,13 +89,13 @@
               <td>{{ a.description }}</td>
               <td>
                 {% if a.status == 0 %}
-                  <span class="badge bg-warning text-dark">Pending</span>
+                  <span class="badge bg-warning text-dark w-100 h-100">Pending</span>
                 {% elif a.status == 1 %}
-                  <span class="badge bg-primary">Accepted</span>
+                  <span class="badge bg-primary w-100 h-100">Accepted</span>
                 {% elif a.status == 2 %}
-                  <span class="badge bg-success">Completed</span>
+                  <span class="badge bg-success w-100 h-100">Completed</span>
                 {% elif a.status == 3 %}
-                  <span class="badge bg-danger">Rejected</span>
+                  <span class="badge bg-danger w-100 h-100">Rejected</span>
                 {% endif %}
               </td>
             </tr>
