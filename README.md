@@ -10,6 +10,12 @@ Welcome to the Patient Information Management System (PIMS). This project effici
 - **Admin, Doctor, Patient Dashboard Overhaul**
 - **Floating Forms with Toggleable Passwords**
 - **Admin can view Doctor, Patients Records**
+- **Admission for Already Registered Patients**
+- **Bills Management and View History of Invoices of Patients**
+- **Email Notification System**
+- **In Discharge Patient:** After marking the bill of the patient as paid, their account will be deactivated and ready for readmission in the future, eliminating the need for patients to register again.
+- **Receptionist User:** Introduced a Receptionist user subgroup within the Admin group, providing restricted access without is_superuser permissions and limitations on accessing the Staff Panel or viewing and updating staffs.
+- **Improved Contact Us Form:** Enhanced the Contact Us form for better communication and user interaction.
 
 ### User Experience Enhancements:
 - **Strong Passwords & View Toggle Password for All Users:** Implemented strong password functionality with the ability to toggle password visibility.
@@ -38,8 +44,6 @@ Welcome to the Patient Information Management System (PIMS). This project effici
 ## Planning/ Implementation:
 - Password Reset Functionality
 - Email Verification (6-digit code)
-- Notification System for Upcoming Appointments (Email Backend)
-- Contact Us Form Overhaul.
 - Planning to change Schema DB for HospitalStaff and Doctor to have Shift Time (Schedules)
 - User Setting Profile (Updating their own)
 - Prescription System For Doctors & Patients (2025)
