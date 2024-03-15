@@ -102,7 +102,7 @@ def adminlogin_view(request):
             username = form.cleaned_data['username']
             password = form.cleaned_data['password']
 
-            print("Attempting login with username: {username}")
+            print(f"Attempting login with username: {username}")
 
             user = authenticate(request, username=username, password=password)
 
@@ -549,8 +549,8 @@ def approve_staff_view(request,pk):
 
     # Send approval email
     user_email = admin.user.email
-    subject = 'Approval on Hospital Management'
-    message = 'Hello, You have been approved as a staff member on our hospital management system.'
+    subject = 'Staff Membership Approval: Hospital Management System'
+    message = f'Hello,\n\nWe are pleased to inform you that you have been approved as a staff member on our Hospital Management System.\n\nYou now have access to all the tools and resources necessary to contribute effectively to our team.\n\nWelcome aboard, and thank you for joining us!\n\nBest regards,\nThe Hospital Management Team'
     sender_email = settings.EMAIL_HOST_USER
     receiver_email = [user_email]
     send_mail(subject, message, sender_email, receiver_email)
@@ -565,8 +565,8 @@ def delete_staff_view(request,pk):
 
     # Send rejection email
     user_email = user.email
-    subject = 'Rejection on Hospital Management'
-    message = 'Hello, Your request to join as a staff member on our hospital management system has been rejected.'
+    subject = 'Staff Membership Rejection: Hospital Management System'
+    message = f'Hello,\n\nWe regret to inform you that your request to join as a staff member on our Hospital Management System has been rejected.\n\nIf you have any questions or require further clarification regarding this decision, please feel free to reach out to us.\n\nThank you for your interest.\n\nBest regards,\nThe Hospital Management Team'
     sender_email = settings.EMAIL_HOST_USER
     receiver_email = [user_email]
     send_mail(subject, message, sender_email, receiver_email)
@@ -754,8 +754,8 @@ def approve_doctor_view(request,pk):
 
     # Send approval email
     user_email = doctor.user.email
-    subject = 'Approval on Hospital Management'
-    message = 'Hello, You have been approved as a doctor on our hospital management system.'
+    subject = 'Doctor Approval: Hospital Management System'
+    message = f'Hello,\n\nCongratulations! You have been approved as a {doctor.department} on our Hospital Management System.\n\nYou are now part of our esteemed medical team, dedicated to providing exceptional care to our patients in the {doctor.department} department.\n\nWe look forward to your valuable contributions.\n\nWelcome aboard!\n\nBest regards,\nThe Hospital Management Team'
     sender_email = settings.EMAIL_HOST_USER
     receiver_email = [user_email]
     send_mail(subject, message, sender_email, receiver_email)
@@ -770,8 +770,8 @@ def reject_doctor_view(request,pk):
 
     # Send rejection email
     user_email = doctor.user.email
-    subject = 'Rejection on Hospital Management'
-    message = 'Hello, Your request to join as a doctor on our hospital management system has been rejected.'
+    subject = 'Doctor Membership Rejection: Hospital Management System'
+    message = f'Hello,\n\nWe regret to inform you that your request to join as a doctor in the {doctor.department} department on our Hospital Management System has been rejected.\n\nIf you have any questions or require further clarification regarding this decision, please feel free to reach out to us.\n\nThank you for your interest.\n\nBest regards,\nThe Hospital Management Team'
     sender_email = settings.EMAIL_HOST_USER
     receiver_email = [user_email]
     send_mail(subject, message, sender_email, receiver_email)
@@ -1007,8 +1007,8 @@ def approve_patient_view(request, pk):
 
     # Send approval email
     user_email = patient.user.email
-    subject = 'Approval on Hospital Management'
-    message = 'Hello, Your registration request for our hospital management system has been approved.'
+    subject = 'Approval Notification: Hospital Management System'
+    message = f'Hello,\n\nWe are delighted to inform you that your registration request for our Hospital Management System has been approved.\n\nYou can now access all the features and functionalities available.\n\nThank you for choosing our services!\n\nBest regards,\nThe Hospital Management Team'
     sender_email = settings.EMAIL_HOST_USER
     receiver_email = [user_email]
     send_mail(subject, message, sender_email, receiver_email)
@@ -1023,8 +1023,8 @@ def reject_patient_view(request, pk):
 
     # Send rejection email
     user_email = user.email
-    subject = 'Rejection on Hospital Management'
-    message = 'Hello, Your registration request for our hospital management system has been rejected.'
+    subject = 'Registration Rejection: Hospital Management System'
+    message = f'Hello,\n\nWe regret to inform you that your registration request for our Hospital Management System has been rejected.\n\nIf you have any questions or concerns regarding this decision, please don\'t hesitate to contact us.\n\nThank you for considering our services.\n\nBest regards,\nThe Hospital Management Team'
     sender_email = settings.EMAIL_HOST_USER
     receiver_email = [user_email]
     send_mail(subject, message, sender_email, receiver_email)
@@ -1054,9 +1054,9 @@ def admin_discharge_patient_view(request):
 def discharge_patient_view(request, pk):
     admin = models.HospitalStaffAdmin.objects.get(user_id=request.user.id)
     patient=models.Patient.objects.get(id=pk)
-    days=(date.today()-patient.admit_date) #2 days, 0:00:00
+    days=(date.today()-patient.admit_date)
     assignedDoctor=models.User.objects.all().filter(id=patient.assigned_doctor_id)
-    d=days.days # only how many day that is 2
+    d=days.days
     patientDict={
         'patientId':pk,
         'name':patient.get_name,
@@ -1097,6 +1097,22 @@ def discharge_patient_view(request, pk):
         pDD.save()
         # Pass the ID of the saved object to the template
         patientDict['discharge_id'] = pDD.id
+
+        # Send the bill via email
+        subject = 'Your Hospital Bill and Discharge Details'
+        message = f'Hello {patient.get_name},\n\nYour hospital bill has been generated. Please find the details below:\n\n' \
+          f'Medicine Cost: ${pDD.medicineCost}\n' \
+          f'Room Charge: ${pDD.roomCharge}\n' \
+          f'Doctor Fee: ${pDD.doctorFee}\n' \
+          f'Other Charges: ${pDD.OtherCharge}\n' \
+          f'Total: ${patientDict["total"]}\n\n' \
+          f'You can view your new invoice and unpaid bills in your discharge panel on the patient portal.\n\n' \
+          f'Thank you for choosing our hospital.\n\nBest regards,\nHospital Management Team'
+        
+        sender_email = settings.EMAIL_HOST_USER
+        receiver_email = [patient.user.email]
+        send_mail(subject, message, sender_email, receiver_email, fail_silently=False)
+
         return render(request,'hospital/patient_final_bill.html',context=patientDict)
     return render(request,'hospital/patient_generate_bill.html',context=patientDict)
 
@@ -1188,14 +1204,17 @@ def admin_add_appointment_view(request):
             appointment.doctorName = doctor.get_full_name()
             appointment.patientName = patient.get_full_name()
             appointment.status = models.Appointment.ACCEPTED
+            
             appointment.save()
             
             # Send email notifications to patient and doctor
+            appointment_date = appointment.appointmentDate.strftime('%B %d, %Y')  # Full month name, day, full year
+            appointment_time = appointment.appointmentDate.strftime('%I:%M %p')   # Time with AM or PM
             patient_email = patient.email
             doctor_email = doctor.email
             subject = 'Appointment Confirmation'
-            patient_message = f'Hello {patient.get_full_name()},\n\nYour appointment with Dr. {appointment.doctorName} on {appointment.appointmentDate.date()} has been confirmed.\n\nPlease arrive at least 15 minutes before the scheduled time.\n\nThank you!'
-            doctor_message = f'Hello Dr. {doctor.get_full_name()},\n\nYou have a new appointment scheduled with {appointment.patientName} on {appointment.appointmentDate.date()}.\n\nPlease be available at the clinic.\n\nThank you!'
+            patient_message = f'Hello {patient.get_full_name()},\n\nWe are pleased to confirm your appointment with Dr. {appointment.doctorName} on {appointment_date} at {appointment_time}.\n\nPlease remember to arrive at least 15 minutes before your scheduled time.\n\nIf you need to reschedule or have any questions, feel free to contact us.\n\nLooking forward to seeing you!\n\nBest regards,\nThe Hospital Management Team'
+            doctor_message = f'Hello Dr. {doctor.get_full_name()},\n\nYou have a new appointment scheduled with {appointment.patientName} on {appointment_date} at {appointment_time}.\n\nPlease ensure you are available at the clinic to attend to the patient.\n\nIf you have any concerns or conflicts with this appointment, kindly inform us as soon as possible.\n\nThank you for your dedication!\n\nBest regards,\nThe Hospital Management Team'
             sender_email = settings.EMAIL_HOST_USER
             patient_receiver_email = [patient_email]
             doctor_receiver_email = [doctor_email]
@@ -1232,13 +1251,20 @@ def approve_appointment_view(request,pk):
     appointment.save()
 
     # Send email notification to patient
-    patient = models.Patient.objects.get(id=appointment.patientId)
-    patient_email = patient.user.email
+    appointment_date = appointment.appointmentDate.strftime('%B %d, %Y')  # Full month name, day, full year
+    appointment_time = appointment.appointmentDate.strftime('%I:%M %p')   # Time with AM or PM
+    patient = models.User.objects.get(id=appointment.patientId)
+    doctor = models.User.objects.get(id=appointment.doctorId)
+    patient_email = patient.email
+    doctor_email = doctor.email
     subject = 'Appointment Confirmation'
-    patient_message = f'Hello {patient.user.get_full_name()},\n\nYour appointment with Dr. {appointment.doctorName} on {appointment.appointmentDate.strftime("%Y-%m-%d")} at {appointment.appointmentTime.strftime("%H:%M")} has been confirmed.\n\nPlease arrive at least 15 minutes before the scheduled time.\n\nThank you!'
+    patient_message = f'Hello {patient.get_full_name()},\n\nWe are pleased to confirm your appointment with Dr. {appointment.doctorName} on {appointment_date} at {appointment_time}.\n\nPlease remember to arrive at least 15 minutes before your scheduled time.\n\nIf you need to reschedule or have any questions, feel free to contact us.\n\nLooking forward to seeing you!\n\nBest regards,\nThe Hospital Management Team'
+    doctor_message = f'Hello Dr. {doctor.get_full_name()},\n\nYou have a new appointment scheduled with {appointment.patientName} on {appointment_date} at {appointment_time}.\n\nPlease ensure you are available at the clinic to attend to the patient.\n\nIf you have any concerns or conflicts with this appointment, kindly inform us as soon as possible.\n\nThank you for your dedication!\n\nBest regards,\nThe Hospital Management Team'
     sender_email = settings.EMAIL_HOST_USER
-    receiver_email = [patient_email]
-    send_mail(subject, patient_message, sender_email, receiver_email)
+    patient_receiver_email = [patient_email]
+    doctor_receiver_email = [doctor_email]
+    send_mail(subject, patient_message, sender_email, patient_receiver_email)
+    send_mail(subject, doctor_message, sender_email, doctor_receiver_email)
 
     return redirect(reverse('admin-approve-appointment'))
 
@@ -1252,10 +1278,12 @@ def reject_appointment_view(request,pk):
     appointment.save()
 
     # Send email notification to patient
+    appointment_date = appointment.appointmentDate.strftime('%B %d, %Y')  # Full month name, day, full year
+    appointment_time = appointment.appointmentDate.strftime('%I:%M %p')   # Time with AM or PM
     patient = models.Patient.objects.get(id=appointment.patientId)
     patient_email = patient.user.email
     subject = 'Appointment Rejection'
-    patient_message = f'Hello {patient.user.get_full_name()},\n\nYour appointment request with Dr. {appointment.doctorName} on {appointment.appointmentDate.strftime("%Y-%m-%d")} at {appointment.appointmentTime.strftime("%H:%M")} has been rejected.\n\nPlease contact the hospital for further details.\n\nThank you!'
+    patient_message = f'Hello {patient.user.get_full_name()},\n\nWe regret to inform you that your appointment request with Dr. {appointment.doctorName} on {appointment_date} at {appointment_time} has been rejected.\n\nPlease contact the hospital for further details or to reschedule your appointment.\n\nThank you for your understanding.\n\nBest regards,\nThe Hospital Management Team'
     sender_email = settings.EMAIL_HOST_USER
     receiver_email = [patient_email]
     send_mail(subject, patient_message, sender_email, receiver_email)
@@ -1287,9 +1315,11 @@ def set_admin_complete_appointment_view(request,pk):
     patient = models.Patient.objects.get(user_id=patient_id)
     
     #Send Email
+    appointment_date = appointment.appointmentDate.strftime('%B %d, %Y')  # Full month name, day, full year
+    appointment_time = appointment.appointmentDate.strftime('%I:%M %p')   # Time with AM or PM
     patient_email = patient.user.email
     subject = 'Appointment Completion'
-    patient_message = f'Hello {patient.user.get_full_name()},\n\nWe would like to inform you that your appointment with Dr. {appointment.doctorName} on {appointment.appointmentDate.strftime("%Y-%m-%d")} has been completed.\n\nWe hope you had a pleasant experience at our hospital.\n\nThank you!'
+    patient_message = f'Hello {patient.user.get_full_name()},\n\nWe are pleased to inform you that your appointment with Dr. {appointment.doctorName} on {appointment_date} at {appointment_time} has been successfully completed.\n\nWe hope you had a pleasant experience at our hospital and that your health needs were addressed satisfactorily.\n\nThank you for choosing our services!\n\nBest regards,\nThe Hospital Management Team'
     sender_email = settings.EMAIL_HOST_USER
     receiver_email = [patient_email]
     send_mail(subject, patient_message, sender_email, receiver_email)
@@ -1374,8 +1404,8 @@ def mark_pay_patient_bill(request, patientId, discharge_id):
         bill.save() # Save Record
 
         # Send email notification to the patient
-        subject = 'Your Hospital Bill has been Paid'
-        message = f'Hello {patient.user.get_full_name()},\n\nWe are pleased to inform you that your hospital bill has been successfully paid.\n\nThank you for choosing our hospital.\n\nBest regards,\nHospital Management Team'
+        subject = 'Your Hospital Bill Payment Confirmation'
+        message = f'Hello {patient.user.get_full_name()},\n\nWe are delighted to inform you that your hospital bill has been successfully paid. Here are the details:\n\nAdmit Date: {bill.admitDate}\nRelease Date: {bill.releaseDate}\nDays Spent: {bill.daySpent}\n\nRoom Charge: ${bill.roomCharge}\nMedicine Cost: ${bill.medicineCost}\nDoctor Fee: ${bill.doctorFee}\nOther Charges: ${bill.OtherCharge}\nTotal Bill: ${bill.total}\n\nThank you for choosing our hospital for your healthcare needs.\n\nBest regards,\nHospital Management Team'
         sender_email = settings.EMAIL_HOST_USER
         receiver_email = [patient.user.email]
         send_mail(subject, message, sender_email, receiver_email)
@@ -1398,7 +1428,7 @@ def admin_patient_discharge_records_view(request):
     # Iterate over each patient to check if they have a discharge record
     for patient in patients:
         # Filter discharge records for the current patient already paid his/her bills
-        patientRecord = models.PatientDischargeDetails.objects.filter(patientId=patient.id, is_Paid=True).first()
+        patientRecord = models.PatientDischargeDetails.objects.filter(patientId=patient.id).first()
         if patientRecord:
             # If a discharge record exists for the patient, we add it to the list
             patientDischargeRecords.append(patientRecord)
@@ -1643,9 +1673,11 @@ def reject_doctor_appointment_view(request,pk):
     appointment.save()
 
     # Sending email notification to patient
+    appointment_date = appointment.appointmentDate.strftime('%B %d, %Y')  # Full month name, day, full year
+    appointment_time = appointment.appointmentDate.strftime('%I:%M %p')   # Time with AM or PM
     patient = models.Patient.objects.get(user_id = appointment.patientId)
     subject = 'Your appointment has been rejected'
-    message = f"Dear {patient.user.get_full_name()},\n\nWe regret to inform you that your appointment with Dr. {appointment.doctorName} has been rejected.\n\nIf you have any questions or concerns, please feel free to contact us.\n\nBest regards,\nDr. {appointment.doctorName}"
+    message = f"Dear {patient.user.get_full_name()},\n\nWe regret to inform you that your appointment with Dr. {appointment.doctorName} scheduled for {appointment_date} at {appointment_time} has been rejected.\n\nIf you have any questions or concerns, please feel free to contact us.\n\nBest regards,\nDr. {appointment.doctorName}"
     from_email = settings.EMAIL_HOST_USER  # Update with your sender email
     to = [patient.user.email]
     send_mail(subject, message, from_email, to)
@@ -1710,9 +1742,11 @@ def set_complete_appointment_view(request, pk):
         appointment.save()
 
         # Sending email notification to patient
-        patient = models.Patient.objects.get(id = appointment.patientId)
+        appointment_date = appointment.appointmentDate.strftime('%B %d, %Y')  # Full month name, day, full year
+        appointment_time = appointment.appointmentDate.strftime('%I:%M %p')   # Time with AM or PM
+        patient = models.Patient.objects.get(user_id = appointment.patientId)
         subject = 'Your appointment has been completed!'
-        message= f'Hello {patient.user.get_full_name()},\n\nWe would like to inform you that your appointment with Dr. {appointment.doctorName} on {appointment.appointmentDate.strftime("%Y-%m-%d")} at {appointment.appointmentTime.strftime("%H:%M")} has been completed.\n\nWe hope you had a pleasant experience at our hospital.\n\nThank you!'
+        message= f'Hello {patient.user.get_full_name()},\n\nWe would like to inform you that your appointment with Dr. {appointment.doctorName} on {appointment_date} at {appointment_time} has been completed.\n\nWe hope you had a pleasant experience at our hospital.\n\nThank you!'
         from_email = settings.EMAIL_HOST_USER  # Update with your sender email
         to = [patient.email]
         send_mail(subject, message, from_email, to)
@@ -1809,7 +1843,7 @@ def patient_appointment_view(request):
     return render(request,'hospital/patient_appointment.html',{'patient':patient})
 
 
-
+from .disease_mappings import disease_to_department #Add More keywords here.
 @login_required(login_url='patientlogin')
 @user_passes_test(is_patient)
 def patient_book_appointment_view(request):
@@ -1818,26 +1852,6 @@ def patient_book_appointment_view(request):
     patient_doctors = models.Doctor.objects.filter(status=True, user_id=assigned_doctor_id)
     appointmentForm = forms.PatientAppointmentForm(patient_doctors=patient_doctors)
     message = None
-
-    # Map disease keywords to doctor departments
-    disease_to_department = {
-        'heart': 'Cardiologist',
-        'skin': 'Dermatologists',
-        'fever': 'Emergency Medicine Specialists',
-        'allergy': 'Allergists/Immunologists',
-        'surgery': 'Anesthesiologists',
-        'cancer': ['Colon and Rectal Surgeons', 'Oncologists'],
-        'digestive': 'Gastroenterologists',
-        'blood': 'Hematologists',
-        'kidney': 'Nephrologists',
-        'nerve': 'Neurologists',
-        'eye': 'Ophthalmologists',
-        'bone': 'Orthopedic Surgeons',
-        'child': 'Pediatricians',
-        'mental': 'Psychiatrists',
-        'radiology': 'Radiologists',
-        'joint': 'Rheumatologists'
-    }
 
     if request.method == 'POST':
         appointmentForm = forms.PatientAppointmentForm(request.POST, patient_doctors=patient_doctors)
@@ -1897,36 +1911,14 @@ def patient_view_appointment_view(request):
 @login_required(login_url='patientlogin')
 @user_passes_test(is_patient)
 def patient_discharge_view(request):
-    patient = models.Patient.objects.get(user_id=request.user.id)  # for profile picture of patient in sidebar
-    discharge_detail = models.PatientDischargeDetails.objects.filter(patientId=patient.id).last()
-    patient_dict = None
-    if discharge_detail:
-        patient_dict = {
-            'is_discharged': True,
-            'patient': patient,
-            'patientId': patient.id,
-            'patientName': patient.get_name,
-            'assignedDoctorName': discharge_detail.assignedDoctorName,
-            'address': patient.address,
-            'mobile': patient.mobile,
-            'symptoms': patient.symptoms,
-            'admit_date': patient.admit_date,
-            'releaseDate': discharge_detail.releaseDate,
-            'daySpent': discharge_detail.daySpent,
-            'medicineCost': discharge_detail.medicineCost,
-            'roomCharge': discharge_detail.roomCharge,
-            'doctorFee': discharge_detail.doctorFee,
-            'OtherCharge': discharge_detail.OtherCharge,
-            'total': discharge_detail.total,
-            'discharge_id': discharge_detail.id,  # Add discharge_id to the context
-            'isPaid': discharge_detail.is_Paid,
-        }
-    else:
-        patient_dict = {
-            'is_discharged': False,
-            'patient': patient,
-            'patientId': request.user.id,
-        }
+    patient = models.Patient.objects.get(user_id=request.user.id)  # Fetch patient details
+    discharge_details = models.PatientDischargeDetails.objects.filter(patientId=patient.id, is_Paid=False)
+    is_discharged = discharge_details.exists()  # Check if any discharge details exist for the patient
+    patient_dict = {
+        'patient': patient,
+        'is_discharged': is_discharged,
+        'discharge_details': discharge_details,
+    }
     return render(request, 'hospital/patient_discharge.html', context=patient_dict)
 
 @login_required(login_url='patientlogin')
@@ -1996,7 +1988,6 @@ def contactus_view(request):
                     settings.EMAIL_RECEIVING_USER,
                     fail_silently=False,
                 )
-                messages.success(request, 'Your feedback has been sent successfully.')
                 return redirect('contactussuccess')
             except Exception as e:
                 # Inside the 'except' block
