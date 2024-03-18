@@ -72,7 +72,7 @@ Welcome to the Patient Information Management System (PIMS). This project effici
 ![Appointments](screenshots/appointments.png)
 
 ### Billing Invoice History Records
-![Billing Invoice History Records](screenshots/billing_invoice_history.png)
+![Billing Invoice History Records](screenshots/billing_invoice_history.PNG)
 
 ### Invoice
 ![Invoice](screenshots/invoice.png)
