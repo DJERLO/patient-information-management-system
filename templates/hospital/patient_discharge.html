@@ -108,137 +108,154 @@
     .download {
       text-align: center;
       display: block;
+      margin-bottom: 100px;
     }
   </style>
 </head>
 
 <br><br><br>
 
-{%if is_discharged%}
-<div class="container invoice-box">
-  <table cellpadding="0" cellspacing="0">
-    <tr class="top">
-      <td colspan="2">
-        <table>
-          <tr>
-            <td class="title">
-              <h1>Hospital Management</h1>
-            </td>
+{% if is_discharged %}
+  {% if discharge_details %}
+    {% for discharge_detail in discharge_details %}
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-auto">
+          <p class="text-center display-6">Invoice Date: {{ discharge_detail.releaseDate }}</p>
+        </div>
+      </div>
+      <div class="container invoice-box">
+        <table cellpadding="0" cellspacing="0">
+          <tr class="top">
+            <td colspan="2">
+              <table>
+                <tr>
+                  <td class="title">
+                    <h1>Hospital Management</h1>
+                  </td>
 
-            <td>
-
-              Admit Date: {{admit_date}}<br>
-              Release Date: {{releaseDate}}<br>
-              Days Spent At the Hospital: {{daySpent}}
-            </td>
-          </tr>
-        </table>
-      </td>
-    </tr>
-
-    <tr class="information">
-      <td colspan="2">
-        <table>
-          <tr>
-            <td>
-              Patient Name : {{patientName}}<br>
-              Patient Contact : {{mobile}}<br>
-              Patient Address : {{address}}<br>
-            </td>
-
-            <td>
-              Doctor Name :<br>
-              {{assignedDoctorName}}<br>
-
+                  <td>
+                    Admit Date: {{ discharge_detail.admitDate }}<br>
+                    Release Date: {{ discharge_detail.releaseDate }}<br>
+                    Days Spent At the Hospital: {{ discharge_detail.daySpent }}
+                  </td>
+                </tr>
+              </table>
             </td>
           </tr>
+
+          <tr class="information">
+            <td colspan="2">
+              <table>
+                <tr>
+                  <td>
+                    Patient Name: {{ discharge_detail.patientName }}<br>
+                    Patient Contact: {{ discharge_detail.mobile }}<br>
+                    Patient Address: {{ discharge_detail.address }}<br>
+                  </td>
+
+                  <td>
+                    Doctor Name:<br>
+                    {{ discharge_detail.assignedDoctorName }}<br>
+
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <tr class="heading">
+            <td>
+              Disease and Symptoms
+            </td>
+            <td>
+
+            </td>
+
+          </tr>
+
+          <tr class="details">
+            <td>
+              {{ discharge_detail.symptoms }}
+            </td>
+          </tr>
+          <tr class="heading">
+            <td>
+              Item
+            </td>
+
+            <td>
+              Price
+            </td>
+          </tr>
+
+          <tr class="item">
+            <td>
+              Room Charge of {{ discharge_detail.daySpent }} Days
+            </td>
+
+            <td>
+              {{ discharge_detail.roomCharge }}
+            </td>
+          </tr>
+
+          <tr class="item">
+            <td>
+              Doctor Fee
+            </td>
+
+            <td>
+              {{ discharge_detail.doctorFee }}
+            </td>
+          </tr>
+
+          <tr class="item">
+            <td>
+              Medicine Cost
+            </td>
+
+            <td>
+              {{ discharge_detail.medicineCost }}
+            </td>
+          </tr>
+
+          <tr class="item last">
+            <td>
+              Other Charge
+            </td>
+
+            <td>
+              {{ discharge_detail.OtherCharge }}
+            </td>
+          </tr>
+
+          <tr class="total">
+            <td></td>
+
+            <td>
+              Total: {{ discharge_detail.total }}
+            </td>
+          </tr>
+
         </table>
-      </td>
-    </tr>
-
-    <tr class="heading">
-      <td>
-        Disease and Symptoms
-      </td>
-      <td>
-
-      </td>
-
-    </tr>
-
-    <tr class="details">
-      <td>
-        {{symptoms}}
-      </td>
-    </tr>
-    <tr class="heading">
-      <td>
-        Item
-      </td>
-
-      <td>
-        Price
-      </td>
-    </tr>
-
-    <tr class="item">
-      <td>
-        Room Charge of {{daySpent}} Days
-      </td>
-
-      <td>
-        {{roomCharge}}
-      </td>
-    </tr>
-
-    <tr class="item">
-      <td>
-        Doctor Fee
-      </td>
-
-      <td>
-        {{doctorFee}}
-      </td>
-    </tr>
-
-    <tr class="item">
-      <td>
-        Medicine Cost
-      </td>
-
-      <td>
-        {{medicineCost}}
-      </td>
-    </tr>
-
-    <tr class="item last">
-      <td>
-        Other Charge
-      </td>
-
-      <td>
-        {{OtherCharge}}
-      </td>
-    </tr>
-
-    <tr class="total">
-      <td></td>
-
-      <td>
-        Total : {{total}}
-      </td>
-    </tr>
-
-  </table>
-</div>
-<br><br>
-<div class="download">
-  <a class="btn btn-danger" href="{% url 'download-pdf' patientId  %}"><i class="bi bi-download"></i> Download </a>
-</div>
-
-
-
-{%else%}
+      </div>
+      <br><br>
+      <div class="download">
+        <a class="btn btn-danger" href="{% url 'download-pdf' pk=discharge_detail.patientId discharge_id=discharge_detail.id %}">
+          <i class="bi bi-download"></i> Download
+        </a>
+      </div>
+    {% endfor %}
+  {% else %}
+    <div class="container">
+      <div class="row">
+        <div class="col">
+          <h5 class="display-6 text-center">No Discharge Details Found!</h5>
+        </div>
+      </div>
+    </div>
+  {% endif %}
+{% else %}
 <div class="container">
   <div class="row">
     <div class="col">
@@ -248,7 +265,8 @@
     </div>
   </div>
 </div>
-{%endif%}
+{% endif %}
 
-<br><br><br><br><br><br><br><br>
+
+<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
 {% endblock content %}

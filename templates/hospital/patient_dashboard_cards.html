@@ -120,7 +120,7 @@
     }
 
     .market-update-right i.fa.fa-check-circle{
-      font-size: 3em;
+      font-size: 2.5em;
       color: #68AE00; 
       width: 80px;
       height: 80px;
@@ -138,7 +138,7 @@
     }
 
     .market-update-right i.fa.fa-times-circle{
-      font-size: 3em;
+      font-size: 2.5em;
       color: #e61409; 
       width: 80px;
       height: 80px;
@@ -156,7 +156,7 @@
 
     .market-update-right i.fa.fa-user-o,
     i.fa.fa-map-marker {
-      font-size: 3em;
+      font-size: 2.5em;
       color: #68AE00;
       width: 80px;
       height: 80px;
@@ -173,16 +173,16 @@
 
     .market-update-right i.fa.fa-info-circle,
     i.fa.fa-list-alt {
-      font-size: 3em;
+      font-size: 2.5em;
       color: #FC8213;
       width: 80px;
       height: 80px;
       background: #fff;
       text-align: center;
-      border-radius: 49px;
-      -webkit-border-radius: 49px;
-      -moz-border-radius: 49px;
-      -o-border-radius: 49px;
+      border-radius: 50px;
+      -webkit-border-radius: 50px;
+      -moz-border-radius: 50px;
+      -o-border-radius: 50px;
       line-height: 1.2em; 
       margin-top: 0.465em;
       margin-right: 1.0em;
@@ -190,16 +190,16 @@
 
     .market-update-right i.fa.fa-mobile,
     i.fa.fa-calendar-check, i.fa.fa-calendar-o {
-      font-size: 3em;
+      font-size: 2.5em;
       color: #337AB7;
       width: 80px;
       height: 80px;
       background: #fff;
       text-align: center;
-      border-radius: 49px;
-      -webkit-border-radius: 49px;
-      -moz-border-radius: 49px;
-      -o-border-radius: 49px;
+      border-radius: 50px;
+      -webkit-border-radius: 50px;
+      -moz-border-radius: 50px;
+      -o-border-radius: 50px;
       line-height: 1.2em; 
       margin-top: 0.465em;
       margin-right: 1.0em;
@@ -240,24 +240,35 @@
 </head>
   <div class="container-fluid market-updates">
     {% if appointmentStatus == 0 %}
-      <div class="alert alert-info" role="alert">
+      <div class="alert alert-info alert-dismissible fade show" role="alert">
         <center><p>Your appointment request is currently under review.</p></center>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
       </div>
     {% elif appointmentStatus == 1 %}
-      <div class="alert alert-success" role="alert">
+      <div class="alert alert-primary alert-dismissible fade show" role="alert">
         <center><p>Your appointment has been approved!</p></center>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
       </div>
     {% elif appointmentStatus == 2 %}
-      <div class="alert alert-danger" role="alert">
+      <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <center><p>Your Appointment is Complete</p></center>
+        <center><p>Thank you for attending your appointment. If you have any follow-up questions or need further assistance, please feel free to <a class="link-dark" href="/contactus">contact us</a>.</p></center>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+    {% elif appointmentStatus == 3 %}
+      <div class="alert alert-danger alert-dismissible fade show" role="alert">
         <center><p>We regret to inform you that your appointment request has been rejected.</p></center>
         <center><p>If you have any questions or concerns, please feel free to <a class="link-dark" href="/contactus">contact us</a>.</p></center>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
       </div>
     {% else %}
-      <div class="alert alert-info" role="alert">
+      <div class="alert alert-info alert-dismissible fade show" role="alert">
         <center><p>No appointment has been scheduled.</p></center>
         <center><p>Schedule your appointment <a class="link-dark" href="/patient-book-appointment">here</a>.</p></center>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
       </div>
     {% endif %}
+  </div>
 
     <div class="row">
       
@@ -354,6 +365,9 @@
                     <h3>{{ appointmentDate }}</h3>
                     <h4>Appointment Date</h4>
                 {% elif appointmentStatus == 2 %}
+                    <h3>Complete</h3>
+                    <h4>Appointment Status</h4>
+                {% elif appointmentStatus == 3 %}
                     <h3>Rejected</h3>
                     <h4>Appointment Status</h4>
                 {% else %}

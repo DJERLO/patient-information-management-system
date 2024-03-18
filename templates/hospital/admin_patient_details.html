@@ -4,7 +4,7 @@
     <h2 class="mt-5 mb-4 text-center">Patient Details</h2>
 
     <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-12">
             <div class="card mb-4">
                 <div class="card-header bg-primary text-white">
                     <h3 class="card-title mb-0">Patient Information</h3>
@@ -14,10 +14,10 @@
                         <img src="{{ patient.profile_pic.url }}" alt="Profile Pic" style="width: 150px; height: 150px;">
                     </div>
                     <ul class="list-group list-group-flush">
-                        <li class="list-group-item">First Name: {{ user.first_name }}</li>
-                        <li class="list-group-item">Last Name: {{ user.last_name }}</li>
-                        <li class="list-group-item">Full Name: {{ user.get_full_name }}</li>
-                        <li class="list-group-item">Email: {{ user.email }}</li>
+                        <li class="list-group-item">First Name: {{ patient.user.first_name }}</li>
+                        <li class="list-group-item">Last Name: {{ patient.user.last_name }}</li>
+                        <li class="list-group-item">Full Name: {{ patient.user.get_full_name }}</li>
+                        <li class="list-group-item">Email: {{ patient.user.email }}</li>
                         <li class="list-group-item">Symptoms: {{ patient.symptoms }}</li>
                         <li class="list-group-item">Contact: {{ patient.mobile }}</li>
                         <li class="list-group-item">Address: {{ patient.address }}</li>
@@ -26,7 +26,7 @@
             </div>
         </div>
 
-        <div class="col-md-6">
+        <div class="col-md-12">
             {% if insurance %}
             <div class="card mb-4">
                 <div class="card-header bg-primary text-white">
@@ -52,9 +52,23 @@
                     </ul>
                 </div>
             </div>
-            {% else %}
-            <div class="alert alert-warning" role="alert">
-                No insurance information available.
+            {% endif %}
+        </div>
+        <div class="col-md-12">
+            {% if last_discharge %}
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="card-title mb-0">Last Recorded Discharge</h3>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item">Last Admission Date: {{ last_discharge.admitDate }}</li>
+                        <li class="list-group-item">Release Date: {{ last_discharge.releaseDate }}</li>
+                        <li class="list-group-item">Assigned Doctor: Dr.{{ last_discharge.assignedDoctorName }}</li>
+                        <li class="list-group-item">Last Diagnosis: {{ last_discharge.symptoms }}</li>
+                        <!-- Render other Discharge details here -->
+                    </ul>
+                </div>
             </div>
             {% endif %}
         </div>

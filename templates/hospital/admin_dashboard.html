@@ -24,6 +24,10 @@
     height: auto;
    }
 
+   .bg-orange{
+    color: rgb(255, 159, 64);
+   }
+
   /* Media Query for smaller screens */
   @media only screen and (max-width: 768px) {
     /* Adjust table font size for smaller screens */
@@ -62,7 +66,7 @@
     <div class="col-md-12">
       <div class="card border border-dark">
         <div class="card-header bg-primary text-white" style="text-align:center;">
-          <h6 class="card-title">Recent Doctors</h6>
+          <h6 class="card-title">Active Doctors List</h6>
         </div>
         <div class="card-body">
           <div class="table-responsive p-4">
@@ -82,11 +86,11 @@
                   <td>{{d.department}}</td>
                   <td>{{d.mobile}}</td>
                   {% if d.status == 0 %}
-                  <td><span class="badge bg-primary">On Hold</span></td>
+                  <td><span class="badge bg-primary w-100">On Hold</span></td>
                   {% elif d.status == 1 %}
-                  <td><span class="badge bg-success">Available</span></td>
+                  <td><span class="badge bg-success w-100">Available</span></td>
                   {% elif d.status == 2 %}
-                  <td><span class="badge bg-danger">Not Available</span></td>
+                  <td><span class="badge bg-danger w-100">Not Available</span></td>
                   {% endif %}
                 </tr>
                 {% endfor %}
@@ -97,7 +101,28 @@
       </div>
     </div>
     
-    <div class="col-lg-6 col-xl-6">
+
+    <div class="col-lg-4 col-xl-4">
+      <div class="card border border-dark">
+        <div class="card-header bg-primary text-white" style="text-align:center;">
+          <h6 class="card-title">Total Patients Data</h6>
+        </div>
+        <div class="card-body">
+          <div class="d-flex justify-content-center" style="width:100%; overflow-x:auto;">
+            <img class="chart" src="https://quickchart.io/chart?c={type:'doughnut',data:{labels:['Pending', 'Admitted', 'Total Patients'],datasets:[{label:'Count',data:[{{pendingpatientcount}},{{admittedpatientcount}},{{patientcount}}]}]}}">
+          </div>
+        </div>
+        <div class="card-footer text-center text-dark">
+          <div class="row"> 
+            <div class="col-4 badge bg-primary flex-row">Pending: {{pendingpatientcount}}</div>
+            <div class="bg-orange col-4 badge bg-warning text-dark">Admitted: {{admittedpatientcount}}</div>
+            <div class="col-4 badge bg-danger">Total: {{patientcount}}</div>
+          </div>  
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-4 col-xl-4">
       <div class="card border border-dark">
         <div class="card-header bg-primary text-white" style="text-align:center;">
           <h6 class="card-title">Patient Admission Timeline</h6>
@@ -115,20 +140,21 @@
       </div>
     </div>
 
-    <div class="col-lg-6 col-xl-6">
+    <div class="col-lg-4 col-xl-4">
       <div class="card border border-dark">
         <div class="card-header bg-primary text-white" style="text-align:center;">
-          <h6 class="card-title">Total Patients Data</h6>
+          <h6 class="card-title">Appointment Data</h6>
         </div>
         <div class="card-body">
           <div class="d-flex justify-content-center" style="width:100%; overflow-x:auto;">
-            <img class="chart" src="https://quickchart.io/chart?c={type:'doughnut',data:{labels:['Total Patients','Pending Approval'],datasets:[{label:'Count',data:[{{patientcount}},{{pendingpatientcount}}]}]}}">
+            <img class="chart" src="https://quickchart.io/chart?c={type:'pie',data:{labels:['Pending','Accepted','Completed'],datasets:[{label:'Count',data:[{{pendingappointmentcount}},{{acceptedappointmentcount}},{{completedappointmentcount}}]}]}}">
           </div>
         </div>
         <div class="card-footer text-center text-dark">
           <div class="row"> 
-            <div class="col-6 badge bg-primary">Total Patients: {{patientcount}}</div>
-            <div class="col-6 badge bg-warning text-dark">Needs Approval: {{pendingpatientcount}}</div>
+            <div class="col-4 badge bg-primary">Pending: {{pendingappointmentcount}}</div>
+            <div class="col-4 badge bg-warning text-dark">Accepted: {{acceptedappointmentcount}}</div>
+            <div class="col-4 badge bg-danger">Completed: {{completedappointmentcount}}</div>
           </div>  
         </div>
       </div>
@@ -153,13 +179,13 @@
               <tbody>
                 {% for p in patients %}
                 <tr>
-                  <td>{{p.admit_date}}</td>
+                  <td>{{p.admit_date|date:"F d, Y"}}</td>
                   <td>{{p.get_name}}</td>
                   <td>{{p.mobile}}</td>
                   {% if p.status %}
-                  <td><span class="badge bg-success">Admitted</span></td>
+                  <td><span class="badge bg-success w-100">Admitted</span></td>
                   {% else %}
-                  <td><span class="badge bg-primary">On Hold</span></td>
+                  <td><span class="badge bg-primary w-100">On Hold</span></td>
                   {% endif %}
                 </tr>
                 {% endfor %}
@@ -171,8 +197,11 @@
     </div>
   </div>
 </div>
+
 <script>
   let table1 = new DataTable('#dev-doctor-table');
-  let table2 = new DataTable('#dev-patient-table');
+  let table2 = new DataTable('#dev-patient-table',{
+    "order": [[0, "desc"]]  // Sort by the first column (index 0) in descending order by default
+  });
 </script>
 {% endblock content %}

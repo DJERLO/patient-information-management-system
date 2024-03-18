@@ -3,22 +3,8 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from . import models
+from django.core.validators import RegexValidator
 
-#Modal Forms
-class AdminChangeProfilePicForm(forms.ModelForm):
-    class Meta:
-        model = models.HospitalStaffAdmin
-        fields = ['profile_pic']
-
-class DoctorChangeProfilePicForm(forms.ModelForm):
-    class Meta:
-        model = models.Doctor
-        fields = ['profile_pic']
-
-class PatientChangeProfilePicForm(forms.ModelForm):
-    class Meta:
-        model = models.Patient
-        fields = ['profile_pic']
 
 #Login Forms
 class AdminLoginForm(forms.Form):
@@ -85,13 +71,27 @@ class UpdateDoctorForm(forms.ModelForm):
 
 # Sign Up
 class DoctorUserForm(UserCreationForm):
+    password1 = forms.CharField(
+        label="Password",
+        strip=False,
+        widget=forms.PasswordInput,
+        validators=[
+            RegexValidator(
+                regex='^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()\-_=+{};:,<.>])(?=.*\w).{8,}$',
+                message="Password must contain at least 8 characters, including one uppercase letter, one lowercase letter, one digit, and one special character.",
+            ),
+        ],
+    )
+    password2 = forms.CharField(
+        label="Confirm Password",
+        widget=forms.PasswordInput,
+        strip=False,
+        help_text="Enter the same password as before, for verification.",
+    )
+
     class Meta:
         model = User
         fields = ['first_name', 'last_name', 'username', 'email', 'password1', 'password2']
-        widgets = {
-            'password1': forms.PasswordInput(),
-            'password2': forms.PasswordInput(),
-        }
 
     def __init__(self, *args, **kwargs):
         super(DoctorUserForm, self).__init__(*args, **kwargs)
@@ -112,17 +112,33 @@ class DoctorForm(forms.ModelForm):
 
 
 class PatientUserForm(forms.ModelForm):
-    password = forms.CharField(widget=forms.PasswordInput())
+    password1 = forms.CharField(
+        label="Password",
+        strip=False,
+        widget=forms.PasswordInput,
+        validators=[
+            RegexValidator(
+                regex='^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()\-_=+{};:,<.>])(?=.*\w).{8,}$',
+                message="Password must contain at least 8 characters, including one uppercase letter, one lowercase letter, one digit, and one special character.",
+            ),
+        ],
+    )
+    password2 = forms.CharField(
+        label="Confirm Password",
+        widget=forms.PasswordInput,
+        strip=False,
+        help_text="Enter the same password as before, for verification.",
+    )
 
     class Meta:
         model = User
-        fields = ['first_name', 'last_name', 'email', 'username', 'password']
+        fields = ['first_name', 'last_name', 'email', 'username', 'password1', 'password2']
         widgets = {
             'first_name': forms.TextInput(attrs={'required': 'required'}),
             'last_name': forms.TextInput(attrs={'required': 'required'}),
             'email': forms.EmailInput(attrs={'required': 'required'}),
             'username': forms.TextInput(attrs={'required': 'required'}),
-            'password': forms.PasswordInput(attrs={'required': 'required'}),
+            'password1': forms.PasswordInput(attrs={'required': 'required'}),
         }
 
 class PatientForm(forms.ModelForm):
@@ -152,11 +168,11 @@ class PatientForm(forms.ModelForm):
 
 
 class UpdatePatientUserForm(forms.ModelForm):
-    password = forms.CharField(widget=forms.PasswordInput(), required=True)  # Password field adjustment
+    password = forms.CharField(widget=forms.PasswordInput(), required=False)  # Password field adjustment
 
     class Meta:
         model = User
-        fields = ['first_name', 'last_name', 'email', 'username', 'password']
+        fields = ['first_name', 'last_name', 'email', 'username']
 
 class UpdatePatientForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
@@ -187,7 +203,7 @@ class AppointmentForm(forms.ModelForm):
     
     class Meta:
         model=models.Appointment
-        fields=['description','status', 'appointmentDate']
+        fields=['description', 'appointmentDate']
         widgets = {
             'appointmentDate': forms.DateInput(attrs={'type': 'datetime-local'}),
         }
@@ -226,7 +242,7 @@ class PatientAppointmentForm(forms.ModelForm):
 
     class Meta:
         model = models.Appointment
-        fields = ['description', 'status', 'appointmentDate']
+        fields = ['description', 'appointmentDate']
         widgets = {
             'appointmentDate': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
         }

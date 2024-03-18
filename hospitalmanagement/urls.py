@@ -36,6 +36,7 @@ urlpatterns = [
     
     path('adminlogin', views.adminlogin_view, name='adminlogin'),
     path('adminlogin', LoginView.as_view(template_name='hospital/adminlogin.html')),
+    path('adminlogin', LogoutView.as_view(template_name='hospital/adminlogin.html')), # For is_admin logout
     
     path('doctorlogin', views.doctorlogin_view, name='doctorlogin'),
     path('doctorlogin', LoginView.as_view(template_name='hospital/doctorlogin.html')),
@@ -43,18 +44,38 @@ urlpatterns = [
     path('patientlogin', views.patientlogin_view, name='patientlogin'),
     path('patientlogin', LoginView.as_view(template_name='hospital/patientlogin.html')),
 
+    path('logout', LogoutView.as_view(template_name='hospital/index.html'),name='logout'),
+    path('logout/', views.logout_view, name='logout/'),
 
     path('afterlogin', views.afterlogin_view,name='afterlogin'),
-    path('logout', LogoutView.as_view(template_name='hospital/index.html'),name='logout'),
     
 
-
     path('admin-dashboard', views.admin_dashboard_view,name='admin-dashboard'),
+
+    path('admin-admission',views.admin_admission_view,name='admin-admission'),
+    path('admin-activate-patient/<int:pk>',views.reactivate_patient_view,name='admin-activate-patient'),
+
+    path('admin-billing-invoice', views.admin_billing_view, name='admin-billing-invoice'),
+    path('admin-view-unpaid-bills', views.admin_unpaid_bills_view, name='admin-view-unpaid-bills'),
+    path('admin-view-patient-invoice/<int:patientId>/<int:discharge_id>', views.admin_view_patient_invoice, name='admin-view-patient-invoice'),
+    path('mark-as-paid/<int:patientId>/<int:discharge_id>',views.mark_pay_patient_bill,name='mark-as-paid'),
+
+    path('admin-view-paid-bills', views.admin_patient_discharge_records_view, name='admin-view-paid-bills'),
+    path('admin-view-invoice-records/<int:patientId>', views.admin_patient_view_records, name='admin-view-invoice-records'),
+
+    path('admin-panel', views.admin_panel_view, name='admin-panel'),
+    path('admin-view-staff', views.admin_view_staff,name='admin-view-staff'),
+    path('admin-approve-staff', views.admin_approve_staff_view,name='admin-approve-staff'),
+    
+    path('view/staff-details/<int:pk>/', views.admin_staff_details_view, name='admin-staff-details'),
+    path('approve-staff/<int:pk>', views.approve_staff_view,name='approve-staff'),
+    path('staff-delete/<int:pk>', views.delete_staff_view,name='staff-delete'),
+
 
     path('admin-doctor', views.admin_doctor_view,name='admin-doctor'),
     path('admin-view-doctor', views.admin_view_doctor_view,name='admin-view-doctor'),
     path('view/doctor-details/<int:id>/', views.admin_doctor_details_view, name='admin-doctor-details'),
-    
+
     path('delete-doctor-from-hospital/<int:pk>', views.delete_doctor_from_hospital_view,name='delete-doctor-from-hospital'),
     path('update-doctor/<int:pk>', views.update_doctor_view,name='update-doctor'),
     path('admin-add-doctor', views.admin_add_doctor_view,name='admin-add-doctor'),
@@ -76,8 +97,7 @@ urlpatterns = [
     path('reject-patient/<int:pk>', views.reject_patient_view,name='reject-patient'),
     path('admin-discharge-patient', views.admin_discharge_patient_view,name='admin-discharge-patient'),
     path('discharge-patient/<int:pk>', views.discharge_patient_view,name='discharge-patient'),
-    path('download-pdf/<int:pk>', views.download_pdf_view,name='download-pdf'),
-
+    path('download-pdf/<int:pk>/<int:discharge_id>/', views.download_pdf_view, name='download-pdf'),
 
     path('admin-appointment', views.admin_appointment_view,name='admin-appointment'),
     path('admin-view-appointment', views.admin_view_appointment_view,name='admin-view-appointment'),
@@ -85,7 +105,10 @@ urlpatterns = [
     path('admin-approve-appointment', views.admin_approve_appointment_view,name='admin-approve-appointment'),
     path('approve-appointment/<int:pk>', views.approve_appointment_view,name='approve-appointment'),
     path('reject-appointment/<int:pk>', views.reject_appointment_view,name='reject-appointment'),
-]
+
+    path('admin-status-appointment',views.admin_set_status_appointment_view,name='admin-status-appointment'),
+    path('completed-appointment-admin/<int:pk>', views.set_admin_complete_appointment_view, name='complete-appointment-admin'),
+]   
 
 #---------FOR DOCTOR RELATED URLS-------------------------------------
 urlpatterns +=[

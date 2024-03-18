@@ -36,8 +36,8 @@
       margin-bottom: 2%;
     }
 
-    .form-control {
-      border-radius: 1rem;
+    .form-control, .form-floating {
+      border-radius: 10px;
     }
 
     .btnSubmit {
@@ -49,25 +49,7 @@
       background: #0062cc;
       color: #fff;
     }
-    /*For Larger Device Screens*/
-    @media (min-width: 768px){
-      .btnSubmit {
-       max-width: 200px;
-      text-align: center;
-      }
-
-    }
-
-    /*For Smaller Device Screens*/
-    @media (max-width: 767px){
-      .btnSubmit {
-        width: 30%;
-        height: 100%;
-        font-size: 1.1rem;
-        text-align: center;
-      }
-
-    }
+    
 
     
   </style>
@@ -86,19 +68,20 @@
           <div class="form-content">
             <!-- Add this code where you want to display alerts -->
             <div class="alert-container">
-              {% if messages %}
-                  {% for message in messages %}
+              {% for message in messages %}
+                {% if messages %}
                       <div class="alert alert-danger alert-dismissible fade show" role="alert">
                           {{ message }}
                           <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                               <span aria-hidden="true">&times;</span>
                           </button>
                       </div>
-                  {% endfor %}
-              {% endif %}
+                  {% endif %}
+              {% endfor %}
             </div>
               <div class="row">
                   <div class="col-md-6 mt-4">
+                      
                       <div class="form-floating">
                         {% render_field form.first_name class="form-control" placeholder="First Name" %}
                         <label for="floatingFirstName">First Name</label>
@@ -106,9 +89,10 @@
                           Looks good!
                         </div>
                         <div class="invalid-feedback">
-                            Provide the First Name
+                            Provide your First Name
                         </div>
                       </div>
+                      
                       <div class="form-floating">
                         {% render_field form.last_name class="form-control" placeholder="Last Name" %}
                         <label for="floatingLastName">Last Name</label>
@@ -116,9 +100,10 @@
                           Looks good!
                         </div>
                         <div class="invalid-feedback">
-                            Provide the Last Name
+                            Provide your Last Name
                         </div>
                       </div>
+                      
                       <div class="form-floating">
                         {% render_field form.username class="form-control" placeholder="Username" %}
                         <label for="floatingUsername">Username</label>
@@ -129,6 +114,7 @@
                             Provide a Username
                         </div>
                       </div>
+                      
                       <div class="form-floating">
                         {% render_field form.email class="form-control" placeholder="Email" %}
                         <label for="floatingEmail">Email</label>
@@ -139,26 +125,7 @@
                             Provide a valid Email
                         </div>
                       </div>
-                      <div class="form-floating">
-                        {% render_field form.password1 class="form-control" placeholder="Password" %}
-                        <label for="floatingPassword1">Password</label>
-                        <div class="valid-feedback">
-                          Looks good!
-                        </div>
-                        <div class="invalid-feedback">
-                            Provide a Password
-                        </div>
-                      </div>
-                      <div class="form-floating">
-                        {% render_field form.password2 class="form-control" placeholder="Repeat Password" %}
-                        <label for="floatingPassword2">Repeat Password</label>
-                        <div class="valid-feedback">
-                          Looks good!
-                        </div>
-                        <div class="invalid-feedback">
-                            Repeat the Password
-                        </div>
-                      </div>
+
                       <div class="form-floating">
                         {% render_field profile_form.address class="form-control" placeholder="Address" %}
                         <label for="floatingAddress">Address</label>
@@ -166,32 +133,45 @@
                           Looks good!
                         </div>
                         <div class="invalid-feedback">
-                            Provide the Address
+                            Provide your Address
                         </div>
                       </div>
+                      
+                      <div class="input-group mb-3 flex-nowrap">
+                        <button class="btn btn-outline-primary" type="button" id="togglePassword1">
+                          <i class="bi bi-eye-fill"></i>
+                        </button>
+                        <div class="form-floating flex-grow-1">
+                            {% render_field form.password1 class="form-control" placeholder="Password" id="floatingPassword1" pattern="^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*\W)(?!.* ).{8,32}$" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Password must contain at least one digit, one lowercase letter, one uppercase letter, one special character, and be between 8 to 32 characters long" %}
+                          <label for="floatingPassword1">Password</label>
+                        </div>
+                        
+                      </div>
+                      
+                      <div class="input-group mb-3  flex-nowrap">
+                          <button class="btn btn-outline-primary" type="button" id="togglePassword2">
+                            <i class="bi bi-eye-fill"></i>
+                          </button>
+                        <div class="form-floating flex-grow-1">
+                          {% render_field form.password2 class="form-control" placeholder="Repeat Password" id="floatingPassword2" pattern="^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*\W)(?!.* ).{8,32}$" pattern="^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*\W)(?!.* ).{8,32}$" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Repeat your Password for Verification" %}
+                          <label for="floatingPassword1">Repeat Password</label>
+                        </div>
+                      </div>
+                   
                     </div>
+                    
                     <div class="col-md-6 p-1">
                       <center>
                         <label for="{{ profile_form.profile_pic.id_for_label }}">Profile Picture</label>
-                        <img class="mb-1" id="preview" src="{% static 'images/profile.webp' %}" alt="Preview" style="max-width: 100%; max-height: 150px; display: block;">
+                        <img class="mb-4" id="preview" src="{% static 'images/profile.webp' %}" alt="Preview" style="max-width: 100%; max-height: 150px; display: block;">
                       </center>
-                      <div class="form-group">
+                      <div class="form-group mb-2">
                         {% render_field profile_form.profile_pic class="form-control" onchange="previewImage(this)" %}
                         <div class="valid-feedback">
                           Looks nice!
                         </div>
                         <div class="invalid-feedback">
-                            Provide the Profile Picture
-                        </div>
-                      </div>
-                      <div class="form-floating">
-                        {% render_field profile_form.license_num class="form-control" placeholder="12-34-567"%}
-                        <label for="{{ profile_form.license_num.id_for_label }}">License Number:</label>
-                        <div class="valid-feedback">
-                          Looks great!
-                        </div>
-                        <div class="invalid-feedback">
-                            Provide the PRC License Number.
+                            Provide your Profile Picture
                         </div>
                       </div>
                       <div class="form-floating">
@@ -201,7 +181,17 @@
                           Looks great!
                         </div>
                         <div class="invalid-feedback">
-                            Provide the Department(Specialty)
+                            Provide your Department(Specialty)
+                        </div>
+                      </div>
+                      <div class="form-floating">
+                        {% render_field profile_form.license_num class="form-control" placeholder="1234567"%}
+                        <label for="{{ profile_form.license_num.id_for_label }}">License Number:</label>
+                        <div class="valid-feedback">
+                          Looks great!
+                        </div>
+                        <div class="invalid-feedback">
+                            Provide your PRC License Number.
                         </div>
                       </div>
                       <div class="form-floating">
@@ -216,8 +206,8 @@
                       </div>
                   </div>
               </div>
-                  <center><button type="submit" class="btnSubmit">Add Doctor</button></center> 
-                  
+                  <center><button type="submit" class="btnSubmit">Apply</button></center> 
+                  <div class="text-center">Already have an account? <a href="/doctorlogin">Login here</a></div>
               </div>
              
           </div>
@@ -226,6 +216,34 @@
 </form>
 
 <script>
+  document.addEventListener("DOMContentLoaded", function() {
+      const passwordField1 = document.getElementById('floatingPassword1');
+      const togglePassword1 = document.getElementById('togglePassword1');
+      const eyeIcon1 = document.querySelector('i');
+
+      const passwordField2 = document.getElementById('floatingPassword2');
+      const togglePassword2 = document.getElementById('togglePassword2');
+      const eyeIcon2 = document.querySelector('i');
+  
+      togglePassword1.addEventListener('click', function() {
+        const type = passwordField1.getAttribute('type') === 'password' ? 'text' : 'password';
+        passwordField1.setAttribute('type', type);
+        this.innerHTML = type === 'password' ? '<i class="bi bi-eye-fill"></i>' : '<i class="bi bi-eye-slash-fill"></i>';
+      });
+
+      togglePassword2.addEventListener('click', function() {
+        const type = passwordField2.getAttribute('type') === 'password' ? 'text' : 'password';
+        passwordField2.setAttribute('type', type);
+        this.innerHTML = type === 'password' ? '<i class="bi bi-eye-fill"></i>' : '<i class="bi bi-eye-slash-fill"></i>';
+      });
+
+    });
+
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+      return new bootstrap.Tooltip(tooltipTriggerEl)
+    })
+
   function previewImage(input) {
       var preview = document.getElementById('preview');
       var file = input.files[0];

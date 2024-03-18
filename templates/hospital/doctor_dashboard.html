@@ -2,7 +2,7 @@
 {% load static %}
 {% block content %}
 
-<br><br><br><br>
+<br><br><br>
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -44,7 +44,7 @@
     <div class="col-md-12 col-xl-12">
       <div class="card border border-dark">
         <div class="card-header bg-primary text-white" style="text-align:center;">
-          <h6 class="card-title">Recent Appointments For You</h6>
+          <h6 class="card-title">Upcoming Appointments For You</h6>
         </div>
         <div class="table-responsive p-4">
           <table class="table table-hover table-striped py-3" id="dev-table">
@@ -54,16 +54,14 @@
                 <th>Patient Name</th>
                 <th>Description</th>
                 <th>Contact</th>
-                <th>Address</th>
               </tr>
             </thead>
             {% for a,p in appointments %}
             <tr>
-              <td>{{a.appointmentDate}}</td>
+              <td>{{a.appointmentDate|date:"F d, Y - g:iA"}}</td>
               <td>{{a.patientName}}</td>
               <td>{{a.description}}</td>
               <td>{{p.mobile}}</td>
-              <td>{{p.address}}</td>
             </tr>
             {% endfor %}
           </table>

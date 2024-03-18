@@ -1,7 +1,11 @@
+from django.core.mail import send_mail
+from datetime import timedelta
 from django.utils import timezone
 from django.db import models
 from django.contrib.auth.models import User
 from django.core.validators import validate_email, RegexValidator
+
+from hospitalmanagement import settings
 
 class HospitalStaffAdmin(models.Model):
     staff_id = models.AutoField(primary_key=True)  
@@ -11,9 +15,9 @@ class HospitalStaffAdmin(models.Model):
     address = models.CharField(max_length=40, blank=False, null=False)
     mobile = models.CharField(max_length=20, null=True, blank=False)
     email = models.EmailField(validators=[validate_email], blank=False, null=False)
-
+    status = models.BooleanField(default=False)
+    
     @property
-
     def get_name(self):
         return f"{self.user.first_name} {self.user.last_name}"
 
@@ -44,7 +48,15 @@ departments=[('Cardiologist', 'Cardiologist'),
     ('Pediatricians', 'Pediatricians'),
     ('Psychiatrists', 'Psychiatrists'),
     ('Radiologists', 'Radiologists'),
-    ('Rheumatologists', 'Rheumatologists')
+    ('Rheumatologists', 'Rheumatologists'),
+    ('Urologists', 'Urologists'),  
+    ('Endocrinologists', 'Endocrinologists'),  
+    ('Pulmonologists', 'Pulmonologists'),  
+    ('Gynecologists', 'Gynecologists'),  
+    ('Oncology Nurses', 'Oncology Nurses'),  
+    ('General Practitioners', 'General Practitioners'),  
+    ('Dentists', 'Dentists'),  
+    ('Orthodontists', 'Orthodontists'),  
 ]
 class Doctor(models.Model):
     #Status Code
@@ -249,4 +261,15 @@ class PatientDischargeDetails(models.Model):
     doctorFee=models.PositiveIntegerField(null=False)
     OtherCharge=models.PositiveIntegerField(null=False)
     total=models.PositiveIntegerField(null=False)
+    is_Paid= models.BooleanField(default=False)
 
+    @classmethod
+    def check_unpaid_invoices_and_send_email(cls):
+        last_email_sent_time = timezone.now() - timedelta(hours=24)  # Example: 24 hours ago
+        if last_email_sent_time < timezone.now() - timedelta(hours=24):
+            unpaid_invoices = cls.objects.filter(is_Paid=False)
+            for invoice in unpaid_invoices:
+                # Send email notification
+                subject = 'Unpaid Hospital Bill Notification'
+                message = f'Hello {invoice.patientName},\n\nWe hope this message finds you well.\n\nWe\'d like to remind you that there is an outstanding balance on your hospital bill. To view and settle your invoice, you can log in to your patient portal and access it under the Discharge panel in the side navigation menu.\n\nPlease ensure the payment is settled at your earliest convenience. If you have any questions or need assistance, feel free to reach out to our support team.\n\nThank you for your prompt attention to this matter.\n\nBest regards,\nThe Hospital Management Team'
+                send_mail(subject, message, settings.EMAIL_HOST_USER, [invoice.user.email])

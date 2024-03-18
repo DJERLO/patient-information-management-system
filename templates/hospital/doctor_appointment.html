@@ -134,7 +134,7 @@
     let doctorViewAppointment = document.getElementById("doctorViewAppointment")
     let doctorAddAppointment = document.getElementById("doctorAddAppointment")
     let doctorApproveAppointment = document.getElementById("doctorApproveAppointment")
-    let doctorDeleteAppointment = document.getElementById("doctorStatusAppointment")
+    let doctorStatusAppointment = document.getElementById("doctorStatusAppointment")
     
     doctorViewAppointment.addEventListener("click", function() {
       window.location.href = "/doctor-view-appointment";
@@ -148,11 +148,11 @@
       window.location.href = "/doctor-approve-appointment";
     });
 
-    doctorDeleteAppointment.addEventListener("click", function() {
+    doctorStatusAppointment.addEventListener("click", function() {
       window.location.href = "/doctor-status-appointment";
     });
 
   </script>
   
-<br><br><br><br><br><br><br>
+  <br><br><br><br><br><br><br><br><br><br><br><br><br><br>
 {% endblock content %}

@@ -1,8 +1,6 @@
-<!DOCTYPE html>
+
 {% load static %}
 {% load widget_tweaks %}
-
-<html lang="en" dir="ltr">
 
 <head>
     <meta charset="UTF-8">
@@ -10,23 +8,57 @@
     <title>PIMS - Contact Us</title>
     <link rel="icon" type="image/x-icon" href={% static "images/favicon.ico"%}>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2/dist/sweetalert2.all.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/sweetalert2/dist/sweetalert2.min.css" rel="stylesheet">
     <style>
         body {
             background-color: #f8f9fa;
-            padding-top: 50px;
+            padding-top: 60px;
+            display: grid;
         }
 
-        .contact-container {
+        footer{
+            position: absolute;
+            top: 100%
+        }
+
+        .blur-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-image: url('{% static "images/back.jpg" %}');
+            background-size: cover;
+            background-repeat: no-repeat;
+            filter: blur(3px);
+            z-index: -1; 
+            }
+
+        .contact-container-1 {
             max-width: 600px;
-            margin: 0 auto;
+            margin: 0;
             background-color: #fff;
             padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
         }
 
+        .contact-container-2 {
+            max-width: 450px;
+            margin: 0;
+            background-color: #fff;
+            padding: 20px;
+            font-size: 1.5rem;
+        }
+
+        .contact-container-3 {
+            display: none;
+            max-width: 600px;
+            margin: 0;
+            background-color: #fff;
+            padding: 20px;
+        }
+        
         .contact-heading {
             text-align: center;
             margin-bottom: 30px;
@@ -36,95 +68,138 @@
         .btn-send {
             width: 100%;
         }
+        
+        #messageField{
+            height: 300px;
+        }
+
+        @media screen and (max-width: 768px){
+            .contact-container-2 {
+                display: none;
+            }
+
+            .contact-container-3 {
+                display: block;
+            }
+        }
+
     </style>
 </head>
-
-<body>
-    {% include "hospital/navbar.html" %}
-    <div class="container">
-        <div class="row justify-content-center mt-5">
-            <div class="col-md-8">
-                <div class="contact-container">
-                    <h3 class='alert alert-success contact-heading'>Send Us Your Valuable Feedback!</h3>
+{% include "hospital/navbar.html" %}
+    <div class="container-fluid">
+        <div class="blur-background"></div>
+        <div class="row mt-5">
+            <div class="col-lg-12 d-flex flex-row justify-content-center mb-6">
+                <!--For Smaller Device-->
+                <div class="contact-container-1 w-100 h-100">
+                    <div class="contact-container-3">
+                        <h3 class='display-6 contact-heading'>Contact Us</h3>
+                        <div class="contact-details">
+                            <!-- Hospital Details with Bootstrap Icons -->
+                            <div class="mb-3">
+                                <i class="bi bi-geo-alt"></i> Hospital Address: 123 Main Street, City, Country
+                            </div>
+                            <div class="mb-3">
+                                <i class="bi bi-phone"></i> Phone: +1234567890
+                            </div>
+                            <div class="mb-3">
+                                <i class="bi bi-envelope"></i> Email: info@example.com
+                            </div>
+                       </div>
+                    </div>
+                    <!--Form-->
+                    <h3 class='display-6 contact-heading'>Send Us A Message</h3>
                     <form id="contact-form" method="POST">
                         {% csrf_token %}
-                        <div class="mb-3">
-                            <label for="id_Name" class="form-label">Name</label>
+                        <div class="mb-3 form-floating">
                             {% render_field form.Name class="form-control" placeholder="Your Name" name="name" %}
+                            <label for="id_Name" class="form-label">Name</label>
                         </div>
-                        <div class="mb-3">
-                            <label for="id_Email" class="form-label">Email</label>
+                        <div class="mb-3 form-floating">
                             {% render_field form.Email class="form-control" placeholder="Your Email" name="email" %}
+                            <label for="id_Email" class="form-label">Email</label>
                         </div>
-                        <div class="mb-3">
-                            <label for="id_Subject" class="form-label">Subject</label>
+                        <div class="mb-3 form-floating">
                             {% render_field form.Subject class="form-control" placeholder="Subject/Title" name="subject" %}
+                            <label for="id_Subject" class="form-label">Subject</label>
                         </div>
-                        <div class="mb-3">
+                        <div class="mb-3 form-floating">
+                            {% render_field form.Message class="form-control" id="messageField" placeholder="Leave us your message" name="message" %}
                             <label for="id_Message" class="form-label">Message</label>
-                            {% render_field form.Message class="form-control" placeholder="Leave us your message" name="message" %}
                         </div>
                         <div class="mb-3">
                             <button type="button" id="submit-btn" class="btn btn-primary btn-send">Send Message</button>
                         </div>
                     </form>
                 </div>
+                <div class="contact-container-2 w-100 h-100">
+                    <h3 class='display-6 contact-heading'>Contact Us</h3>
+                    <div class="contact-details">
+                        <!-- Hospital Details with Bootstrap Icons -->
+                        <div class="mb-3">
+                            <i class="bi bi-geo-alt"></i> Hospital Address: 123 Main Street, City, Country
+                        </div>
+                        <div class="mb-3">
+                            <i class="bi bi-phone"></i> Phone: +1234567890
+                        </div>
+                        <div class="mb-3">
+                            <i class="bi bi-envelope"></i> Email: info@example.com
+                        </div>
+                   </div>
+                </div>
             </div>
-        </div>
-    </div>
-    
+
+            {% include 'hospital/footer.html' %}    
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@12.6.10/dist/sweetalert2.min.js"></script>
     <script>
       // AJAX form submission
-document.addEventListener('DOMContentLoaded', function() {
-    document.getElementById('submit-btn').addEventListener('click', function(event) {
-        event.preventDefault(); // Prevent default form submission behavior
+    document.addEventListener('DOMContentLoaded', function() {
+        document.getElementById('submit-btn').addEventListener('click', function(event) {
+            event.preventDefault(); // Prevent default form submission behavior
 
-        // Validate form fields
-        var form = document.getElementById('contact-form');
-        if (!form.checkValidity()) {
-            form.reportValidity(); // Display validation error messages
-            return; // Exit function if form is not valid
-        }
-
-        // If form is valid, proceed with AJAX submission
-        var formData = new FormData(form);
-        
-        // Add CSRF token to formData
-        formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
-
-        var xhr = new XMLHttpRequest();
-        xhr.open('POST', form.action);
-        xhr.onreadystatechange = function() {
-            if (xhr.readyState === XMLHttpRequest.DONE) {
-                if (xhr.status === 200) {
-                    // Success
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Success',
-                        text: 'Your message has been sent!',
-                        confirmButtonText: 'OK'
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            window.location.href = "{% url 'contactussuccess' %}"; // Redirect to contactussuccess page
-                        }
-                    });
-                } else {
-                    // Error
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Oops...',
-                        text: 'Something went wrong! Please try again later.',
-                        confirmButtonText: 'OK'
-                    });
-                }
+            // Validate form fields
+            var form = document.getElementById('contact-form');
+            if (!form.checkValidity()) {
+                form.reportValidity(); // Display validation error messages
+                return; // Exit function if form is not valid
             }
-        };
-        xhr.send(formData);
-    });
-});
-  </script>
-</body>
 
-</html>
+            // If form is valid, proceed with AJAX submission
+            var formData = new FormData(form);
+            
+            // Add CSRF token to formData
+            formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', form.action);
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === XMLHttpRequest.DONE) {
+                    if (xhr.status === 200) {
+                        // Success
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success',
+                            text: 'Your message has been sent!',
+                            confirmButtonText: 'OK'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                window.location.href = "{% url 'contactussuccess' %}"; // Redirect to contactussuccess page
+                            }
+                        });
+                    } else {
+                        // Error
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: 'Something went wrong! Please try again later.',
+                            confirmButtonText: 'OK'
+                        });
+                    }
+                }
+            };
+            xhr.send(formData);
+        });
+    });
+  </script>
+  

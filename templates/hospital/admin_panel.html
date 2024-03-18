@@ -1,0 +1,142 @@
+{% extends 'hospital/admin_base.html' %}
+{% load static %}
+{% block content %}
+<br><br>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css">
+  <style type="text/css">
+    
+    a:link {
+      text-decoration: none;
+    }
+
+    h6 {
+      color: white;
+    }
+
+    .fixed-top{
+      position: absolute;
+    }
+  
+    .order-card {
+      color: #fff;
+    }
+  
+    .bg-c-blue {
+      background: linear-gradient(45deg, #4099ff, #73b4ff);
+    }
+  
+    .bg-c-green {
+      background: linear-gradient(45deg, #2ed8b6, #59e0c5);
+    }
+  
+    .bg-c-yellow {
+      background: linear-gradient(45deg, #FFB64D, #ffcb80);
+    }
+  
+    .bg-c-pink {
+      background: linear-gradient(45deg, #FF5370, #ff869a);
+    }
+  
+    .card {
+      border-radius: 5px;
+      -webkit-box-shadow: 0 1px 2.94px 0.06px rgba(4, 26, 55, 0.16);
+      box-shadow: 0 1px 2.94px 0.06px rgba(4, 26, 55, 0.16);
+      border: none;
+      margin-bottom: 30px;
+      -webkit-transition: all 0.3s ease-in-out;
+      transition: all 0.3s ease-in-out;
+    }
+  
+    .card .card-block {
+      padding: 25px;
+      cursor: pointer;
+    }
+  
+    .card-block:hover {
+      cursor: pointer;
+      border-radius: 5px;
+      background-color: #1f88de; /* Optional: Change background color on hover */
+    }
+  
+    .order-card i {
+      font-size: 26px;
+    }
+  
+    .f-left {
+      float: left;
+    }
+  
+    .f-right {
+      float: right;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container-fluid">
+  <div class="row">
+    <div class="col-md-4 col-xl-4">
+      <div class="card bg-c-blue order-card">
+        <div class="card-block" id="staffViewCard">
+          <h6 class="m-b-20">View Staff Records</h6>
+          <br>
+          <h2 class="text-right"><i class="fas fa-user-nurse f-left"></i></h2>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="col-md-4 col-xl-4">
+      <div class="card bg-c-yellow order-card">
+        <div class="card-block" id="staffApproveCard">
+          <h6 class="m-b-20">Approve Staff Registrations</h6>
+          <br>
+          <h2 class="text-right"><i class="fas fa-check-circle f-left"></i></h2>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4 col-xl-4">
+      <div class="card bg-c-pink order-card">
+        <div class="card-block"  id="specialisationCard">
+            <h6 class="m-b-20">Administration Site</h6>
+            <br>
+            <h2 class="text-right"><i class="fa-solid fa-gear f-left"></i></i></h2>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+</body>
+
+
+<script>
+  let staffViewBtn = document.getElementById("staffViewCard")
+  let staffApproveBtn = document.getElementById("staffApproveCard")
+  let staffSpecialisationBtn = document.getElementById("specialisationCard")
+  
+  //EventListener
+    staffViewBtn.addEventListener("click", function() {
+      window.location.href = "/admin-view-staff";
+  });
+
+
+  staffApproveBtn.addEventListener("click", function() {
+      window.location.href = "/admin-approve-staff";
+  });
+
+  staffSpecialisationBtn.addEventListener("click", function() {
+      window.location.href = "/admin/";
+  });
+
+</script>
+
+
+<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+{% endblock content %}

@@ -9,6 +9,7 @@
   <title>PIMS - Patient Sign Up</title>
   <link rel="icon" type="image/x-icon" href={% static "images/favicon.ico"%}>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
   <style type="text/css">
     body {
@@ -38,7 +39,7 @@
       
     }
 
-    .form-control {
+    .form-control, .form-floating {
       border-radius: 1.5rem;
     }
 
@@ -97,7 +98,7 @@
   <br>
   <br>
 
-  <form class="need-validation" method="post" enctype="multipart/form-data">
+  <form class="was-validated" method="post" enctype="multipart/form-data">
     {% csrf_token %}
     <div class="container register-form">
         <div class="form">
@@ -107,18 +108,34 @@
             
             <div class="form-content">
                 <!-- Alert Messages -->
-                {% if messages %}
-                <div class="alert alert-dismissible {% if messages.tags %}alert-{{ messages.tags }}{% endif %}" role="alert">
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    {% for message in messages %}
-                    {{ message }}
-                    {% endfor %}
-                </div>
-                {% endif %}
+                <div class="alert-container">
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                {{ message }}
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                  </div>
                 <center>
-                    <img id="preview" src="{% static 'images/profile.webp' %}" alt="Preview" style="max-width: 100%; max-height: 9.5em;">
+                    <img class="mb-3" id="preview" src="{% static 'images/profile.webp' %}" alt="Preview" style="max-width: 100%; max-height: 9.5em;">
                 </center>
                 <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            {% render_field patientForm.profile_pic class="form-control mb-1" onchange="previewImage(this)" %}
+                            <div class="invalid-feedback">
+                                Please upload your profile picture.
+                            </div>
+                            <div class="valid-feedback">
+                                Looks nice!
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="col-md-6">
                         <div class="form-floating">
                             {% render_field patientForm.assigned_doctor_id class="form-control" placeholder="Doctor" %}
@@ -130,6 +147,7 @@
                                 Good, All Set!
                             </div>
                         </div>
+
                         <div class="form-floating">
                             {% render_field patientForm.symptoms class="form-control" placeholder="Symptoms" %}
                             <label for="floatingSymptoms">Symptoms:</label>
@@ -181,16 +199,8 @@
                             </div>
                         </div>
                     </div>
+                    
                     <div class="col-md-6">
-                        <div class="form-group">
-                            {% render_field patientForm.profile_pic class="form-control mb-1" onchange="previewImage(this)" %}
-                            <div class="invalid-feedback">
-                                Please upload your profile picture.
-                            </div>
-                            <div class="valid-feedback">
-                                Looks nice!
-                            </div>
-                        </div>
                         <div class="form-floating">
                             {% render_field userForm.username class="form-control" placeholder="Username" %}
                             <label for="floatingUsername">Username:</label>
@@ -201,16 +211,26 @@
                                 Looks good!
                             </div>
                         </div>
-                        <div class="form-floating">
-                            {% render_field userForm.password class="form-control" placeholder="Password" %}
-                            <label for="floatingPassword">Password:</label>
-                            <div class="invalid-feedback">
-                                Please provide a password.
+                        <div class="input-group mb-4 flex-nowrap">
+                            <button class="btn btn-outline-primary" type="button" id="togglePassword1">
+                              <i class="bi bi-eye-fill"></i>
+                            </button>
+                            <div class="form-floating flex-grow-1">
+                                {% render_field userForm.password1 class="form-control" placeholder="Password" id="floatingPassword1" pattern="^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*\W)(?!.* ).{8,32}$" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Password must contain at least one digit, one lowercase letter, one uppercase letter, one special character, and be between 8 to 32 characters long" %}
+                              <label for="floatingPassword1">Password</label>
                             </div>
-                            <div class="valid-feedback">
-                                Looks good!
+                            
+                          </div>
+                          
+                          <div class="input-group mb-4  flex-nowrap">
+                              <button class="btn btn-outline-primary" type="button" id="togglePassword2">
+                                <i class="bi bi-eye-fill"></i>
+                              </button>
+                            <div class="form-floating flex-grow-1">
+                              {% render_field userForm.password2 class="form-control" placeholder="Repeat Password" id="floatingPassword2" pattern="^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*\W)(?!.* ).{8,32}$" pattern="^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*\W)(?!.* ).{8,32}$" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Repeat your Password for Verification" %}
+                              <label for="floatingPassword1">Repeat Password</label>
                             </div>
-                        </div>
+                          </div>
                         <div class="form-floating">
                             {% render_field patientForm.address class="form-control" placeholder="Address" %}
                             <label for="floatingAddress">Address:</label>
@@ -254,6 +274,34 @@
   
 </body>
 <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      const passwordField1 = document.getElementById('floatingPassword1');
+      const togglePassword1 = document.getElementById('togglePassword1');
+      const eyeIcon1 = document.querySelector('i');
+
+      const passwordField2 = document.getElementById('floatingPassword2');
+      const togglePassword2 = document.getElementById('togglePassword2');
+      const eyeIcon2 = document.querySelector('i');
+  
+      togglePassword1.addEventListener('click', function() {
+        const type = passwordField1.getAttribute('type') === 'password' ? 'text' : 'password';
+        passwordField1.setAttribute('type', type);
+        this.innerHTML = type === 'password' ? '<i class="bi bi-eye-fill"></i>' : '<i class="bi bi-eye-slash-fill"></i>';
+      });
+
+      togglePassword2.addEventListener('click', function() {
+        const type = passwordField2.getAttribute('type') === 'password' ? 'text' : 'password';
+        passwordField2.setAttribute('type', type);
+        this.innerHTML = type === 'password' ? '<i class="bi bi-eye-fill"></i>' : '<i class="bi bi-eye-slash-fill"></i>';
+      });
+
+    });
+
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+      return new bootstrap.Tooltip(tooltipTriggerEl)
+    })
+
   function previewImage(input) {
       var preview = document.getElementById('preview');
       var file = input.files[0];

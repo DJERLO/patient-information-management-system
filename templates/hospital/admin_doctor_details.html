@@ -12,13 +12,17 @@
                 </div>
                 <div class="card-body">
                     <div class="text-center mb-4">
-                        <img src="{{ doctor.profile_pic.url }}" alt="Profile Pic" style="width: 150px; height: 150px;">
+                        {% if doctor.profile_pic %}
+                            <img src="{{ doctor.profile_pic.url }}" alt="Profile Pic" style="width: 150px; height: 150px;">
+                        {% else %}
+                            <img src="{% static 'images/doctor.png' %}" alt="Profile Pic" style="width: 150px; height: 150px;">
+                        {% endif %}
                     </div>
                     <ul class="list-group list-group-flush">
-                        <li class="list-group-item">First Name: {{ user.first_name }}</li>
-                        <li class="list-group-item">Last Name: {{ user.last_name }}</li>
-                        <li class="list-group-item">Full Name: {{ user.get_full_name }}</li>
-                        <li class="list-group-item">Email: {{ user.email }}</li>
+                        <li class="list-group-item">First Name: {{ doctor.user.first_name }}</li>
+                        <li class="list-group-item">Last Name: {{ doctor.user.last_name }}</li>
+                        <li class="list-group-item">Full Name: {{ doctor.user.get_full_name }}</li>
+                        <li class="list-group-item">Email: {{ doctor.user.email }}</li>
                         <li class="list-group-item">License Number: {{ doctor.license_num }}</li>
                         <li class="list-group-item">Contact: {{ doctor.mobile }}</li>
                         <li class="list-group-item">Address: {{ doctor.address }}</li>
@@ -35,8 +39,6 @@
                 </div>
             </div>
         </div>
-
-        
     </div>
 </div>
 {% endblock content %}

@@ -77,7 +77,7 @@
             <td>{{ p.symptoms }}</td>
             <td>{{ p.mobile }}</td>
             <td>{{ p.address }}</td>
-            <td><a class="btn btn-primary btn-sm" href="{% url 'doctor-patient-details' p.id %}"><i class="bi bi-eye"></i></a></td>
+            <td><a class="btn btn-primary btn-sm w-100 h-100" href="{% url 'doctor-patient-details' p.id %}"><i class="bi bi-eye"></i></a></td>
           </tr>
           {% endfor %}
         </tbody>

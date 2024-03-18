@@ -66,8 +66,8 @@
     <div class="card-header bg-primary text-white">
       <h6 class="card-title">Your Appointment Approvals Required</h6>
     </div>
-    <div class="table-responsive">
-      <table class="table table-hover" id="approval-table">
+    <div class="table-responsive p-4">
+      <table class="table table-hover py-3" id="approval-table">
         <thead class="table-dark">
           <tr>
             <th>Date Request</th>
@@ -81,17 +81,17 @@
         <tbody>
           {% for appointment in appointments %}
           <tr>
-            <td>{{ appointment.appointmentDate }}</td>
+            <td>{{ appointment.appointmentDate|date:"F d, Y - g:iA" }}</td>
             <td>{{ appointment.doctorName }}</td>
             <td>{{ appointment.patientName }}</td>
             <td>{{ appointment.description }}</td>
             <td>
-              <a class="btn btn-primary btn-sm" href="{% url 'approve-doctor-appointment' appointment.appointment_id %}">
+              <a class="btn btn-primary btn-sm w-100 h-100" href="{% url 'approve-doctor-appointment' appointment.appointment_id %}">
                 <i class="bi bi-check"></i>
               </a>
             </td>
             <td>
-              <a class="btn btn-danger btn-sm delete-btn" href="{% url 'reject-doctor-appointment' appointment.appointment_id %}">
+              <a class="btn btn-danger btn-sm delete-btn w-100 h-100" href="{% url 'reject-doctor-appointment' appointment.appointment_id %}">
                 <i class="bi bi-trash"></i>
               </a>
             </td>

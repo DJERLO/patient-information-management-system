@@ -81,7 +81,7 @@
           <tbody>
             {% for a, p in appointments %}
             <tr>
-              <td>{{ a.appointmentDate }}</td>
+              <td>{{ a.appointmentDate|date:"F d, Y - g:iA" }}</td>
               <td>{{ a.patientName }}</td>
               <td>{{ a.description }}</td>
               <td>{{ p.mobile }}</td>
@@ -94,7 +94,9 @@
   </div>
 
 <script>
-  let table = new DataTable('#dev-table');
+  let table = new DataTable('#dev-table',{
+    "order": [[0, "desc"]]  // Sort by the first column (index 0) in descending order by default
+  });
 </script>
 
 {% endblock content %}

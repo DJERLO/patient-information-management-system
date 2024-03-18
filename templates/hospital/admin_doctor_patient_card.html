@@ -18,6 +18,8 @@
       margin: auto;
       text-align: center;
       font-family: arial;
+      width: 100%;
+      height: 100%;
     }
 
     .title {
@@ -73,6 +75,7 @@
       .grid-item {
         width: 100%;
         height: 100%;
+        max-width: 250px; /* Adjust the max-width as needed */
         justify-content: center;
         align-self: center;
       }
@@ -101,7 +104,7 @@
     <div class="grid-container">
       <div class="grid-item">
         <div class="card">
-          <img src="{% static "images/admin.png" %}" alt="Admin" style="width:100%">
+          <img class="img-fluid" src="{% static "images/admin.png" %}" alt="Admin">
           <p class="title">ADMIN</p>
           <p><button><a href="/adminclick">View</a></button></p>
         </div>
@@ -109,7 +112,7 @@
 
       <div class="grid-item">
         <div class="card">
-          <img src="{% static "images/doctor.png" %}" alt="Doctor" style="width:100%">
+          <img class="img-fluid" src="{% static "images/doctor.png" %}" alt="Doctor">
           <p class="title">DOCTOR</p>
           <p><button><a href="/doctorclick">View</a></button></p>
         </div>
@@ -117,7 +120,7 @@
 
       <div class="grid-item">
         <div class="card">
-          <img src="{% static "images/patient.png" %}" alt="Patient" style="width:100%">
+          <img class="img-fluid" src="{% static "images/patient.png" %}" alt="Patient">
           <p class="title">PATIENT</p>
           <p><button><a href="/patientclick">View</a></button></p>
         </div>
@@ -125,7 +128,5 @@
     </div>
   </div>
 </body>
-
-</html>
 
 </html>

@@ -1,0 +1,35 @@
+{% extends 'hospital/admin_base.html' %}
+{% load static %}
+{% block content %}
+<div class="container">
+    <h2 class="mt-5 mb-4 text-center">Staff Details</h2>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="card-title mb-0">Staff Information</h3>
+                </div>
+                <div class="card-body">
+                    <div class="text-center mb-4">
+                        {% if admins.profile_pic %}
+                            <img src="{{ admins.profile_pic.url }}" alt="Profile Pic" style="width: 150px; height: 150px;">
+                        {% else %}
+                            <img src="{% static 'images/adminpropic.png' %}" alt="Profile Pic" style="width: 150px; height: 150px;">
+                        {% endif %}
+                    </div>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item">First Name: {{ user.first_name }}</li>
+                        <li class="list-group-item">Last Name: {{ user.last_name }}</li>
+                        <li class="list-group-item">Full Name: {{ user.get_full_name }}</li>
+                        <li class="list-group-item">Email: {{ user.email }}</li>
+                        <li class="list-group-item">Symptoms: {{ admins.email }}</li>
+                        <li class="list-group-item">Contact: {{ admins.mobile }}</li>
+                        <li class="list-group-item">Address: {{ admins.address }}</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

@@ -1,0 +1,47 @@
+#This is a Dictionary 
+#Here some Keywords for departments 
+#Use on Patient Booking Appointment System as Filtering for Self-Diagnose
+
+disease_to_department = {
+    #Format [keywwords: Department]
+    'heart': 'Cardiologist',
+    'blood pressure': 'Cardiologist',
+    'skin': 'Dermatologists',
+    'rash': 'Dermatologists',
+    'fever': 'Emergency Medicine Specialists',
+    'allergy': 'Allergists/Immunologists',
+    'surgery': 'Anesthesiologists',
+    'appendix': 'Anesthesiologists',
+    'cancer': ['Colon and Rectal Surgeons', 'Oncologists'],
+    'tumor': 'Oncologists',
+    'digestive': 'Gastroenterologists',
+    'stomachache': 'Gastroenterologists',
+    'blood': 'Hematologists',
+    'anemia': 'Hematologists',
+    'kidney': 'Nephrologists',
+    'nephritis': 'Nephrologists',
+    'nerve': 'Neurologists',
+    'headache': 'Neurologists',
+    'eye': 'Ophthalmologists',
+    'vision': 'Ophthalmologists',
+    'bone': 'Orthopedic Surgeons',
+    'fracture': 'Orthopedic Surgeons',
+    'child': 'Pediatricians',
+    'pediatrics': 'Pediatricians',
+    'mental': 'Psychiatrists',
+    'depression': 'Psychiatrists',
+    'radiology': 'Radiologists',
+    'x-ray': 'Radiologists',
+    'joint': 'Rheumatologists',
+    'arthritis': 'Rheumatologists',
+    'urinary': 'Urologists',  
+    'hormonal': 'Endocrinologists',  
+    'respiratory': 'Pulmonologists',  
+    'women': 'Gynecologists',  
+    'oncology': 'Oncology Nurses',  
+    'general health': 'General Practitioners', 
+    'dental': 'Dentists', 
+    'teeth': 'Dentists',  
+    'braces': 'Orthodontists',  
+    # Add More Key/Values if you add more departments
+}

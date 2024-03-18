@@ -60,16 +60,17 @@
         <!-- End of Alert message -->
         <div class="row">
           <div class="col-md-12">
-            <div class="form-group">
-              {% render_field appointmentForm.description class="form-control" placeholder="Description" %}
+            <div class="form-floating mb-3">
+              {% render_field appointmentForm.description class="form-control" placeholder="Description" style="height: 300px;" %}
+              <label for="{{ appointmentForm.description.id_for_label }}">Description</label>
             </div>
-            <label for="{{ appointmentForm.appointmentDate.id_for_label }}">Appointment Date:</label>
-            <div class="form-group">
+            <div class="form-floating mb-3">
               {% render_field appointmentForm.appointmentDate class="form-control" placeholder="Appointment Date" %}
+              <label for="{{ appointmentForm.appointmentDate.id_for_label }}">Appointment Date</label>
             </div>
-            <div class="form-group">
-              <label for="{{ appointmentForm.patientId.id_for_label }}">Patient:</label>
+            <div class="form-floating mb-3">
               {% render_field appointmentForm.patientId class="form-control" %}
+              <label for="{{ appointmentForm.patientId.id_for_label }}">Patient:</label>
             </div>
           </div>
         </div>

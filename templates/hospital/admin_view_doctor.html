@@ -22,10 +22,14 @@
       margin: 10px auto;
     }
 
+    table{
+      width: 100%;
+      table-layout: fixed;
+    }
 
     .table-responsive {
       text-wrap: wrap;
-      
+      table-layout: fixed;
     }
 
     .view-doctor-panel{
@@ -81,7 +85,6 @@
             <th>Department</th>
             <th>View</th>
             <th>Update</th>
-            <th>Delete</th>
           </tr>
         </thead>
         <tbody>
@@ -92,9 +95,8 @@
             <td>{{ d.mobile }}</td>
             <td>{{ d.address }}</td>
             <td>{{ d.department }}</td>
-            <td><a class="btn btn-primary btn-sm" href="{% url 'admin-doctor-details' d.id %}"><i class="bi bi-eye"></i></a></td>
-            <td><a class="btn btn-secondary btn-sm" href="{% url 'update-doctor' d.id  %}"><i class="bi bi-pencil"></i></a></td>
-            <td><a class="btn btn-danger btn-sm delete-btn" href="{% url 'delete-doctor-from-hospital' d.id  %}"><i class="bi bi-trash"></i></a></td>
+            <td><a class="btn btn-primary btn-sm w-100 h-100" href="{% url 'admin-doctor-details' d.id %}"><i class="bi bi-eye"></i></a></td>
+            <td><a class="btn btn-secondary btn-sm w-100 h-100" href="{% url 'update-doctor' d.id  %}"><i class="bi bi-pencil"></i></a></td>
           </tr>
           {% endfor %}
         </tbody>
@@ -125,6 +127,10 @@
           });
       });
   });
+
+  function callDoctor(number) {
+        window.location.href = "tel:" + number;
+    }
   </script>
 
 {% endblock content %}
