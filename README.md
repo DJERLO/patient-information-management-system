@@ -50,6 +50,57 @@ Welcome to the Patient Information Management System (PIMS). This project effici
 - Pharmacy Management System (2025)
 - Chat Rooms
 
+# Screenshots
+
+## Homepage
+![Homepage](screenshots/homepage.png)
+
+## About Us
+![About Us](screenshots/about_us.png)
+
+## Contact
+![Contact](screenshots/contact.png)
+
+## Admin User
+### Admin Dashboard1
+![Admin Dashboard1](screenshots/admin_dashboard1.png)
+
+### Admin Dashboard2
+![Admin Dashboard2](screenshots/admin_dashboard2.png)
+
+### Appointments
+![Appointments](screenshots/appointments.png)
+
+### Billing Invoice History Records
+![Billing Invoice History Records](screenshots/billing_invoice_history.png)
+
+### Invoice
+![Invoice](screenshots/invoice.png)
+
+## Receptionist
+### Receptionist Dashboard
+![Receptionist Dashboard](screenshots/receptionist_dashboard.png)
+
+### Receptionist Payment Management
+![Receptionist Payment Management](screenshots/receptionist_payment_management.png)
+
+## Doctor User
+### Doctor Dashboard
+![Doctor Dashboard](screenshots/doctor_dashboard.png)
+
+### Doctor Discharge Records
+![Doctor Discharge Records](screenshots/doctor_discharge_records.png)
+
+## Patient User
+### Patient Dashboard
+![Patient Dashboard](screenshots/patient_dashboard.png)
+
+### Patient Insurance
+![Patient Insurance](screenshots/patient_insurance.png)
+
+### Patient Invoice
+![Patient Invoice](screenshots/patient_invoice.png)
+
 ## Requirements and Installation Instructions:
 
 ### 1. Python Installation:

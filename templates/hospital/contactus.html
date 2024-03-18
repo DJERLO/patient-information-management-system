@@ -1,8 +1,6 @@
-<!DOCTYPE html>
+
 {% load static %}
 {% load widget_tweaks %}
-
-<html lang="en" dir="ltr">
 
 <head>
     <meta charset="UTF-8">
@@ -17,6 +15,12 @@
         body {
             background-color: #f8f9fa;
             padding-top: 60px;
+            display: grid;
+        }
+
+        footer{
+            position: absolute;
+            top: 100%
         }
 
         .blur-background {
@@ -24,7 +28,7 @@
             top: 0;
             left: 0;
             width: 100vw;
-            height: 100%;
+            height: 100vh;
             background-image: url('{% static "images/back.jpg" %}');
             background-size: cover;
             background-repeat: no-repeat;
@@ -82,12 +86,10 @@
     </style>
 </head>
 {% include "hospital/navbar.html" %}
-<body>
     <div class="container-fluid">
+        <div class="blur-background"></div>
         <div class="row mt-5">
-            <div class="blur-background"></div>
-            
-            <div class="col-lg-12 d-flex flex-row justify-content-center">
+            <div class="col-lg-12 d-flex flex-row justify-content-center mb-6">
                 <!--For Smaller Device-->
                 <div class="contact-container-1 w-100 h-100">
                     <div class="contact-container-3">
@@ -146,10 +148,8 @@
                    </div>
                 </div>
             </div>
-        </div>
-        <br><br><br>
-{% include 'hospital/footer.html' %}
-    
+
+            {% include 'hospital/footer.html' %}    
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@12.6.10/dist/sweetalert2.min.js"></script>
     <script>
@@ -202,6 +202,4 @@
         });
     });
   </script>
-</body>
-
-</html>
+  

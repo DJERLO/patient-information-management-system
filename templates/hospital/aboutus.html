@@ -8,26 +8,15 @@
   <title>About Us</title>
   <link rel="icon" type="image/x-icon" href={% static "images/favicon.ico"%}>
   <style media="screen">
-    .blur-background {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      background-image: url('{% static "images/back.jpg" %}');
-      background-size: cover;
-      background-repeat: no-repeat;
-      filter: blur(3px); /* Adjust the blur amount as needed */
-      z-index: -1; /* Ensure the blur layer is behind other content */
-    }
     
     .aboutus {
       text-align: center;
-      margin-top: 0px;
-      margin-bottom: 0px;
-      width: 100vw;
-      height: 100vh;
       overflow-x: hidden;
+      margin: 0;
+      padding: 10vh 0;
+      width: 100%;
+      height: 100%;
+      
     }
 
     .text-content{
@@ -37,15 +26,9 @@
       text-align: justify;
       padding-left: 300px;
       padding-right: 300px;
+      font-size: clamp(14px, 1.0vw, 32px) !important; /* Adjust the min, preferred, and max font sizes as needed */
     }
 
-    .jumbotron h1 {
-      text-align: center;
-    }
-
-    .alert {
-      margin: 0px;
-    }
 
     hr{
       border: 2px solid black;
@@ -56,33 +39,11 @@
       font-size: 1rem; /* Base font size */
     }
 
-    .jumbotron {
-      padding: 10vh 0;
-    }
-
-    .jumbotron h1.display-4 {
-      font-size: 1.5rem;
-    }
-
-    .jumbotron p.lead,
-    .jumbotron p.responsive-text {
-      font-size: 1rem;
-    }
+    
 
     /* Media queries for larger screens */
     @media (min-width: 768px) {
-      .jumbotron {
-        padding: 15vh 0;
-      }
-
-      .jumbotron h1.display-4 {
-        font-size: 1.2rem;
-      }
-
-      .jumbotron p.lead,
-      .jumbotron p.responsive-text {
-        font-size: 1.25rem;
-      }
+      
       .text-content{
         margin-left: 15px;
         margin-right: 15px;
@@ -97,19 +58,6 @@
 
     /* Media queries for smaller screens */
     @media (max-width: 767px) {
-      .jumbotron {
-        padding: 10vh 5px;
-      }
-
-      .jumbotron h1.display-4 {
-        font-size: 0.5rem;
-        
-      }
-
-      .jumbotron p.lead,
-      .jumbotron p.responsive-text {
-        font-size: 0.625rem;
-      }
 
       .display-4{
         font-size: 0.825rem;
@@ -129,10 +77,8 @@
   </style>
 </head>
 
-<body>
   {% include "hospital/navbar.html" %}
-  <br><br><br><br><br>
-  <div class="aboutus w-100 h-100" style="margin-bottom: 0px;margin-top: 0px;">
+  <div class="aboutus w-100 h-100">
     <div class="text-content">
       <h1 class=" display-4 text-center">Welcome to Our PIMS Portal</h1>
       <p class="lead">A comprehensive system dedicated to managing patient information effectively.</p>
@@ -147,7 +93,6 @@
       </div>
     <hr>
   </div>
-</body>
 
 </html>
 {% include 'hospital/footer.html' %}

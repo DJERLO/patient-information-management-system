@@ -76,6 +76,7 @@
         <table class="table table-hover py-3" id="dev-table">
           <thead class="table-dark">
             <tr>
+              <th>Invoice No.</th>
               <th>Name</th>
               <th>Contact</th>
               <th>Address</th>
@@ -87,6 +88,7 @@
           <tbody>
             {% for p in patients_with_unpaid_bills %}
             <tr>
+              <td>{{ p.id }}</td>
               <td>{{ p.patientName }}</td>
               <td>{{ p.mobile }}</td>
               <td>{{ p.address }}</td>
