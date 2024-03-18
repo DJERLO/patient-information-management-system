@@ -102,6 +102,55 @@ With these tools installed and Python in your system PATH, proceed with setting 
 
 **Note**: Ensure administrative privileges for installing Python and modifying the system PATH.
 
+## Generating SECRET_KEY and Email Credentials for this Django Project
+
+In order to run the Patient Information Management System (PIMS), you'll need to generate a `SECRET_KEY` for your Django project. This key is used for cryptographic signing and should be kept secret. Additionally, you'll need to configure email credentials for email functionality within the application.
+
+### Generating SECRET_KEY:
+
+To generate a `SECRET_KEY`, follow these steps:
+
+1. Open a Python shell or terminal.
+2. Run the following command to generate a random `SECRET_KEY`:
+
+    ```bash
+    python -c "from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())"
+    ```
+
+3. Copy the generated key.
+
+### Configuring Email Credentials:
+
+For email functionality within the PIMS project, you need to configure the following email credentials:
+
+- `EMAIL_HOST_USER`: Your email address used for sending emails.
+- `EMAIL_HOST_PASSWORD`: The password for the email account.
+- `EMAIL_RECEIVING_USER`: Email address where you will receive messages sent from the website.
+- `DEFAULT_FROM_EMAIL`: The default email address used as the sender.
+
+Follow these steps to configure email credentials:
+
+4. Create a file named `.env` in the root directory of your project, next to the `settings.py` file (in the `hospitalmanagement` folder in this case).
+
+5. Add the following lines to the `.env` file, replacing `<generated_secret_key>` with the actual `SECRET_KEY` you copied earlier, and filling in the email credentials:
+
+    ```plaintext
+    SECRET_KEY=<generated_secret_key>
+
+    # Email Backend
+    EMAIL_HOST_USER=your_email_address
+    EMAIL_HOST_PASSWORD=your_email_password
+    EMAIL_RECEIVING_USER=your_receiving_email_address
+    DEFAULT_FROM_EMAIL=your_default_email_address
+    ```
+
+6. Save the `.env` file.
+
+Now, your Django project will use the secret key and email credentials specified in the `.env` file. Remember not to share or expose these sensitive credentials publicly.
+
+For more information on setting up and running the PIMS project, refer to the "Setting Up and Running the Local Server" section in the README.
+
+
 ## Setting Up and Running the Local Server:
 
 1. Set up a virtual environment:

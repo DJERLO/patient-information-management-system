@@ -1208,8 +1208,9 @@ def admin_add_appointment_view(request):
             appointment.save()
             
             # Send email notifications to patient and doctor
-            appointment_date = appointment.appointmentDate.strftime('%B %d, %Y')  # Full month name, day, full year
-            appointment_time = appointment.appointmentDate.strftime('%I:%M %p')   # Time with AM or PM
+            current_timezone = timezone.get_current_timezone()
+            appointment_date = timezone.localtime(appointment.appointmentDate, timezone=current_timezone).strftime('%B %d, %Y')
+            appointment_time = timezone.localtime(appointment.appointmentDate, timezone=current_timezone).strftime('%I:%M %p')
             patient_email = patient.email
             doctor_email = doctor.email
             subject = 'Appointment Confirmation'
@@ -1251,8 +1252,9 @@ def approve_appointment_view(request,pk):
     appointment.save()
 
     # Send email notification to patient
-    appointment_date = appointment.appointmentDate.strftime('%B %d, %Y')  # Full month name, day, full year
-    appointment_time = appointment.appointmentDate.strftime('%I:%M %p')   # Time with AM or PM
+    current_timezone = timezone.get_current_timezone()
+    appointment_date = timezone.localtime(appointment.appointmentDate, timezone=current_timezone).strftime('%B %d, %Y')
+    appointment_time = timezone.localtime(appointment.appointmentDate, timezone=current_timezone).strftime('%I:%M %p')
     patient = models.User.objects.get(id=appointment.patientId)
     doctor = models.User.objects.get(id=appointment.doctorId)
     patient_email = patient.email
@@ -1278,8 +1280,9 @@ def reject_appointment_view(request,pk):
     appointment.save()
 
     # Send email notification to patient
-    appointment_date = appointment.appointmentDate.strftime('%B %d, %Y')  # Full month name, day, full year
-    appointment_time = appointment.appointmentDate.strftime('%I:%M %p')   # Time with AM or PM
+    current_timezone = timezone.get_current_timezone()
+    appointment_date = timezone.localtime(appointment.appointmentDate, timezone=current_timezone).strftime('%B %d, %Y')
+    appointment_time = timezone.localtime(appointment.appointmentDate, timezone=current_timezone).strftime('%I:%M %p')
     patient = models.Patient.objects.get(id=appointment.patientId)
     patient_email = patient.user.email
     subject = 'Appointment Rejection'
@@ -1315,8 +1318,9 @@ def set_admin_complete_appointment_view(request,pk):
     patient = models.Patient.objects.get(user_id=patient_id)
     
     #Send Email
-    appointment_date = appointment.appointmentDate.strftime('%B %d, %Y')  # Full month name, day, full year
-    appointment_time = appointment.appointmentDate.strftime('%I:%M %p')   # Time with AM or PM
+    current_timezone = timezone.get_current_timezone()
+    appointment_date = timezone.localtime(appointment.appointmentDate, timezone=current_timezone).strftime('%B %d, %Y')
+    appointment_time = timezone.localtime(appointment.appointmentDate, timezone=current_timezone).strftime('%I:%M %p')
     patient_email = patient.user.email
     subject = 'Appointment Completion'
     patient_message = f'Hello {patient.user.get_full_name()},\n\nWe are pleased to inform you that your appointment with Dr. {appointment.doctorName} on {appointment_date} at {appointment_time} has been successfully completed.\n\nWe hope you had a pleasant experience at our hospital and that your health needs were addressed satisfactorily.\n\nThank you for choosing our services!\n\nBest regards,\nThe Hospital Management Team'
@@ -1650,8 +1654,9 @@ def approve_doctor_appointment_view(request,pk):
     appointment.save()
 
     # Format the appointment date and time
-    appointment_date = appointment.appointmentDate.strftime('%B %d, %Y')  # Full month name, day, full year
-    appointment_time = appointment.appointmentDate.strftime('%I:%M %p')   # Time with AM or PM
+    current_timezone = timezone.get_current_timezone()
+    appointment_date = timezone.localtime(appointment.appointmentDate, timezone=current_timezone).strftime('%B %d, %Y')
+    appointment_time = timezone.localtime(appointment.appointmentDate, timezone=current_timezone).strftime('%I:%M %p')
 
     # Sending email notification to patient
     patient = models.Patient.objects.get(user_id = appointment.patientId)
@@ -1673,8 +1678,9 @@ def reject_doctor_appointment_view(request,pk):
     appointment.save()
 
     # Sending email notification to patient
-    appointment_date = appointment.appointmentDate.strftime('%B %d, %Y')  # Full month name, day, full year
-    appointment_time = appointment.appointmentDate.strftime('%I:%M %p')   # Time with AM or PM
+    current_timezone = timezone.get_current_timezone()
+    appointment_date = timezone.localtime(appointment.appointmentDate, timezone=current_timezone).strftime('%B %d, %Y')
+    appointment_time = timezone.localtime(appointment.appointmentDate, timezone=current_timezone).strftime('%I:%M %p')
     patient = models.Patient.objects.get(user_id = appointment.patientId)
     subject = 'Your appointment has been rejected'
     message = f"Dear {patient.user.get_full_name()},\n\nWe regret to inform you that your appointment with Dr. {appointment.doctorName} scheduled for {appointment_date} at {appointment_time} has been rejected.\n\nIf you have any questions or concerns, please feel free to contact us.\n\nBest regards,\nDr. {appointment.doctorName}"
@@ -1742,13 +1748,14 @@ def set_complete_appointment_view(request, pk):
         appointment.save()
 
         # Sending email notification to patient
-        appointment_date = appointment.appointmentDate.strftime('%B %d, %Y')  # Full month name, day, full year
-        appointment_time = appointment.appointmentDate.strftime('%I:%M %p')   # Time with AM or PM
+        current_timezone = timezone.get_current_timezone()
+        appointment_date = timezone.localtime(appointment.appointmentDate, timezone=current_timezone).strftime('%B %d, %Y')
+        appointment_time = timezone.localtime(appointment.appointmentDate, timezone=current_timezone).strftime('%I:%M %p')
         patient = models.Patient.objects.get(user_id = appointment.patientId)
         subject = 'Your appointment has been completed!'
         message= f'Hello {patient.user.get_full_name()},\n\nWe would like to inform you that your appointment with Dr. {appointment.doctorName} on {appointment_date} at {appointment_time} has been completed.\n\nWe hope you had a pleasant experience at our hospital.\n\nThank you!'
         from_email = settings.EMAIL_HOST_USER  # Update with your sender email
-        to = [patient.email]
+        to = [patient.user.email]
         send_mail(subject, message, from_email, to)
 
         return redirect('doctor-status-appointment')

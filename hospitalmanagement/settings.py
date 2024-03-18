@@ -13,6 +13,12 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 import os
 from django.contrib.messages import constants as messages
 
+import os
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
+
 MESSAGE_TAGS = {
         messages.DEBUG: 'alert-secondary',
         messages.INFO: 'alert-info',
@@ -31,7 +37,7 @@ STATIC_DIR=os.path.join(BASE_DIR,'static')
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'hpbv()ep00boce&o0w7z1h)st148(*m@6@-rk$nn)(n9ojj4c0'
+SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -150,10 +156,10 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_USE_TLS = True
 EMAIL_PORT = 587
-EMAIL_HOST_USER = 'jhaicayetano143@gmail.com' 
-EMAIL_HOST_PASSWORD = 'fzqkqnxpuwekowsd'
-EMAIL_RECEIVING_USER = ['juvelyncayetano61@gmail.com']  # email on which you will receive messages sent from website
-DEFAULT_FROM_EMAIL = 'jhaicayetano143@gmail.com'  # Set the default sender email
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
+EMAIL_RECEIVING_USER = os.getenv('EMAIL_RECEIVING_USER')
+DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL')
 EMAIL_LOGGING_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 LOGGING = {

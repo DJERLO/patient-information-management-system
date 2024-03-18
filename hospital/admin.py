@@ -3,8 +3,7 @@ from .models import HospitalStaffAdmin, Doctor,Patient, Appointment,PatientDisch
 
 # Register your models here.
 class HospitalStaffAdminAdmin(admin.ModelAdmin):
-    list_display = ('user', 'username', 'profile_pic', 'address', 'mobile', 'email')
-    # Add any other configuration options you need
+    pass
 
 admin.site.register(HospitalStaffAdmin, HospitalStaffAdminAdmin)
 
