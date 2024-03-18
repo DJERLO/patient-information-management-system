@@ -75,11 +75,7 @@ Welcome to the Patient Information Management System (PIMS). This project effici
 ![Billing Invoice History Records](screenshots/billing_invoice_history.PNG)
 
 ### Invoice
-<<<<<<< Updated upstream
-![Invoice](screenshots/Invoice.PNG)
-=======
 ![Invoice](screenshots/invoice.PNG)
->>>>>>> Stashed changes
 
 ## Receptionist
 ### Receptionist Dashboard
