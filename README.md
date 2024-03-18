@@ -75,31 +75,31 @@ Welcome to the Patient Information Management System (PIMS). This project effici
 ![Billing Invoice History Records](screenshots/billing_invoice_history.PNG)
 
 ### Invoice
-![Invoice](screenshots/invoice.png)
+![Invoice](screenshots/Invoice.PNG)
 
 ## Receptionist
 ### Receptionist Dashboard
-![Receptionist Dashboard](screenshots/receptionist_dashboard.png)
+![Receptionist Dashboard](screenshots/receptionist_dashboard.PNG)
 
 ### Receptionist Payment Management
-![Receptionist Payment Management](screenshots/receptionist_payment_management.png)
+![Receptionist Payment Management](screenshots/receptionist_payment_management.PNG)
 
 ## Doctor
 ### Doctor Dashboard
-![Doctor Dashboard](screenshots/doctor_dashboard.png)
+![Doctor Dashboard](screenshots/doctor_dashboard.PNG)
 
 ### Doctor Discharge Records
-![Doctor Discharge Records](screenshots/doctor_discharge_records.png)
+![Doctor Discharge Records](screenshots/doctor_discharge_records.PNG)
 
 ## Patient
 ### Patient Dashboard
-![Patient Dashboard](screenshots/patient_dashboard.png)
+![Patient Dashboard](screenshots/patient_dashboard.PNG)
 
 ### Patient Insurance
-![Patient Insurance](screenshots/patient_insurance.png)
+![Patient Insurance](screenshots/patient_insurance.PNG)
 
 ### Patient Invoice
-![Patient Invoice](screenshots/patient_invoice.png)
+![Patient Invoice](screenshots/patient_invoice.PNG)
 
 ## Requirements and Installation Instructions:
 
