@@ -53,13 +53,13 @@ Welcome to the Patient Information Management System (PIMS). This project effici
 # Screenshots
 
 ## Homepage
-![Homepage](screenshots/homepage.png)
+![Homepage](screenshots/Homepage.png)
 
 ## About Us
 ![About Us](screenshots/about_us.png)
 
 ## Contact
-![Contact](screenshots/contact.png)
+![Contact](screenshots/Contact.png)
 
 ## Admin User
 ### Admin Dashboard1
@@ -84,14 +84,14 @@ Welcome to the Patient Information Management System (PIMS). This project effici
 ### Receptionist Payment Management
 ![Receptionist Payment Management](screenshots/receptionist_payment_management.png)
 
-## Doctor User
+## Doctor
 ### Doctor Dashboard
 ![Doctor Dashboard](screenshots/doctor_dashboard.png)
 
 ### Doctor Discharge Records
 ![Doctor Discharge Records](screenshots/doctor_discharge_records.png)
 
-## Patient User
+## Patient
 ### Patient Dashboard
 ![Patient Dashboard](screenshots/patient_dashboard.png)
 
