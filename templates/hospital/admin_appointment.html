@@ -6,7 +6,9 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+  <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+  <link rel="stylesheet" href="//cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
+  <script src="//cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css">
   <style type="text/css">
     a:link {
@@ -72,6 +74,56 @@
     .f-right {
       float: right;
     }
+
+    h6:not(.m-b-20) {
+      text-align: center;
+    }
+
+    .row {
+      margin: 10px auto;
+    }
+
+    .table-responsive {
+      text-wrap: nowrap;
+      padding: 0 0 0 0;
+    }
+
+    .view-appointments-panel{
+      width: 100%;
+      height: 100vw;
+      position: relative;
+      margin: 1px 1px 1px 1px;
+      text-align: start;
+    }
+
+    /* Media Query for smaller screens */
+    @media only screen and (max-width: 768px) {
+      /* Adjust table font size for smaller screens */
+      table {
+        font-size: 0.5rem; /* Adjust this value as needed */
+      }
+
+      /* Adjust th and td padding for smaller screens */
+      th,
+      td {
+        padding: 0.10rem; /* Adjust this value as needed */
+      }
+    }
+
+    /* Media Query for larger screens */
+    @media only screen and (min-width: 768px) {
+      /* Adjust table font size for larger screens */
+      table {
+        font-size: 0.825rem; /* Adjust this value as needed */
+      }
+
+      /* Adjust th and td padding for larger screens */
+      th,
+      td {
+        padding: 0.75rem; /* Adjust this value as needed */
+      }
+    }
+
   </style>
 </head>
 
@@ -118,6 +170,49 @@
       </div>
     </div>
 
+    <div class="view-appointment-panel">
+      <div class="card border border-dark">
+        <div class="card-header bg-primary text-white">
+          <h6 class="card-title h5">Upcoming Appointments</h6>
+        </div>
+        <div class="card-body">
+          <div class="table-responsive p-4">
+            <table class="table table-hover py-3" id="dev-table">
+              <thead class="table-dark">
+                <tr>
+                  <th>Date</th>
+                  <th>Doctor Name</th>
+                  <th>Patient Name</th>
+                  <th>Description</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for a in appointments %}
+                <tr>
+                  <td>{{ a.appointmentDate|date:"F d, Y : g:iA" }}</td>
+                  <td>{{ a.doctorName }}</td>
+                  <td>{{ a.patientName }}</td>
+                  <td>{{ a.description }}</td>
+                  <td>
+                    {% if a.status == 0 %}
+                      <span class="badge bg-warning text-dark w-100 h-100">Pending</span>
+                    {% elif a.status == 1 %}
+                      <span class="badge bg-primary w-100 h-100">Accepted</span>
+                    {% elif a.status == 2 %}
+                      <span class="badge bg-success w-100 h-100">Completed</span>
+                    {% elif a.status == 3 %}
+                      <span class="badge bg-danger w-100 h-100">Rejected</span>
+                    {% endif %}
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
 
   </div>
 </div>
@@ -142,6 +237,10 @@
 
   appointmentStatus.addEventListener("click", function() {
     window.location.href = "/admin-status-appointment";
+  });
+
+  let table = new DataTable('#dev-table',{
+    "order": [[0, "desc"]]  // Sort by the first column (index 0) in descending order by default
   });
 
 </script>

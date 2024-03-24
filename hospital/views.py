@@ -1173,8 +1173,9 @@ import datetime
 @login_required(login_url='adminlogin')
 @user_passes_test(is_admin)
 def admin_appointment_view(request):
+    appointments = models.Appointment.objects.filter(status__in=[models.Appointment.ACCEPTED, models.Appointment.COMPLETED, models.Appointment.PENDING, models.Appointment.REJECTED])
     admin = models.HospitalStaffAdmin.objects.get(user_id=request.user.id)
-    context = {'admin': admin,}
+    context = {'admin': admin, 'appointments':appointments,   }
     return render(request,'hospital/admin_appointment.html', context)
 
 
@@ -1353,8 +1354,22 @@ def set_admin_complete_appointment_view(request,pk):
 @user_passes_test(is_admin)
 def admin_billing_view(request):
     admin = models.HospitalStaffAdmin.objects.get(user_id=request.user.id)
+    # Fetch all patients in this model
+    patients = models.Patient.objects.all()
+
+    # Initialize a list to store discharge records for patients who have been discharged and paid their bills
+    patientDischargeRecords = []
+
+    # Iterate over each patient to check if they have a discharge record
+    for patient in patients:
+        # Filter discharge records for the current patient already paid his/her bills
+        patientRecord = models.PatientDischargeDetails.objects.filter(patientId=patient.id).first()
+        if patientRecord:
+            # If a discharge record exists for the patient, we add it to the list
+            patientDischargeRecords.append(patientRecord)
     context = {
         'admin': admin,
+        'patientDischargeRecords': patientDischargeRecords,
     }
     return render(request,'hospital/admin_billing_section.html', context)
 
@@ -1606,6 +1621,7 @@ def doctor_toggle_availability(request):
 def doctor_patient_view(request):
     mydict={
     'doctor':models.Doctor.objects.get(user_id=request.user.id), #for profile picture of doctor in sidebar
+    'patients':models.Patient.objects.all().filter(status=True,assigned_doctor_id=request.user.id)
     }
     return render(request,'hospital/doctor_patient.html',context=mydict)
 
@@ -1633,7 +1649,13 @@ def doctor_view_discharge_patient_view(request):
 @user_passes_test(is_doctor)
 def doctor_appointment_view(request):
     doctor=models.Doctor.objects.get(user_id=request.user.id) #for profile picture of doctor in sidebar
-    return render(request,'hospital/doctor_appointment.html',{'doctor':doctor})
+    appointments=models.Appointment.objects.all().filter(status=models.Appointment.ACCEPTED,doctorId=request.user.id)
+    patientid=[]
+    for a in appointments:
+        patientid.append(a.patientId)
+    patients=models.Patient.objects.all().filter(status=True,user_id__in=patientid)
+    appointments=zip(appointments,patients)
+    return render(request,'hospital/doctor_appointment.html',{'appointments':appointments, 'doctor':doctor })
 
 
 @login_required(login_url='doctorlogin')
@@ -1856,7 +1878,8 @@ def patient_dashboard_view(request):
 @user_passes_test(is_patient)
 def patient_appointment_view(request):
     patient=models.Patient.objects.get(user_id=request.user.id) #for profile picture of patient in sidebar
-    return render(request,'hospital/patient_appointment.html',{'patient':patient})
+    appointments=models.Appointment.objects.all().filter(patientId=request.user.id)
+    return render(request,'hospital/patient_appointment.html',{'appointments':appointments, 'patient':patient})
 
 
 from .disease_mappings import disease_to_department #Add More keywords here.
