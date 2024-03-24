@@ -1,4 +1,4 @@
-{% extends 'hospital/admin_base.html' %}
+  {% extends 'hospital/admin_base.html' %}
 {% load static %}
 {% block content %}
 <br><br>
@@ -6,7 +6,10 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+  <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <link rel="stylesheet" href="//cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
+  <script src="//cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css">
   <style type="text/css">
     a:link {
@@ -72,6 +75,56 @@
     .f-right {
       float: right;
     }
+
+    h6:not(.m-b-20) {
+      text-align: center;
+      font-size: 1.2em;
+    }
+    
+
+    .row {
+      margin: 10px auto;
+    }
+
+    .table-responsive {
+      text-wrap: wrap;
+      text-overflow: clip;
+      
+    }
+
+    .view-patient-panel{
+      width: 100%;
+      height: 100%;
+      position: relative;
+      margin: 1px 1px 1px 1px;
+    }
+    /* Media Query for smaller screens */
+    @media only screen and (max-width: 768px) {
+      /* Adjust table font size for smaller screens */
+      table {
+        font-size: 0.5rem; /* Adjust this value as needed */
+      }
+
+      /* Adjust th and td padding for smaller screens */
+      th,
+      td {
+        padding: 0.10rem; /* Adjust this value as needed */
+      }
+    }
+
+    /* Media Query for larger screens */
+    @media only screen and (min-width: 768px) {
+      /* Adjust table font size for larger screens */
+      table {
+        font-size: 0.825rem; /* Adjust this value as needed */
+      }
+
+      /* Adjust th and td padding for larger screens */
+      th,
+      td {
+        padding: 0.75rem; /* Adjust this value as needed */
+      }
+    }
   </style>
 </head>
 
@@ -98,9 +151,44 @@
       </div>
     </div>
 
+    <div class="view-patient-panel">
+      <div class="card border border-dark">
+        <div class="card-header bg-primary text-white">
+          <h6 class="card-title">Patient Discharge Records and Billing History</h6>
+        </div>
+        <div class="card-body">
+          <div class="table-responsive p-3">
+            <table class="table table-hover py-3" id="dev-table">
+              <thead class="table-dark">
+                <tr>
+                  <th>Name</th>
+                  <th>Contact</th>
+                  <th>Address</th>
+                  <th>View Profile</th>
+                  <th>View Records</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for p in patientDischargeRecords %}
+                <tr>
+                  <td>{{ p.patientName }}</td>
+                  <td>{{ p.mobile }}</td>
+                  <td>{{ p.address }}</td>
+                  <td><a class="btn btn-primary btn-sm w-100 h-100" href="{% url 'admin-patient-details' p.patientId %}"><i class="bi bi-eye"></i></a></td>
+                  <td><a class="btn btn-secondary btn-sm w-100 h-100" href="{% url 'admin-view-invoice-records' p.patientId %}"><i class="bi bi-file-earmark-text"></i></a></td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
   </div>
 </div>
 <script>
+  let table = new DataTable('#dev-table')
   let patientDischargeRecordsView = document.getElementById("patientDischargeRecords")
   let billingPaymentManagementView = document.getElementById("billingPaymentManagement")
   
