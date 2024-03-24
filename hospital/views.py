@@ -504,8 +504,10 @@ def admin_dashboard_view(request):
 @user_passes_test(is_superuser)
 def admin_panel_view(request):
     admin = models.HospitalStaffAdmin.objects.get(user_id=request.user.id)
+    admins = models.HospitalStaffAdmin.objects.all().filter(status=True)
     context = {
         'admin': admin,
+        'admins': admins,
     }
     return render(request,'hospital/admin_panel.html', context)
 
@@ -593,9 +595,11 @@ def admin_approve_staff_view(request):
 @login_required(login_url='adminlogin')
 @user_passes_test(is_admin)
 def admin_doctor_view(request):
+    doctors=models.Doctor.objects.all().filter(status=models.Doctor.STATUS_AVAILABLE)
     admin = models.HospitalStaffAdmin.objects.get(user_id=request.user.id)
     context = {
         'admin': admin,
+        'doctors': doctors,
     }
     return render(request,'hospital/admin_doctor.html', context)
 
@@ -608,7 +612,7 @@ def admin_view_doctor_view(request):
     admin = models.HospitalStaffAdmin.objects.get(user_id=request.user.id)
     context = {
         'admin': admin,
-        'doctors': doctors
+        'doctors': doctors,
     }
     return render(request,'hospital/admin_view_doctor.html', context)
 
@@ -793,16 +797,18 @@ def admin_view_doctor_specialisation_view(request):
         'admin': admin,
         'doctors': doctors,
     }
-    return render(request,'hospital/admin_view_doctor_specialisation.html', context)
+    return render(request,'hospital/admin_view_doctor_Specialisation.html', context)
 
 
 
 @login_required(login_url='adminlogin')
 @user_passes_test(is_admin)
 def admin_patient_view(request):
+    patients=models.Patient.objects.all().filter(status=True)
     admin = models.HospitalStaffAdmin.objects.get(user_id=request.user.id)
     context = {
         'admin': admin,
+        'patients': patients,
     }
     return render(request,'hospital/admin_patient.html', context)
 

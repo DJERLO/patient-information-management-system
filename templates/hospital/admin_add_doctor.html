@@ -58,7 +58,7 @@
 
 </head>
 <br><br><br>
-<form class="was-validated" method="post" enctype="multipart/form-data">
+<form class="needs-validation" method="post" enctype="multipart/form-data" novalidate>
   {% csrf_token %}
   <div class="container register-form">
       <div class="form">
@@ -80,11 +80,25 @@
               {% endfor %}
             </div>
               <div class="row">
-                  <div class="col-md-6 mt-4">
-                      
-                      <div class="form-floating">
+                <div class="col-md-12">
+                  <center>
+                    <label for="{{ profile_form.profile_pic.id_for_label }}">Profile Picture</label>
+                    <img class="mb-1" id="preview" src="{% static 'images/profile.webp' %}" alt="Preview" style="max-width: 100%; max-height: 150px; display: block;">
+                  </center>
+                  <div class="form-group my-2">
+                    {% render_field profile_form.profile_pic class="form-control form-control-lg" onchange="previewImage(this)" %}
+                    <div class="valid-feedback">
+                      Looks nice!
+                    </div>
+                    <div class="invalid-feedback">
+                        Provide your Profile Picture
+                    </div>
+                  </div>
+                </div>
+                  <div class="col-md-6">
+                      <div class="form-floating my-2">
                         {% render_field form.first_name class="form-control" placeholder="First Name" %}
-                        <label for="floatingFirstName">First Name</label>
+                        <label class="fw-bold" for="floatingFirstName">First Name:</label>
                         <div class="valid-feedback">
                           Looks good!
                         </div>
@@ -93,9 +107,9 @@
                         </div>
                       </div>
                       
-                      <div class="form-floating">
+                      <div class="form-floating my-2">
                         {% render_field form.last_name class="form-control" placeholder="Last Name" %}
-                        <label for="floatingLastName">Last Name</label>
+                        <label class="fw-bold" for="floatingLastName">Last Name:</label>
                         <div class="valid-feedback">
                           Looks good!
                         </div>
@@ -104,9 +118,9 @@
                         </div>
                       </div>
                       
-                      <div class="form-floating">
+                      <div class="form-floating my-2">
                         {% render_field form.username class="form-control" placeholder="Username" %}
-                        <label for="floatingUsername">Username</label>
+                        <label class="fw-bold" for="floatingUsername">Username:</label>
                         <div class="valid-feedback">
                           Looks good!
                         </div>
@@ -115,9 +129,9 @@
                         </div>
                       </div>
                       
-                      <div class="form-floating">
+                      <div class="form-floating my-2">
                         {% render_field form.email class="form-control" placeholder="Email" %}
-                        <label for="floatingEmail">Email</label>
+                        <label class="fw-bold" for="floatingEmail">Email:</label>
                         <div class="valid-feedback">
                           Looks good!
                         </div>
@@ -126,57 +140,27 @@
                         </div>
                       </div>
 
-                      <div class="form-floating">
-                        {% render_field profile_form.address class="form-control" placeholder="Address" %}
-                        <label for="floatingAddress">Address</label>
-                        <div class="valid-feedback">
-                          Looks good!
-                        </div>
-                        <div class="invalid-feedback">
-                            Provide your Address
-                        </div>
-                      </div>
                       
-                      <div class="input-group mb-3 flex-nowrap">
+                      <div class="input-group my-2 flex-nowrap">
                         <button class="btn btn-outline-primary" type="button" id="togglePassword1">
                           <i class="bi bi-eye-fill"></i>
                         </button>
                         <div class="form-floating flex-grow-1">
                             {% render_field form.password1 class="form-control" placeholder="Password" id="floatingPassword1" pattern="^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*\W)(?!.* ).{8,32}$" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Password must contain at least one digit, one lowercase letter, one uppercase letter, one special character, and be between 8 to 32 characters long" %}
-                          <label for="floatingPassword1">Password</label>
+                          <label class="fw-bold" for="floatingPassword1">Password:</label>
                         </div>
                         
                       </div>
                       
-                      <div class="input-group mb-3  flex-nowrap">
-                          <button class="btn btn-outline-primary" type="button" id="togglePassword2">
-                            <i class="bi bi-eye-fill"></i>
-                          </button>
-                        <div class="form-floating flex-grow-1">
-                          {% render_field form.password2 class="form-control" placeholder="Repeat Password" id="floatingPassword2" pattern="^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*\W)(?!.* ).{8,32}$" pattern="^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*\W)(?!.* ).{8,32}$" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Repeat your Password for Verification" %}
-                          <label for="floatingPassword1">Repeat Password</label>
-                        </div>
-                      </div>
+                      
                    
                     </div>
                     
-                    <div class="col-md-6 p-1">
-                      <center>
-                        <label for="{{ profile_form.profile_pic.id_for_label }}">Profile Picture</label>
-                        <img class="mb-4" id="preview" src="{% static 'images/profile.webp' %}" alt="Preview" style="max-width: 100%; max-height: 150px; display: block;">
-                      </center>
-                      <div class="form-group mb-2">
-                        {% render_field profile_form.profile_pic class="form-control" onchange="previewImage(this)" %}
-                        <div class="valid-feedback">
-                          Looks nice!
-                        </div>
-                        <div class="invalid-feedback">
-                            Provide your Profile Picture
-                        </div>
-                      </div>
-                      <div class="form-floating">
+                    <div class="col-md-6">
+                      
+                      <div class="form-floating my-2">
                         {% render_field profile_form.department class="form-control" placeholder="Department" %}
-                        <label for="{{ profile_form.department.id_for_label }}">Department</label>
+                        <label class="fw-bold" for="{{ profile_form.department.id_for_label }}">Department:</label>
                         <div class="valid-feedback">
                           Looks great!
                         </div>
@@ -184,9 +168,9 @@
                             Provide your Department(Specialty)
                         </div>
                       </div>
-                      <div class="form-floating">
+                      <div class="form-floating my-2">
                         {% render_field profile_form.license_num class="form-control" placeholder="1234567"%}
-                        <label for="{{ profile_form.license_num.id_for_label }}">License Number:</label>
+                        <label class="fw-bold" for="{{ profile_form.license_num.id_for_label }}">License Number:</label>
                         <div class="valid-feedback">
                           Looks great!
                         </div>
@@ -194,9 +178,10 @@
                             Provide your PRC License Number.
                         </div>
                       </div>
-                      <div class="form-floating">
+
+                      <div class="form-floating my-2">
                         {% render_field profile_form.mobile class="form-control" placeholder="Contact" pattern="(^(\+)(\d){12}$)|(^\d{11}$)" %}
-                        <label for="floatingMobile">Contact</label>
+                        <label class="fw-bold" for="floatingMobile">Contact:</label>
                         <div class="valid-feedback">
                           Looks good!
                         </div>
@@ -204,10 +189,31 @@
                             Provide a valid Contact Number (e,g: 09172464146 or +639172464146)
                         </div>
                       </div>
+
+                      <div class="form-floating my-2">
+                        {% render_field profile_form.address class="form-control" placeholder="Address" %}
+                        <label class="fw-bold" for="floatingAddress">Address:</label>
+                        <div class="valid-feedback">
+                          Looks good!
+                        </div>
+                        <div class="invalid-feedback">
+                            Provide your Address
+                        </div>
+                      </div>
+
+                      <div class="input-group my-2  flex-nowrap">
+                        <button class="btn btn-outline-primary" type="button" id="togglePassword2">
+                          <i class="bi bi-eye-fill"></i>
+                        </button>
+                      <div class="form-floating flex-grow-1">
+                        {% render_field form.password2 class="form-control" placeholder="Repeat Password" id="floatingPassword2" pattern="^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*\W)(?!.* ).{8,32}$" pattern="^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*\W)(?!.* ).{8,32}$" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Repeat your Password for Verification" %}
+                        <label class="fw-bold" for="floatingPassword1">Repeat Password:</label>
+                      </div>
+                    </div>
+
                   </div>
               </div>
-                  <center><button type="submit" class="btnSubmit">Apply</button></center> 
-                  <div class="text-center">Already have an account? <a href="/doctorlogin">Login here</a></div>
+                  <center><button type="submit" class="btnSubmit mt-3">Add Doctor</button></center> 
               </div>
              
           </div>
@@ -224,7 +230,55 @@
       const passwordField2 = document.getElementById('floatingPassword2');
       const togglePassword2 = document.getElementById('togglePassword2');
       const eyeIcon2 = document.querySelector('i');
-  
+
+       // Function to check if passwords match and meet additional rules
+    function passwordsMatch() {
+      const password1 = passwordField1.value.trim();
+      const password2 = passwordField2.value.trim();
+
+      // Check if passwords are not blank
+      if (password1 === '' && password2 === '') {
+        // If both passwords are blank, return true (no validation needed)
+        return true;
+      } else if (password1 === '' || password2 === '') {
+        // If one of the passwords is blank while the other is not, return false
+        return false;
+      } else {
+        // If both passwords are not blank, check if they match
+        return password1 === password2;
+      }
+    }
+
+    // Disable Bootstrap form validation
+    var forms = document.querySelectorAll('.needs-validation');
+    Array.prototype.slice.call(forms)
+      .forEach(function(form) {
+        form.addEventListener('submit', function(event) {
+          if (!passwordsMatch()) {
+            // Prevent form submission
+            event.preventDefault();
+            // Display password validation alert
+            const alertContainer = document.querySelector('.alert-container');
+            alertContainer.innerHTML = '<div class="alert alert-danger alert-dismissible fade show" role="alert">Passwords do not match! <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"><span aria-hidden="true"></span></button></div>';
+            // Add invalid-feedback class to password fields
+            passwordField1.classList.add('is-invalid');
+            passwordField2.classList.add('is-invalid');
+          } else {
+            const alertContainer = document.querySelector('.alert-container');
+            alertContainer.innerHTML = '<div class="alert alert-danger alert-dismissible fade show" role="alert">Please fill in all fields before submitting.<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"><span aria-hidden="true"></span></button></div>';
+            // Remove invalid-feedback class if passwords match
+            passwordField1.classList.remove('is-invalid');
+            passwordField2.classList.remove('is-invalid');
+          }
+          if (!form.checkValidity()) {
+            event.preventDefault();
+            event.stopPropagation();
+          }
+          form.classList.remove('needs-validation');
+          form.classList.add('was-validated');
+        }, false);
+      }); 
+
       togglePassword1.addEventListener('click', function() {
         const type = passwordField1.getAttribute('type') === 'password' ? 'text' : 'password';
         passwordField1.setAttribute('type', type);

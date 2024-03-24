@@ -13,9 +13,9 @@
   {% endif %}
   
   <link rel="icon" type="image/x-icon" href={% static "images/favicon.ico"%}>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -522,11 +522,6 @@
                 <span>Dashboard</span>
             </a>
         </li>
-        <li tabindex="0" id="adminAdmissionIcon" class="icon-admission nav-item {% if 'admission' in request.path %}active{% endif %}">
-          <a class="nav-link text-white" href="/admin-admission">
-              <span>Admission</span>
-          </a>
-        </li>
         {% if user.is_superuser %}
           <li tabindex="0" id="djangoAdminIcon" class="icon-admin nav-item">
             <a class="nav-link text-white" href="/admin-panel">
@@ -549,11 +544,13 @@
                 <span>Appointments</span>
             </a>
         </li>
+        {% if not user.is_superuser %}
         <li tabindex="0" id="adminInvoiceIcon" class="icon-invoice nav-item {% if 'bill' in request.path or 'invoice' in request.path %}active{% endif %}">
           <a class="nav-link text-white" href="#">
               <span>Billing/Invoice</span>
           </a>
-      </li>
+        </li>
+      {% endif %}
       
     </ul>
 </nav>
@@ -636,10 +633,6 @@
             window.location.href = "/admin-dashboard";
         });
 
-        document.getElementById("adminAdmissionIcon").addEventListener("click", function() {
-          window.location.href = "/admin-admission";
-        });
-        
         
         // Admin Doctor Icon
         document.getElementById("adminDoctorIcon").addEventListener("click", function() {
@@ -656,9 +649,11 @@
           window.location.href = "/admin-appointment";
         });
 
+        {% if not user.is_superuser %}
         document.getElementById("adminInvoiceIcon").addEventListener("click", function() {
           window.location.href = "/admin-billing-invoice";
         });
+        {% endif %}
         
         {% if user.is_superuser %}
         // Admin Administrative Icon
