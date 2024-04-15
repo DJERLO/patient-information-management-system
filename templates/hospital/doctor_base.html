@@ -360,7 +360,7 @@
     }
 
     /* Initially hide the camera icon */
-    .bi-camera-fill {
+    .bi-gear-fill {
         font-size: 2.5em;
         color: #19191a;
         width: 100%;
@@ -372,7 +372,7 @@
     }
 
     /* Show the camera icon on hover */
-    .bi-camera-fill:hover {
+    .bi-gear-fill:hover {
         opacity: 1; /* Show the icon on hover */
         transform: scale(1.050);
     }
@@ -382,7 +382,7 @@
       .navbar-brand {
         font-size: 1.2em; /* Font size for screens with a max-width of 768px */
       }
-      .bi-camera-fill {
+      .bi-gear-fill {
         font-size: 1.2em;
     }
   }
@@ -391,7 +391,7 @@
       .navbar-brand {
         font-size: 1em; /* Font size for screens with a max-width of 576px */
       }
-      .bi-camera-fill:hover {
+      .bi-gear-fill:hover {
         opacity: 1; /* Show the icon on hover */
         transform: scale(0.725);
     }
@@ -413,10 +413,10 @@
       <a href="#" data-bs-toggle="modal" data-bs-target="#profilePicModal" class="position-relative">
         {% if doctor.profile_pic %}
             <img class="rounded-circle" src="{{ doctor.profile_pic.url }}" alt="Profile Pic"/>
-            <span class="position-absolute top-50 start-50 translate-middle bi-camera-fill"></span>
+            <span class="position-absolute top-50 start-50 translate-middle bi-gear-fill"></span>
         {% else %}
             <img class="rounded-circle" src="{% static 'images/adminpropic.png' %}" alt="Default Profile Pic"/>
-            <span class="position-absolute top-50 start-50 translate-middle bi-camera-fill"></span>
+            <span class="position-absolute top-50 start-50 translate-middle bi-gear-fill"></span>
         {% endif %}
     </a>
       <br><br>
@@ -459,28 +459,92 @@
     </ul>
   </nav>
   {% endwith %}
-  <!-- Modal -->
-  <div class="container-fluid">
-    <div class="modal fade" id="profilePicModal" tabindex="-1" aria-labelledby="profilePicModalLabel" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered" role="document">
-          <div class="modal-content">
-              <div class="modal-header">
-                  <h4 class="modal-title" id="profilePicModalLabel">Change Profile Picture</h4>
-                  <button type="button" class="btn btn-danger border border-dark btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-              </div>
-              <div class="modal-body d-flex flex-column align-items-center">
-                <img id="preview" class="border border-dark rounded-circle mb-3" src="{% if doctor.profile_pic %}{{ doctor.profile_pic.url }}{% else %}{% static 'images/adminpropic.png' %}{% endif %}" alt="Profile Pic" width="150px" height="150px"/>
-                <form id="profilePicForm" method="post" enctype="multipart/form-data" action="/doctor-change-profile-pic" class="w-100">
-                  {% csrf_token %}
-                  <input type="hidden" name="user_id" value="{{ request.user.id }}">
-                  <input type="file" name="profile_pic" id="profilePicInput" onchange="previewImage(this)" class="form-control mb-3" placeholder="No file chosen">
-                  <center><button type="submit" class="btn btn-primary">Save Changes</button></center>
-                </form>
-              </div>
-          </div>
-      </div>
+<!-- Modal -->
+<div class="container-fluid">
+  <div class="modal fade" id="profilePicModal" tabindex="-1" aria-labelledby="profilePicModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="profilePicModalLabel">User Settings</h4>
+                <button type="button" class="btn btn-danger border border-dark btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body d-flex flex-column align-items-center">
+              <img id="preview" class="border border-dark rounded-circle mb-3" src="{% if doctor.profile_pic %}{{ doctor.profile_pic.url }}{% else %}{% static 'images/adminpropic.png' %}{% endif %}" alt="Profile Pic" width="150px" height="150px"/>
+              <form id="doctorUserForm" method="post" enctype="multipart/form-data" action="/doctor-update-profile/" class="w-100 h-100">
+                {% csrf_token %}
+                <input type="hidden" name="user_id" value="{{ request.user.id }}">
+                <label for="profilePicInput" class="form-label">Change Profile Pic</label>
+                <input type="file" name="profile_pic" id="profilePicInput" onchange="previewImage(this)" class="form-control mb-3" placeholder="No file chosen">
+                <div class="row g-3">
+                  <div class="col-md-6">
+                    <div class="mb-2">
+                        <label for="departmentInput" class="form-label">Department</label>
+                        <select name="department" class="form-select" id="departmentInput">
+                            {% for dept in doctor.departments %}
+                            <option value="{{ dept.0 }}" {% if dept.0 == doctor.department %}selected{% endif %}>{{ dept.1 }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="mb-2">
+                    <label for="license_num" class="form-label">License No.:</label>
+                    <input type="text" name="license_num" class="form-control" id="license_numInput" value="{{ doctor.license_num }}" pattern="\d{7}">
+                  </div>
+                </div>
+                  <div class="col-md-6">
+                    <div class="mb-2">
+                      <label for="firstNameInput" class="form-label">First Name</label>
+                      <input type="text" name="first_name" class="form-control" id="firstNameInput" value="{{ request.user.first_name }}">
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="mb-2">
+                      <label for="lastNameInput" class="form-label">Last Name</label>
+                      <input type="text" name="last_name" class="form-control" id="lastNameInput" value="{{ request.user.last_name }}">
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="mb-2">
+                      <label for="usernameInput" class="form-label">Username</label>
+                      <input type="text" name="username" class="form-control" id="usernameInput" value="{{ request.user.username }}">
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <label for="password" class="form-label">Change Password</label>
+                    <div class="input-group mb-2">
+                      <input type="password" name="password" class="form-control" id="passwordInput">
+                      <button class="btn btn-outline-primary" type="button" id="togglePassword1">
+                        <i class="bi bi-eye-fill"></i>
+                      </button>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="mb-2">
+                      <label for="emailInput" class="form-label">Email</label>
+                      <input type="email" name="email" class="form-control" id="emailInput" value="{{ request.user.email }}">
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="mb-2">
+                      <label for="mobileInput" class="form-label">Mobile</label>
+                      <input type="text" name="mobile" class="form-control" id="mobileInput" value="{{ doctor.mobile }}" pattern="(^(\+)(\d){12}$)|(^\d{11}$)">
+                    </div>
+                  </div>
+                  <div class="col-md-12">
+                    <div class="mb-2">
+                      <label for="addressInput" class="form-label">Address</label>
+                      <input type="text" name="address" class="form-control" id="addressInput" value="{{ doctor.address }}">
+                    </div>
+                  </div>
+                </div>
+                <center><button type="submit" class="btn btn-primary mb-3">Save Changes</button></center>
+              </form>
+            </div>
+        </div>
     </div>
   </div>
+</div>
   <main>
     <!-- nav start -->
     <div class="bs-example">
@@ -523,6 +587,7 @@
    
   </main>
   <script>
+      //Set | Toggle Doctor Availability
       document.getElementById('toggleVisibility').addEventListener('click', function() {
         // Serialize form data
         var formData = new FormData(document.getElementById('toggleForm'));
@@ -586,51 +651,118 @@
         });
     });
 
-    //API
     document.addEventListener('DOMContentLoaded', function() {
-      document.getElementById('profilePicForm').addEventListener('submit', function(event) {
+      // Fetch department options from the API
+      fetch('/api/departments/')
+        .then(response => response.json())
+        .then(data => {
+          // Populate the select dropdown with the retrieved options
+          const departmentSelect = document.getElementById('departmentInput');
+          data.forEach(department => {
+            const option = document.createElement('option');
+            option.value = department[0];  // Use the first element as the value
+            option.textContent = department[1];  // Use the second element as the label
+            departmentSelect.appendChild(option);
+          });
+
+          // Get the current department value from Doctor user.
+          const currentDepartment = "{{ doctor.department }}";
+          // Set the value of the department select dropdown to the current department
+          departmentSelect.value = currentDepartment;
+        })
+        .catch(error => {
+          console.error('Error fetching department options:', error);
+        });
+
+      // Add event listener to handle form submission
+      document.getElementById('doctorUserForm').addEventListener('submit', function(event) {
         event.preventDefault(); // Prevent the default form submission
 
         // Get the form data
-        let formData = new FormData(document.getElementById('profilePicForm'));
+        let formData = new FormData(document.getElementById('doctorUserForm'));
 
         // Send a POST request to the server
-        fetch('/doctor-change-profile-pic/', {
+        fetch('/doctor-update-profile/', {
           method: 'POST',
           body: formData
         })
-        .then(response => {
-          if (response.ok) {
-            return response.json();
-          }
-          throw new Error('Network response was not ok.');
-        })
-        .then(data => {
-          // Show SweetAlert2 notification based on the response
-          if (data.success) {
-            Swal.fire({
-              icon: 'success',
-              title: 'Success!',
-              text: 'Profile picture updated successfully!',
-              showConfirmButton: true, // Show the "OK" button
-              allowOutsideClick: false // Prevent dismissing the alert by clicking outside
-            }).then((result) => {
-              if (result.isConfirmed) {
-                location.reload(); // Reload the page when the user clicks "OK"
-              }
-            });
-          } else {
-            Swal.fire({
-              icon: 'error',
-              title: 'Oops...',
-              text: 'Profile picture upload failed!'
-            });
-          }
-        })
-        .catch(error => {
-          console.error('There was an error!', error);
-        });
+          .then(response => {
+            if (response.ok) {
+              return response.json();
+            }
+            throw new Error('Network response was not ok.');
+          })
+          .then(data => {
+            // Show SweetAlert2 notification based on the response
+            if (data.success) {
+              Swal.fire({
+                icon: 'success',
+                title: 'Success!',
+                text: 'Your details have been successfully updated.',
+                showConfirmButton: true, // Show the "OK" button
+                allowOutsideClick: false // Prevent dismissing the alert by clicking outside
+              }).then((result) => {
+                if (result.isConfirmed) {
+                  location.reload(); // Reload the page when the user clicks "OK"
+                }
+              });
+            } else {
+              Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Failed to update your details. Please try again later.'
+              });
+            }
+          })
+          .catch(error => {
+            console.error('There was an error!', error);
+          });
       });
+    });
+
+    //Toggle Password
+    const passwordField = document.getElementById('passwordInput');
+    const togglePassword1 = document.getElementById('togglePassword1');
+    const eyeIcon1 = document.querySelector('i');
+
+    // Show & Hide Password
+    togglePassword1.addEventListener('click', function() {
+      const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
+      passwordField.setAttribute('type', type);
+      this.innerHTML = type === 'password' ? '<i class="bi bi-eye-fill"></i>' : '<i class="bi bi-eye-slash-fill"></i>';
+    });
+
+    // Variable to store the selected file
+    let selectedFile = null;
+
+    // Function to preview the selected image and store the selected file
+    function previewImage(input) {
+        var preview = document.getElementById('preview');
+        var file = input.files[0];
+        var reader = new FileReader();
+
+        reader.onloadend = function () {
+            preview.src = reader.result;
+        };
+
+        if (file) {
+            // Store the selected file in the variable
+            selectedFile = file;
+            reader.readAsDataURL(file);
+        } else {
+            // If no file is selected, reset the selected file variable
+            selectedFile = null;
+            preview.src = '{% if doctor.profile_pic %}{{ doctor.profile_pic.url }}{% else %}{% static "images/adminpropic.png" %}{% endif %}';
+        }
+    }
+
+    //Event listener to the modal when it's hidden it set the upload file to null.
+    $('#profilePicModal').on('hidden.bs.modal', function (e) {
+        var preview = document.getElementById('preview');
+        // Set the src attribute of the preview image to the default profile picture URL
+        preview.src = '{% if doctor.profile_pic %}{{ doctor.profile_pic.url }}{% else %}{% static "images/adminpropic.png" %}{% endif %}';
+        // Reset the file input to the selected file (if any)
+        document.getElementById('profilePicInput').value = null;
     });
 
     

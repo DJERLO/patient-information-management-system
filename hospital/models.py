@@ -1,11 +1,12 @@
+from typing import Any
 from django.core.mail import send_mail
 from datetime import timedelta
 from django.utils import timezone
 from django.db import models
 from django.contrib.auth.models import User
 from django.core.validators import validate_email, RegexValidator
-
 from hospitalmanagement import settings
+from .departments import departments, SPECIALIZATION_CHOICES, MANUFACTURER_CHOICES
 
 class HospitalStaffAdmin(models.Model):
     staff_id = models.AutoField(primary_key=True)  
@@ -31,33 +32,65 @@ class HospitalStaffAdmin(models.Model):
 
     def __str__(self):
         return f"{self.user.first_name} (StaffAdmin)"
+    
+class Pharmacist(models.Model):    
+    pharmacist_id = models.AutoField(primary_key=True)
+    first_name = models.CharField(max_length=50)
+    last_name = models.CharField(max_length=50)
+    contact_email = models.EmailField()
+    contact_phone = models.CharField(max_length=20)
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    license_number = models.CharField(max_length=50)
+    address = models.TextField()
+    specialization = models.CharField(max_length=100, null=True, blank=True, choices=SPECIALIZATION_CHOICES)
+    profile_pic = models.ImageField(blank=True, null=True, upload_to='profile_pic/PharmacistProfilePic/')
+    status = models.BooleanField(default=True)
 
-departments=[('Cardiologist', 'Cardiologist'),
-    ('Dermatologists', 'Dermatologists'),
-    ('Emergency Medicine Specialists', 'Emergency Medicine Specialists'),
-    ('Allergists/Immunologists', 'Allergists/Immunologists'),
-    ('Anesthesiologists', 'Anesthesiologists'),
-    ('Colon and Rectal Surgeons', 'Colon and Rectal Surgeons'),
-    ('Gastroenterologists', 'Gastroenterologists'),
-    ('Hematologists', 'Hematologists'),
-    ('Nephrologists', 'Nephrologists'),
-    ('Neurologists', 'Neurologists'),
-    ('Oncologists', 'Oncologists'),
-    ('Ophthalmologists', 'Ophthalmologists'),
-    ('Orthopedic Surgeons', 'Orthopedic Surgeons'),
-    ('Pediatricians', 'Pediatricians'),
-    ('Psychiatrists', 'Psychiatrists'),
-    ('Radiologists', 'Radiologists'),
-    ('Rheumatologists', 'Rheumatologists'),
-    ('Urologists', 'Urologists'),  
-    ('Endocrinologists', 'Endocrinologists'),  
-    ('Pulmonologists', 'Pulmonologists'),  
-    ('Gynecologists', 'Gynecologists'),  
-    ('Oncology Nurses', 'Oncology Nurses'),  
-    ('General Practitioners', 'General Practitioners'),  
-    ('Dentists', 'Dentists'),  
-    ('Orthodontists', 'Orthodontists'),  
-]
+    @property
+    def get_name(self):
+        return f"{self.user.first_name} {self.user.last_name}"
+
+    def __str__(self):
+        return f"{self.user.first_name} {self.user.last_name} ({self.specialization})"
+
+class Manufacturer(models.Model):
+    name = models.CharField(max_length=100)
+    address = models.CharField(max_length=200)
+    contact_number = models.CharField(max_length=20)
+
+    def __str__(self):
+        return self.name
+    
+class Symptom(models.Model):
+    name = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.name
+
+class Medicine(models.Model):
+    CATEGORY_CHOICES = [
+        ('OTC', 'Over-the-counter'),
+        ('Prescription', 'Prescription'),
+        ('Other', 'Other'),
+    ]
+
+    name = models.CharField(max_length=100)
+    description = models.TextField(blank=True, null=True)
+    manufacturer = models.ForeignKey(Manufacturer, on_delete=models.CASCADE)
+    dosage = models.CharField(max_length=255, blank=True, null=True)
+    unit_price = models.DecimalField(max_digits=10, decimal_places=2)
+    quantity = models.PositiveIntegerField(default=0)
+    sold_quantity = models.PositiveIntegerField(default=0)  # Track sold quantity
+    expiry_date = models.DateField(blank=True, null=True) # Track expiration date if applicable
+    category = models.CharField(max_length=20, choices=CATEGORY_CHOICES, default='Other')
+    profile_pic = models.ImageField(blank=True, null=True, upload_to='medicine/thumbnails/')
+    symptoms = models.ManyToManyField(Symptom, related_name='medicines', blank=True)
+
+    def __str__(self):
+        return f"{self.name} - {self.dosage} ({self.category})"
+
+
+
 class Doctor(models.Model):
     #Status Code
     STATUS_ONHOLD = 0
@@ -79,7 +112,7 @@ class Doctor(models.Model):
     
     # New field for license number
     license_num_validator = RegexValidator(regex=r'^\d{7}$', message="License number must be 7 digits.")
-    license_num = models.CharField(max_length=7, validators=[license_num_validator])
+    license_num = models.CharField(max_length=7, validators=[license_num_validator], unique=True)
     
     profile_pic = models.ImageField(blank=True, null=True, upload_to='profile_pic/DoctorProfilePic/')
    
@@ -119,7 +152,7 @@ class Doctor(models.Model):
     def __str__(self):
         return "{} ({})".format(self.user.first_name,self.department)
 
-sex = [('Male','Male'), ('Female','Female')]
+sex = [('Male','Male'), ('Female','Female'), ('Other','Other')]
 
 class Patient(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)

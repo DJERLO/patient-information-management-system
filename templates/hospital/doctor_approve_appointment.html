@@ -69,28 +69,28 @@
     <div class="table-responsive p-4">
       <table class="table table-hover py-3" id="approval-table">
         <thead class="table-dark">
-          <tr>
-            <th>Date Request</th>
-            <th>Doctor Name</th>
-            <th>Patient Name</th>
-            <th>Description</th>
-            <th>Approve</th>
-            <th>Reject</th>
+          <tr class="row">
+            <th class="col text-truncate">Date Request</th>
+            <th class="col text-truncate">Doctor Name</th>
+            <th class="col text-truncate">Patient Name</th>
+            <th class="col text-truncate">Description</th>
+            <th class="col text-truncate">Approve</th>
+            <th class="col text-truncate">Reject</th>
           </tr>
         </thead>
         <tbody>
           {% for appointment in appointments %}
-          <tr>
-            <td>{{ appointment.appointmentDate|date:"F d, Y - g:iA" }}</td>
-            <td>{{ appointment.doctorName }}</td>
-            <td>{{ appointment.patientName }}</td>
-            <td>{{ appointment.description }}</td>
-            <td>
+          <tr class="row">
+            <td class="col text-truncate">{{ appointment.appointmentDate|date:"F d, Y - g:iA" }}</td>
+            <td class="col text-truncate">{{ appointment.doctorName }}</td>
+            <td class="col text-truncate">{{ appointment.patientName }}</td>
+            <td class="col text-truncate">{{ appointment.description }}</td>
+            <td class="col text-truncate">
               <a class="btn btn-primary btn-sm w-100 h-100" href="{% url 'approve-doctor-appointment' appointment.appointment_id %}">
                 <i class="bi bi-check"></i>
               </a>
             </td>
-            <td>
+            <td class="col text-truncate">
               <a class="btn btn-danger btn-sm delete-btn w-100 h-100" href="{% url 'reject-doctor-appointment' appointment.appointment_id %}">
                 <i class="bi bi-trash"></i>
               </a>

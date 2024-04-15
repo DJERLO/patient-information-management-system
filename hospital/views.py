@@ -1,14 +1,18 @@
-
+import json
+import random
+import time
+from paymongo import Paymongo
 from django.contrib.auth.models import User
 from django.utils.dateparse import parse_date
 from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import render,redirect
 from django.urls import reverse
+from requests import Response
 from . import forms,models
 from django.db.models import Sum
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import Group
-from django.http import HttpResponseForbidden, HttpResponseRedirect, JsonResponse
+from django.http import HttpResponseBadRequest, HttpResponseForbidden, HttpResponseRedirect, JsonResponse
 from django.core.mail import send_mail
 from django.contrib.auth.decorators import login_required,user_passes_test
 from django.contrib.auth.hashers import make_password
@@ -18,15 +22,27 @@ from django.contrib import messages
 from django.utils import timezone
 from . import forms
 from django.middleware.csrf import get_token
+from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import get_object_or_404
 from datetime import date
 from django.db.models import Max
 from django.utils.html import strip_tags
 from django.template.loader import render_to_string
+from django.db.models import Q
+from django.core.paginator import Paginator
+
+import requests
+import base64
+from dotenv import load_dotenv
+
 
 #   REST API Instances
-from rest_framework import generics
+from rest_framework import generics, status
+from rest_framework.views import APIView
 from .serializers import PatientSerializer
+from rest_framework.response import Response
+
+from .departments import SPECIALIZATION_CHOICES, departments
 
 class PatientListCreate(generics.ListCreateAPIView):
     serializer_class = PatientSerializer
@@ -49,6 +65,63 @@ class PatientRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
             return models.Patient.objects.all()
         else:
             return models.Patient.objects.none()
+        
+class DoctorDepartmentListView(APIView):
+    def get(self, request):
+        return Response(departments)
+
+class PharmacistSpecializationListView(APIView):
+    def get(self, request):
+        return Response(SPECIALIZATION_CHOICES)
+
+
+#----End Of API instances
+@csrf_exempt
+def chatgpt4(request):
+    if request.method == 'POST':
+        user_message = request.POST.get('userMessage')
+
+        url = "https://open-ai21.p.rapidapi.com/conversationgpt35"
+        payload = {
+            "messages": [
+                {
+                    "role": "patient",       # Patient
+                    "content": user_message,  #  the user_message is sent as form data
+                }
+            ],
+            "web_access": False, #This attribute is a boolean flag that indicates whether the model can interact with the database via the web.
+            "system_prompt": "Hello! Welcome to our healthcare virtual agent. My name is Dr. Carey, Your healthcare virtual agent for today and I'm here to assist you with any questions or concerns you may have about your health. Feel free to ask me about symptoms, medications, treatment options, or any other healthcare-related topics. So How can I assist you today?",
+            "temperature": 0.9, # This parameter controls the randomness of the generated responses.
+            "top_k": 5,
+            "top_p": 0.9,
+            "max_tokens": 256, #This attribute sets the maximum number of tokens (words) in the generated response.
+        }
+        headers = {
+            "content-type": "application/json",
+            "X-RapidAPI-Key": "cf030a6d5amsh9fa16951e9dc229p1d1b96jsn60d40e50e951",
+            'X-RapidAPI-Host': 'open-ai21.p.rapidapi.com'
+        }
+
+        try:
+            response = requests.post(url, json=payload, headers=headers)
+            print(response.json())
+            response.raise_for_status()  # Raise exception for HTTP errors
+            data = response.json()
+            reply = data.get('result') #ChatGPT response result
+            message = data.get('message') #429 Client Error
+
+            if reply:
+                return JsonResponse({'reply': reply}, status=200)
+            
+            if message:
+                return JsonResponse({'reply': 'Error: Too many request at the moment'}, status=429)
+        
+        except requests.RequestException as e:
+            return JsonResponse({'error': 'Failed to process message: {}'.format(str(e))}, status=500)
+        except Exception as e:
+            return JsonResponse({'error': 'An unexpected error occurred: {}'.format(str(e))}, status=500)
+    else:
+        return JsonResponse({'error': 'Invalid request method'}, status=405)
 
 def get_csrf_token(request):
     csrf_token = get_token(request)
@@ -60,8 +133,6 @@ def home_view(request):
         return HttpResponseRedirect('afterlogin')
     return render(request,'hospital/index.html')
 
-
-
 def doctor_wait_for_approval(request):
     return render(request, 'hospital/doctor_wait_for_approval.html')
 
@@ -71,6 +142,17 @@ def adminclick_view(request):
         return HttpResponseRedirect('afterlogin')
     return render(request,'hospital/adminclick.html')
 
+#for showing signup/login button for doctor
+def receptionistclick_view(request):
+    if request.user.is_authenticated:
+        return HttpResponseRedirect('afterlogin')
+    return render(request,'hospital/receptionistclick.html')
+
+#for showing signup/login button for doctor
+def pharmacistclick_view(request):
+    if request.user.is_authenticated:
+        return HttpResponseRedirect('afterlogin')
+    return render(request,'hospital/pharmacistclick.html')
 
 #for showing signup/login button for doctor
 def doctorclick_view(request):
@@ -90,8 +172,8 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import authenticate, login
 from django.shortcuts import render, redirect
 from django.contrib import messages
-from .forms import AdminLoginForm, DoctorForm, DoctorLoginForm, DoctorUserForm, PatientLoginForm, StaffAdminProfileForm, StaffAdminSignupForm
-
+from .forms import AdminLoginForm, DoctorForm, DoctorLoginForm, DoctorUserForm, PatientLoginForm, StaffAdminProfileForm, StaffAdminSignupForm, PharmacistUserSignUpForm, PharmacistSignUpForm
+import logging
 def adminlogin_view(request):
     form = AdminLoginForm()
 
@@ -107,17 +189,25 @@ def adminlogin_view(request):
             user = authenticate(request, username=username, password=password)
 
             if user is not None:
-                print(f"User authentication successful for {username}")
+                if is_pharmacist(user):
+                    print("User is a pharmacist.")
+                else:
+                    print("User is not a pharmacist.")
                 
-                if is_admin(user):
+                # Check if the user is an admin or a pharmacist
+                if is_admin(user) or is_pharmacist(user):
                     login(request, user)
                     return redirect('afterlogin')
+                else:
+                    # If neither admin nor pharmacist, authentication fails
+                    messages.error(request, "You are not authorized to access this page.")
             else:
                 # Authentication failed
                 messages.error(request, "Invalid username or password.")
         else:
             # This block is executed when the form is not valid
             print(f"Form is not valid. Form errors: {form.errors}")
+            logger.error(f"Form is not valid. Form errors: {form.errors}")
             messages.error(request, "Invalid username or password. Please check the fields.")
 
     return render(request, 'hospital/adminlogin.html', {'form': form})
@@ -159,7 +249,7 @@ def patientlogin_view(request):
                 return redirect('afterlogin')
             else:
                 # Authentication failed
-                messages.error(request, "Invalid username or password.")
+                messages.error(request, "Authentication failed. Please contact the hospital management team for assistance with your account")
         else:
             messages.error(request, "Invalid form submission. Please check the fields.")
 
@@ -167,7 +257,6 @@ def patientlogin_view(request):
     
         
 #SignUp Views
-
 def staff_admin_signup_view(request):
     adminForm = StaffAdminSignupForm()
     profile_form = StaffAdminProfileForm()
@@ -207,6 +296,35 @@ def staff_admin_signup_view(request):
                     messages.error(request, f"Profile {error}")
 
     return render(request, 'hospital/adminsignup.html', {'form': adminForm, 'profile_form': profile_form})
+
+def pharmacist_signup_view(request):
+    if request.method == 'POST':
+        user_form = PharmacistUserSignUpForm(request.POST)
+        profile_form = PharmacistSignUpForm(request.POST, request.FILES)
+        first_name = request.POST.get('first_name')
+        last_name = request.POST.get('last_name')
+        
+        if user_form.is_valid() and profile_form.is_valid():
+            
+            user = user_form.save(commit=False)
+            user.is_pharmacist = True
+            user.save()
+
+            pharmacist = profile_form.save(commit=False)
+            pharmacist.user = user
+            pharmacist.first_name = first_name
+            pharmacist.last_name = last_name
+            
+            # Add user to 'PHARMACIST' group
+            my_pharmacist_group = Group.objects.get_or_create(name='PHARMACIST')
+            my_pharmacist_group.user_set.add(user)
+            
+            pharmacist.save()
+            return HttpResponseRedirect('adminlogin')
+    else:
+        user_form = PharmacistUserSignUpForm()
+        profile_form = PharmacistSignUpForm()
+    return render(request, 'hospital/pharmacistsignup.html', {'user_form': user_form, 'profile_form': profile_form})
 
 def doctor_signup_view(request):
     if request.method == 'POST':
@@ -304,6 +422,8 @@ def patient_signup_view(request):
 #-----------for checking user is doctor , patient or admin
 def is_admin(user):
     return user.groups.filter(name='ADMIN').exists()
+def is_pharmacist(user):
+    return user.groups.filter(name='PHARMACIST').exists()
 def is_doctor(user):
     return user.groups.filter(name='DOCTOR').exists()
 def is_patient(user):
@@ -331,6 +451,14 @@ def afterlogin_view(request):
             send_mail(subject, message, from_email, to)
 
             return render(request, 'hospital/admin_wait_for_approval.html')
+    elif is_pharmacist(request.user):
+        account_approval = models.Pharmacist.objects.filter(user_id=request.user.id, status=True).exists()
+        if account_approval:
+            return redirect('pharmacist-dashboard')
+        else:
+            # Handle the case when the pharmacist account is not approved
+            # You can render a template or return an appropriate response
+            return render(request, 'hospital/pharmacist_wait_for_approval.html')
     elif is_doctor(request.user):
         account_approval = models.Doctor.objects.filter(user_id=request.user.id, status__in=[models.Doctor.STATUS_AVAILABLE, models.Doctor.STATUS_NOTAVAILABLE]).exists()
         if account_approval:
@@ -370,6 +498,9 @@ def afterlogin_view(request):
         elif is_admin(request.user):
             messages.error(request, "Invalid User or Password")
             return HttpResponseRedirect(reverse('adminlogin'))
+        elif is_pharmacist(request.user):
+            messages.error(request, "Invalid User or Password")
+            return HttpResponseRedirect(reverse('adminlogin'))
         else:
             # Handle the case when the login type is unknown or not defined
             return HttpResponse("Unknown user type")
@@ -378,6 +509,9 @@ def afterlogin_view(request):
 #Logout View
 def logout_view(request):
     if is_admin(request.user):
+        logout(request)  # Log out the current user
+        return redirect('adminlogin')
+    elif is_pharmacist(request.user):
         logout(request)  # Log out the current user
         return redirect('adminlogin')
     elif is_doctor(request.user):
@@ -391,68 +525,289 @@ def logout_view(request):
         return redirect('')
 
 #---------------------------------------------------------------------------------
-#------------------------ CHANGING PROFILE PIC -----------------------------------
+#------------------------ User Settings VIEW -------------------------------------
 #---------------------------------------------------------------------------------
+from django.contrib.auth.forms import PasswordChangeForm
+from django.contrib.auth import update_session_auth_hash
+
 @login_required(login_url='adminlogin')
 @user_passes_test(is_admin)
-def admin_change_profile_pic(request):
+def admin_update_profile_details(request):
     if request.method == 'POST':
+        user_id = request.POST.get('user_id')
         profile_pic = request.FILES.get('profile_pic')
+        first_name = request.POST.get('first_name')
+        last_name = request.POST.get('last_name')
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        email = request.POST.get('email')
+        mobile = request.POST.get('mobile')
+        address = request.POST.get('address')
+        
+        user = User.objects.get(id=user_id)
+        try:
+            staff = models.HospitalStaffAdmin.objects.get(user_id = user_id)
+        except models.HospitalStaffAdmin.DoesNotExist:
+            return JsonResponse({'success': False, 'message': 'HospitalStaffAdmin does not exist for this user.'}, status=400)
 
+         # Update first name if changed
+        if first_name:
+            user.first_name = first_name
+
+        # Update first name if changed
+        if last_name:
+            user.last_name = last_name
+
+        # Update username if changed
+        if username:
+            user.username = username
+
+        # Update password if changed
+        if password:
+            user.set_password(password)
+            update_session_auth_hash(request, user)  # Keep the user logged in after password change
+
+        # Email Change
+        if email:
+            user.email = email
+        
+        if mobile:
+            staff.mobile = mobile
+            staff.save()
+
+        if address:
+            staff.address = address
+            staff.save()
+
+        # Update profile picture if changed
         if profile_pic:
-            try:
-                staff = models.HospitalStaffAdmin.objects.get(user_id=request.user.id)
-            except models.HospitalStaffAdmin.DoesNotExist:
-                return JsonResponse({'success': False, 'message': 'HospitalStaffAdmin does not exist for this user.'}, status=400)
-
             staff.profile_pic = profile_pic
             staff.save()
-            return JsonResponse({'success': True})  # Optionally, return a JSON response indicating success
 
-    return JsonResponse({'success': False})  # Return a JSON response indicating failure
+        # Save the user object after all changes
+        user.save()
+
+        return JsonResponse({'success': True, 'message': 'Your details have been successfully updated.'})
+
+    return JsonResponse({'success': False, 'message': 'Invalid request.'})
+
+@login_required(login_url='adminlogin')
+@user_passes_test(is_pharmacist)
+def pharmacist_update_profile_details(request):
+    if request.method == 'POST':
+        user_id = request.POST.get('user_id')
+        profile_pic = request.FILES.get('profile_pic')
+        first_name = request.POST.get('first_name')
+        last_name = request.POST.get('last_name')
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        userEmail = request.POST.get('email1')
+        workEmail = request.POST.get('email2')
+        specialization = request.POST.get('specialization')
+        mobile = request.POST.get('mobile')
+        address = request.POST.get('address')
+        
+        user = User.objects.get(id=user_id)
+        try:
+            staff = models.Pharmacist.objects.get(user_id = user_id)
+        except models.Pharmacist.DoesNotExist:
+            return JsonResponse({'success': False, 'message': 'Pharmacist does not exist for this user.'}, status=400)
+
+         # Update first name if changed
+        if first_name:
+            user.first_name = first_name
+
+        # Update first name if changed
+        if last_name:
+            user.last_name = last_name
+
+        # Update username if changed
+        if username:
+            user.username = username
+
+        # Update password if changed
+        if password:
+            user.set_password(password)
+            update_session_auth_hash(request, user)  # Keep the user logged in after password change
+
+        # Email Change
+        if userEmail:
+            user.email = userEmail
+
+        # Work Email Change
+        if workEmail:
+            staff.contact_email = workEmail
+            staff.save()
+       
+        if mobile:
+            staff.contact_phone = mobile
+            staff.save()
+
+        if specialization:
+            staff.specialization = specialization
+            staff.save()
+
+        if address:
+            staff.address = address
+            staff.save()
+
+        # Update profile picture if changed
+        if profile_pic:
+            staff.profile_pic = profile_pic
+            staff.save()
+
+        # Save the user object after all changes
+        user.save()
+
+        return JsonResponse({'success': True, 'message': 'Your details have been successfully updated.'})
+
+    return JsonResponse({'success': False, 'message': 'Invalid request.'})
 
 @login_required(login_url='doctorlogin')
 @user_passes_test(is_doctor)
-def doctor_change_profile_pic(request):
+def doctor_update_profile(request):
     if request.method == 'POST':
         profile_pic = request.FILES.get('profile_pic')
+        first_name = request.POST.get('first_name')
+        last_name = request.POST.get('last_name')
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        email = request.POST.get('email')
+        address = request.POST.get('address')
+        mobile = request.POST.get('mobile')
+        department = request.POST.get('department')
+        license_num = request.POST.get('license_num')
 
+        try:
+            doctor = models.Doctor.objects.get(user_id=request.user.id)
+        except models.Doctor.DoesNotExist:
+            return JsonResponse({'success': False, 'message': 'Doctor does not exist for this user.'}, status=400)
+        
+        user = User.objects.get(id = request.user.id)
+
+        #User
+        if first_name:
+            user.first_name = first_name
+
+        if last_name:
+            user.last_name = last_name
+        
+        if username:
+            user.username = username
+
+        if email:
+            user.email = email
+        
+        if password:
+            user.set_password(password)
+            update_session_auth_hash(request, user) # Keep the user logged in after password change         
+
+        #Doctor
         if profile_pic:
-            try:
-                doctor = models.Doctor.objects.get(user_id=request.user.id)
-            except models.Doctor.DoesNotExist:
-                return JsonResponse({'success': False, 'message': 'Doctor does not exist for this user.'}, status=400)
-
             doctor.profile_pic = profile_pic
             doctor.save()
-            return JsonResponse({'success': True})  # Optionally, return a JSON response indicating success
 
-    return JsonResponse({'success': False})  # Return a JSON response indicating failure
+        if address:
+            doctor.address = address
+            doctor.save()
+        
+        if mobile:
+            doctor.mobile = mobile
+            doctor.save()
+
+        if department:
+            doctor.department = department
+            doctor.save()
+        
+        if license_num:
+            doctor.license_num = license_num
+            doctor.save()
+
+        #User Record Save
+        user.save()
+        
+
+        return JsonResponse({'success': True, 'message': 'Profile details updated successfully.'})
+
+    return JsonResponse({'success': False, 'message': 'Invalid request.'})
 
 @login_required(login_url='patientlogin')
 @user_passes_test(is_patient)
-def patient_change_profile_pic(request):
+def patient_update_profile_details(request):
     if request.method == 'POST':
+        user_id = request.POST.get('user_id')
         profile_pic = request.FILES.get('profile_pic')
+        first_name = request.POST.get('first_name')
+        last_name = request.POST.get('last_name')
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        email = request.POST.get('email')
+        mobile = request.POST.get('mobile')
+        address = request.POST.get('address')
+        gender = request.POST.get('gender')
+        DOB = request.POST.get('DOB')
+        
+        user = User.objects.get(id=user_id)
+        try:
+            patient = models.Patient.objects.get(user_id=user_id)
+        except models.Patient.DoesNotExist:
+            return JsonResponse({'success': False, 'message': 'Patient does not exist for this user.'}, status=400)
 
-        if profile_pic:
-            try:
-                patient = models.Patient.objects.get(user_id=request.user.id)
-            except models.Patient.DoesNotExist:
-                return JsonResponse({'success': False, 'message': 'Patient does not exist for this user.'}, status=400)
+        # Update first name if changed
+        if first_name:
+            user.first_name = first_name
 
-            patient.profile_pic = profile_pic
+        # Update last name if changed
+        if last_name:
+            user.last_name = last_name
+
+        # Update username if changed
+        if username:
+            user.username = username
+
+        # Update password if changed
+        if password:
+            user.set_password(password)
+            update_session_auth_hash(request, user)  # Keep the user logged in after password change
+
+        # Email Change
+        if email:
+            user.email = email
+        
+        if mobile:
+            patient.mobile = mobile
             patient.save()
-            return JsonResponse({'success': True})  # Optionally, return a JSON response indicating success
 
-    return JsonResponse({'success': False})  # Return a JSON response indicating failure
+        if address:
+            patient.address = address
+            patient.save()
+        
+        if DOB:
+            patient.date_of_birth = DOB
+            patient.save()
+
+        if gender:
+            patient.gender = gender
+            patient.save()
+
+        # Update profile picture if changed
+        if profile_pic:
+            patient.profile_pic = profile_pic
+
+        # Save the user and patient objects after all changes
+        user.save()
+        
+
+        return JsonResponse({'success': True, 'message': 'Your details have been successfully updated.'})
+
+    return JsonResponse({'success': False, 'message': 'Invalid request.'})
 
 
 #---------------------------------------------------------------------------------
 #------------------------ ADMIN RELATED VIEWS START ------------------------------
 #---------------------------------------------------------------------------------
 from collections import Counter
-from django.db.models import Q
+
 @login_required(login_url='adminlogin')
 @user_passes_test(is_admin)
 def admin_dashboard_view(request):
@@ -505,9 +860,11 @@ def admin_dashboard_view(request):
 def admin_panel_view(request):
     admin = models.HospitalStaffAdmin.objects.get(user_id=request.user.id)
     admins = models.HospitalStaffAdmin.objects.all().filter(status=True)
+    pharmacist = models.Pharmacist.objects.all().filter(status=True)
     context = {
         'admin': admin,
         'admins': admins,
+        'pharmacist': pharmacist,
     }
     return render(request,'hospital/admin_panel.html', context)
 
@@ -517,40 +874,74 @@ login_required(login_url='adminlogin')
 def admin_view_staff(request):
     admin = models.HospitalStaffAdmin.objects.get(user_id=request.user.id)
     admins = models.HospitalStaffAdmin.objects.all().filter(status=True)
+    pharmacist = models.Pharmacist.objects.all().filter(status=True)
     context = {
         'admin': admin,
         'admins': admins,
+        'pharmacist': pharmacist,
     }
     return render(request,'hospital/admin_view_staff.html', context)
 
 @login_required(login_url='adminlogin')
 @user_passes_test(is_superuser)
 def admin_staff_details_view(request, pk):
-    # Get the patient object
-    admins = get_object_or_404(models.HospitalStaffAdmin, user_id=pk)
-    admin = models.HospitalStaffAdmin.objects.get(user_id=request.user.id)
+    # Check if the user is a pharmacist or not
+    is_pharmacist = models.Pharmacist.objects.filter(user_id=pk).exists()
+
+    # Get the pharmacist or admin object based on the user's role
+    if is_pharmacist:
+        staff = models.Pharmacist.objects.get(user_id=pk)
+    else:
+        staff = models.HospitalStaffAdmin.objects.get(user_id=pk)
+
+    # Check if the user is a superuser (admin)
+    is_Admin = staff.user.is_superuser
     
-    # Get the associated user object
-    user = admins.user
+    # Get the current admin
+    admin = get_object_or_404(models.HospitalStaffAdmin, user_id=request.user.id)
     
     # Prepare the context dictionary
     context = {
-        "user": user,
         "admin": admin,
-        "admins": admins,
+        "staff": staff,
+        "is_Pharmacist": is_pharmacist,
+        "is_Admin": is_Admin
     }
 
     return render(request, 'hospital/admin_staff_details.html', context)
 
 @login_required(login_url='adminlogin')
 @user_passes_test(is_superuser)
-def approve_staff_view(request,pk):
-    admin = models.HospitalStaffAdmin.objects.get(user_id=pk)
-    admin.status = True
-    admin.save()
+def approve_staff_view(request, pk):
+    try:
+        # Check if the user is a pharmacist or a receptionist
+        pharmacist = models.Pharmacist.objects.get(user_id=pk)
+        is_pharmacist = True
+    except models.Pharmacist.DoesNotExist:
+        is_pharmacist = False
+
+    try:
+        staff = models.HospitalStaffAdmin.objects.get(user_id=pk)
+        is_staff = True
+    except models.HospitalStaffAdmin.DoesNotExist:
+        is_staff = False
+
+    if is_pharmacist:
+        # User is a pharmacist
+        pharmacist.status = True
+        pharmacist.save()
+        user = pharmacist.user
+    elif is_staff:
+        # User is a receptionist or admin
+        staff.status = True
+        staff.save()
+        user = staff.user
+    else:
+        # User is not a pharmacist or staff
+        return HttpResponse("User not found or invalid")
 
     # Send approval email
-    user_email = admin.user.email
+    user_email = user.email
     subject = 'Staff Membership Approval: Hospital Management System'
     message = f'Hello,\n\nWe are pleased to inform you that you have been approved as a staff member on our Hospital Management System.\n\nYou now have access to all the tools and resources necessary to contribute effectively to our team.\n\nWelcome aboard, and thank you for joining us!\n\nBest regards,\nThe Hospital Management Team'
     sender_email = settings.EMAIL_HOST_USER
@@ -561,9 +952,31 @@ def approve_staff_view(request,pk):
 
 @login_required(login_url='adminlogin')
 @user_passes_test(is_superuser)
-def delete_staff_view(request,pk):
-    admin = models.HospitalStaffAdmin.objects.get(user_id=pk)
-    user = models.User.objects.get(id=pk)
+def delete_staff_view(request, pk):
+    try:
+        # Check if the user is a pharmacist or a receptionist
+        pharmacist = models.Pharmacist.objects.get(user_id=pk)
+        is_pharmacist = True
+    except models.Pharmacist.DoesNotExist:
+        is_pharmacist = False
+
+    try:
+        staff = models.HospitalStaffAdmin.objects.get(user_id=pk)
+        is_staff = True
+    except models.HospitalStaffAdmin.DoesNotExist:
+        is_staff = False
+
+    if is_pharmacist:
+        # User is a pharmacist
+        user = pharmacist.user
+        pharmacist.delete()
+    elif is_staff:
+        # User is a receptionist
+        user = staff.user
+        staff.delete()
+    else:
+        # User is not a pharmacist or staff
+        return HttpResponse("User not found or invalid")
 
     # Send rejection email
     user_email = user.email
@@ -574,7 +987,6 @@ def delete_staff_view(request,pk):
     send_mail(subject, message, sender_email, receiver_email)
 
     user.delete()
-    admin.delete()
     return redirect('admin-view-staff')
 
 @login_required(login_url='adminlogin')
@@ -583,8 +995,10 @@ def admin_approve_staff_view(request):
     #those whose approval are needed
     admin = models.HospitalStaffAdmin.objects.get(user_id=request.user.id)
     admins=models.HospitalStaffAdmin.objects.all().filter(status=False)
+    pharmacist = models.Pharmacist.objects.all().filter(status=False)
     context = {
         'admins':admins,
+        'pharmacist': pharmacist,
         'admin': admin,
     }
     return render(request,'hospital/admin_approve_staff.html', context)
@@ -1413,17 +1827,242 @@ def admin_view_patient_invoice(request, patientId, discharge_id):
     return render(request, 'hospital/admin_view_patient_invoice.html', context)
 
 #---- Mark Patient Paid His Bill and deactivate his/her Account
+def success_payment_view(request):
+    # Implement logic for successful payment
+    return render(request, 'hospital/success_payment.html')
+
+def failed_payment_view(request):
+    # Implement logic for failed payment
+    return render(request, 'hospital/failed_payment.html')
+
+#Enable Webhook for the first time, since Webhooks disabled itself after 12 tries trying to sends a payload to your URL
+def enable_webhook():
+    webhook = 'hook_Mnxpti1SvGNai4a3bZx6vbr2' #Place your Webhook ID here - you can generate yours at Paymongo Webhooks API
+    url = "https://api.paymongo.com/v1/webhooks/hook_Mnxpti1SvGNai4a3bZx6vbr2/enable"
+
+    headers = {
+        "accept": "application/json",
+        "authorization": "Basic c2tfdGVzdF9OeGdSOVBTdTlia2JlWDdQWWs1VFR0NUc6cGtfdGVzdF8xU2RIY0hkem55WDJNWW9TeTdlTWpYWlc="
+    }
+
+    response = requests.post(url, headers=headers)
+    print(f"Status Webhook:{response.text}")
+
+#Function that make the checkout_urls expires within the duration time given
+@csrf_exempt
+def set_checkout_expiry_date(request):
+    if request.method == 'POST':
+        data = json.loads(request.body.decode('utf-8'))
+        checkout_url = data.get('checkout_url')
+        
+
+        if checkout_url:
+            # Encode the secret key for Basic Authentication
+            auth_header = base64.b64encode(settings.PAYMONGO_SECRET_KEY.encode()).decode()
+            
+            #Get the Checkout-Session-ID from the Url
+            checkout_id = f'cs_{checkout_url.split("cs_")[1].split("_")[0]}' 
+            
+            print(f'Checkout Session ID expired: {checkout_id}')
+
+            #Expire a Checkout Session API
+            url = f"https://api.paymongo.com/v1/checkout_sessions/{checkout_id}/expire"
+
+            headers = {
+                "accept": "application/json",
+                "authorization": f'Basic {auth_header}'
+            }
+
+            expiry_response = requests.post(url, headers=headers) # Send a request via POST method to Paymongo
+
+            # Calculate and return the expiration time
+            if expiry_response.ok:
+                return JsonResponse({'link': 'Checkout Link Expired', 'status':True})
+            else:
+                return JsonResponse({'success': False, 'error_message': 'Failed to expire checkout session'}, status=500)
+        else:
+            return JsonResponse({'success': False, 'error_message': 'Missing checkout_url parameter'}, status=400)            
+    else:
+        return JsonResponse({'success': False, 'error_message': 'Invalid request method'}, status=405)
+
+
+
+import base64
+@csrf_exempt
+def create_payment_session(request):
+    if request.method == 'POST':
+        try:
+            # Retrieve total amount and other charges from the form data
+            discharge_id =  request.POST.get('discharge_id')
+            roomCharge = int(request.POST.get('roomCharge')) * 100
+            medicineCost = int(request.POST.get('medicineCost')) * 100
+            doctorFee = int(request.POST.get('doctorFee')) * 100
+            otherCharge = int(request.POST.get('OtherCharge')) * 100
+
+            # Encode the secret key for Basic Authentication
+            auth_header = base64.b64encode(settings.PAYMONGO_SECRET_KEY.encode()).decode()
+
+            # Construct the request payload
+            payload = {
+                "data": {
+                    "attributes": {
+                        "send_email_receipt": False,
+                        "show_description": True,
+                        "show_line_items": True,
+                        "description": "From The Hospital Management Team",
+                        "line_items": [
+                            {
+                                "name": "Room Charge",
+                                "quantity": 1,
+                                "amount": roomCharge,
+                                "currency": "PHP"
+                            },
+                            {
+                                "name": "Medicine Cost",
+                                "quantity": 1,
+                                "amount": medicineCost,
+                                "currency": "PHP"
+                            },
+                            {
+                                "name": "Doctor Fee",
+                                "quantity": 1,
+                                "amount": doctorFee,
+                                "currency": "PHP"
+                            },
+                            {
+                                "name": "Other Charge",
+                                "quantity": 1,
+                                "amount": otherCharge,
+                                "currency": "PHP"
+                            },
+                        ],
+                       "payment_method_types": [
+                            "billease",
+                            "card",
+                            "dob",
+                            "dob_ubp",
+                            "gcash",
+                            "grab_pay",
+                            "paymaya"
+                        ],
+                        "reference_number": f"{discharge_id}",
+                    }
+                }
+            }
+
+            # Make a POST request to create the payment session
+            response = requests.post(
+                'https://api.paymongo.com/v1/checkout_sessions',
+                json=payload,
+                headers={
+                    'Authorization': f'Basic {auth_header}',
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                }
+            )
+            #Get the Checkout Session Link
+            checkout_url = response.json()['data']['attributes']['checkout_url']
+            #print(checkout_url)
+
+            # Check if the request was successful
+            if response.status_code == 200:
+                enable_webhook() #Enable webhook after Creating a session for the first time.
+                return JsonResponse({
+                    'success': 200,
+                    'checkout_url': checkout_url,                   
+                })
+            else:
+                return JsonResponse({'error': 'Failed to create payment session'}, status=response.status_code)
+
+        except Exception as e:
+            # Log the error for debugging purposes
+            print(f"Error creating payment session: {e}")
+            return JsonResponse({'error': 'Failed to create payment session'}, status=500)
+
+    else:
+        return JsonResponse({'error': 'Invalid request method'}, status=405)
+
+#Webhook 
+@csrf_exempt
+def handle_webhook(request):
+    if request.method == 'POST':
+        # Check if the request body is empty
+        if not request.body:
+            print("Empty request body")
+            return JsonResponse({'error': 'Empty request body'}, status=200)
+        else:
+            try:
+                # Decode the JSON payload
+                payload = json.loads(request.body.decode('utf-8'))
+                #print(payload) #Print the whole payload JSON
+                # Check if the payment status is "paid"
+                try:
+                    payment_status = payload.get('data', {}).get('attributes', {}).get('data', {}).get('attributes', {}).get('payments', [{}])[0].get('attributes', {}).get('status')
+                    reference_number = payload.get('data', {}).get('attributes', {}).get('data', {}).get('attributes', {}).get('reference_number') # Get id as reference_id
+
+                    #print(f"Invoice: {reference_number}")
+                    if payment_status == 'paid':
+                        mark_patient_bill(reference_number) #Function that sets the bill and mark as paid
+                        return JsonResponse({'message': 'Payment successfully processed'}, status=200)
+                    
+                except KeyError as e:
+                    print("KeyError:", e)
+                    if str(e) == "'payment_intent'":
+                        return JsonResponse({'message': 'Webhook received successfully'}, status=200)
+                    else:
+                        return JsonResponse({'error': 'KeyError in payment status'}, status=400)
+            except json.JSONDecodeError as e:
+                print("Error decoding JSON:", e)
+                return JsonResponse({'error': 'Error decoding JSON'}, status=400)
+    else:
+        # Return an error response for other request methods
+        return JsonResponse({'error': 'Invalid request method'}, status=405)
+
+#If payment was successful thru a payment channel
+def mark_patient_bill(discharge_id):
+    bill = get_object_or_404(models.PatientDischargeDetails, id=discharge_id)
+    patient = get_object_or_404(models.Patient, id = bill.patientId)
+
+    # Count the number of bills for the patient
+    unpaid_bill_count = models.PatientDischargeDetails.objects.filter(patientId = bill.patientId).count()
+   
+    if patient:
+        #Check if user has less than one bill before deactivating his account
+        if unpaid_bill_count <= 1:
+            # Get Patient User to set the isActive to False(Deactivate)
+            user = patient.user
+            user.is_active = False
+            user.save() # Save changes
+
+        bill.is_Paid = True #Mark Bill as Paid
+        bill.save() # Save Record
+
+        # Send email notification to the patient
+        subject = 'Your Hospital Bill Payment Confirmation'
+        message = f'Hello {patient.user.get_full_name()},\n\nWe are delighted to inform you that your hospital bill has been successfully paid. Here are the details:\n\nAdmit Date: {bill.admitDate}\nRelease Date: {bill.releaseDate}\nDays Spent: {bill.daySpent}\n\nRoom Charge: ${bill.roomCharge}\nMedicine Cost: ${bill.medicineCost}\nDoctor Fee: ${bill.doctorFee}\nOther Charges: ${bill.OtherCharge}\nTotal Bill: ${bill.total}\n\nThank you for choosing our hospital for your healthcare needs.\n\nBest regards,\nHospital Management Team'
+        sender_email = settings.EMAIL_HOST_USER
+        receiver_email = [patient.user.email]
+        send_mail(subject, message, sender_email, receiver_email)
+
+        return JsonResponse({'success': True}) # Success 
+
+#This is for Receptionist Function when payment happend at the front desk.
 @login_required(login_url='adminlogin')
 @user_passes_test(is_admin)
 def mark_pay_patient_bill(request, patientId, discharge_id):
     bill = get_object_or_404(models.PatientDischargeDetails, patientId = patientId, id=discharge_id)
     patient = get_object_or_404(models.Patient, id = patientId)
+
+    # Count the number of bills for the patient
+    unpaid_bill_count = models.PatientDischargeDetails.objects.filter(patientId=patientId).count()
    
     if bill:
-        # Get Patient User to set the isActive to False
-        user = patient.user
-        user.is_active = False
-        user.save() # Save changes
+        #Check if user has less than one bill before deactivating his account
+        if unpaid_bill_count <= 1:
+            # Get Patient User to set the isActive to False(Deactivate)
+            user = patient.user
+            user.is_active = False
+            user.save() # Save changes
 
         bill.is_Paid = True #Mark Bill as Paid
         bill.save() # Save Record
@@ -1574,9 +2213,242 @@ def reactivate_patient_view(request, pk):
 #---------------------------------------------------------------------------------
 
 
+#---------------------------------------------------------------------------------
+#------------------------ PHARMACIST RELATED VIEWS START -------------------------
+#---------------------------------------------------------------------------------
+@login_required(login_url='adminlogin')
+@user_passes_test(is_pharmacist)
+def pharmacist_dashboard_view(request):
+    pharmacist = get_object_or_404(models.Pharmacist, user_id = request.user.id)
+    # Count all available medicines that are not out of stock
+    medicines_count = models.Medicine.objects.exclude(quantity__lte=0).count()
+
+    # List all medicines that are low on stocks below 10 Quantity
+    low_stock_medicines = models.Medicine.objects.filter(quantity__lt=10)
+
+    # Count the number of medicines low on stock for cards
+    medicines_low_stock_count = low_stock_medicines.count()
+
+    # Count the total number of manufacturers
+    total_manufacturers = models.Manufacturer.objects.count()   
+
+    # Count the number of expired medicines
+    expired_medicines_count = models.Medicine.objects.filter(expiry_date__lt=date.today()).count()
+
+    # Count the number of medicines near expiration date (within 30 days)
+    near_expiration_medicines_count = models.Medicine.objects.filter(expiry_date__gte=date.today(), expiry_date__lte=date.today() + timedelta(days=30)).count()
+
+    context = {
+        'medicines_count': medicines_count,
+        'low_stock_medicines': low_stock_medicines,
+        'medicines_low_stock_count': medicines_low_stock_count,
+        'total_manufacturers': total_manufacturers,
+        'expired_medicines_count': expired_medicines_count,
+        'near_expiration_medicines_count': near_expiration_medicines_count,
+        'pharmacist': pharmacist,
+    }
+
+    return render(request, 'hospital/pharmacist_dashboard.html', context)
+
+@login_required(login_url='adminlogin')
+@user_passes_test(is_pharmacist)
+def pharmacist_medicines_view(request):
+    pharmacist = get_object_or_404(models.Pharmacist, user_id = request.user.id)
+    # Fetch all medicines
+    medicines = models.Medicine.objects.all()
+
+    context = {
+        'medicines': medicines,
+        'pharmacist': pharmacist,
+    }
+    return render(request, 'hospital/pharmacist_medicine.html', context)
+
+#Autofill Completion View for Medicines
+def autocomplete_view(request):
+    search = request.GET.get('query', '')
+
+    # Search for matching medicine names or associated symptoms
+    suggestions = models.Medicine.objects.filter(
+        Q(name__icontains=search) |
+        Q(manufacturer__name__icontains=search) |
+        Q(symptoms__name__icontains=search)
+    ).select_related('symptoms').values_list('name', 'symptoms__name')
+
+    # Convert suggestions into a list
+    suggestions_list = []
+    for medicine_name, symptom_name in suggestions:
+        if medicine_name not in suggestions_list:
+            suggestions_list.append(medicine_name)
+        if symptom_name and symptom_name not in suggestions_list:
+            suggestions_list.append(symptom_name)
+
+    # Limit the number of suggestions to 10
+    suggestions_list = suggestions_list[:10]
+    
+    return JsonResponse({'suggestions': suggestions_list})
+
+@login_required(login_url='adminlogin')
+@user_passes_test(is_pharmacist)
+def pharmacist_medicines_list_view(request):
+    pharmacist = get_object_or_404(models.Pharmacist, user_id = request.user.id)
+    # Fetch all medicines or filter by category if provided
+    manufacturers = models.Manufacturer.objects.all()
+    medicines = models.Medicine.objects.all().order_by('-id')
+    search = request.GET.get('search')
+    category = request.GET.get('category')
+    manufacturer = request.GET.get('manufacturer')
+    
+    if category:
+        medicines = medicines.filter(category=category)
+
+    if manufacturer:
+         # Check if the manufacturer name exists
+        if models.Manufacturer.objects.filter(name=manufacturer).exists():
+            # If exists, get the manufacturer object
+            manufacturer = get_object_or_404(models.Manufacturer, name=manufacturer)
+            # Filter medicines by the manufacturer
+            medicines = medicines.filter(manufacturer=manufacturer)
+
+    # Search filter
+    search = request.GET.get('search')
+    if search:
+        medicines = medicines.filter(
+            Q(name__icontains=search) | 
+            Q(manufacturer__name__icontains=search) |
+            Q(symptoms__name__icontains=search) #Tag
+        )
+    
+    # Pagination
+    items_per_page = 12  
+    paginator = Paginator(medicines, items_per_page)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    # Calculate the total number of pages
+    num_pages = paginator.num_pages
+
+    # Define the maximum number of page links to display
+    max_page_links = 5
+
+    # Calculate the range of pages to display
+    current_page = page_obj.number
+    start_page = max(1, current_page - max_page_links // 2)
+    end_page = min(num_pages, start_page + max_page_links - 1)
+
+    # Adjust start_page and end_page if not enough pages to display
+    if end_page - start_page + 1 < max_page_links:
+        start_page = max(1, end_page - max_page_links + 1)
+
+    page_range = range(start_page, end_page + 1)
+
+    context = {
+        'manufacturers':manufacturers,
+        'medicines': page_obj,
+        'page_range': page_range,
+        'selected_category': category,
+        'selected_manfacturer': manufacturer,
+        'pharmacist': pharmacist,
+    }
+    return render(request, 'hospital/pharmacist_view_medicines.html', context)
+
+@login_required(login_url='adminlogin')
+@user_passes_test(is_pharmacist)
+def pharmacist_add_medicine(request):
+    pharmacist = get_object_or_404(models.Pharmacist, user_id = request.user.id)
+    if request.method == 'POST':
+        form = forms.MedicineForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('pharmacist-medicines')  # Redirect to the pharmacist medicines view after adding medicine
+    else:
+        form = forms.MedicineForm()
+    return render(request, 'hospital/pharmacist_add_medicine.html', {'form': form, 'pharmacist':pharmacist,})
+
+@login_required(login_url='adminlogin')
+@user_passes_test(is_pharmacist)
+def pharmacist_update_medicine(request, pk):
+    pharmacist = get_object_or_404(models.Pharmacist, user_id = request.user.id)
+    medicine = get_object_or_404(models.Medicine, pk=pk)
+    if request.method == 'POST':
+        form = forms.MedicineForm(request.POST, request.FILES, instance=medicine)
+        if form.is_valid():
+            profile_pic = request.FILES.get('profile_pic')  # Assign the uploaded file to the profile_pic field
+            medicine = form.save(commit=False)
+            if profile_pic:
+                medicine.profile_pic = profile_pic
+            medicine.save()
+            form.save()
+            return JsonResponse({'success': True, 'message': 'Medicine updated successfully'})
+        else:
+            return JsonResponse({'success': False, 'errors': form.errors})
+    else:
+        form = forms.MedicineForm(instance=medicine)
+    return render(request, 'hospital/pharmacist_update_medicine.html', {'form': form, 'pk':pk, 'pharmacist':pharmacist,})
 
 
 
+#--------Pharmacist Manufacturers
+@login_required(login_url='adminlogin')
+@user_passes_test(is_pharmacist)
+def pharmacist_manufacturers_view(request):
+    
+    pharmacist = get_object_or_404(models.Pharmacist, user_id = request.user.id)
+    manufacturers = models.Manufacturer.objects.all() #Fetch All Manufacturer Objects Instances
+
+    if request.method == 'POST':
+        name = request.POST.get('manufacturerName')
+        address = request.POST.get('manufacturerAddress')
+        contact = request.POST.get('manufacturerContact')
+
+        # Create a new Manufacturer instance
+        manufacturer = models.Manufacturer(name=name, address=address, contact_number=contact)
+        # Save the Manufacturer instance to the database
+        manufacturer.save()
+        
+        return redirect('pharmacist-manufacturers-view')
+    
+    context = {
+        'pharmacist': pharmacist,
+        'manufacturers': manufacturers,
+    }
+
+    return render(request, 'hospital/pharmacist_manufacturers.html', context)
+
+@login_required(login_url='adminlogin')
+@user_passes_test(is_pharmacist)
+def pharmacist_manufacturers_update(request):
+    if request.method == 'POST':
+        # Assuming you have logic here to retrieve the manufacturer object to update
+        manufacturer_id = request.POST.get('manufacturerId')
+        manufacturer = get_object_or_404(models.Manufacturer, pk=manufacturer_id)
+
+        # Update the manufacturer object with the new data
+        manufacturer.name = request.POST.get('manufacturerName')
+        manufacturer.address = request.POST.get('manufacturerAddress')
+        manufacturer.contact_number = request.POST.get('manufacturerContact')
+        manufacturer.save()
+
+        # Return success response
+        return JsonResponse({'message': 'Manufacturer updated successfully.'})
+
+    return HttpResponseBadRequest('Invalid request method.')
+
+@login_required(login_url='adminlogin')
+@user_passes_test(is_pharmacist)
+def pharmacist_manufacturers_delete(request):
+    if request.method == 'POST':
+        manufacturer_id = request.POST.get('manufacturerId')
+        manufacturer = get_object_or_404(models.Manufacturer, pk=manufacturer_id)
+        manufacturer.delete()
+        return JsonResponse({'message': 'Manufacturer deleted successfully.'})
+    else:
+        return JsonResponse({'error': 'Invalid request method.'}, status=400)
+
+#-------END of Pharmacist Manufacturers
+
+#---------------------------------------------------------------------------------
+#------------------------ PHARMACIST RELATED VIEWS START -------------------------
+#---------------------------------------------------------------------------------
 
 #---------------------------------------------------------------------------------
 #------------------------ DOCTOR RELATED VIEWS START ------------------------------
@@ -1953,10 +2825,13 @@ def patient_discharge_view(request):
     patient = models.Patient.objects.get(user_id=request.user.id)  # Fetch patient details
     discharge_details = models.PatientDischargeDetails.objects.filter(patientId=patient.id, is_Paid=False)
     is_discharged = discharge_details.exists()  # Check if any discharge details exist for the patient
+    # Encode the secret key for Basic Authentication
+    auth_header = base64.b64encode(settings.PAYMONGO_SECRET_KEY.encode()).decode()
     patient_dict = {
         'patient': patient,
         'is_discharged': is_discharged,
         'discharge_details': discharge_details,
+        'auth_header': auth_header,
     }
     return render(request, 'hospital/patient_discharge.html', context=patient_dict)
 

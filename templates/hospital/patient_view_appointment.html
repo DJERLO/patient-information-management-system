@@ -15,10 +15,6 @@
       text-align: center;
     }
 
-    .row {
-      margin: 10px auto;
-    }
-
     .table-responsive {
       text-wrap: nowrap;
       padding: 0 0 0 0;
@@ -44,20 +40,20 @@
       <div class="table-responsive p-3">
         <table class="table table-hover py-3" id="dev-table">
           <thead class="table-dark">
-            <tr>
-              <th>Date</th>
-              <th>Doctor Name</th>
-              <th>Description</th>
-              <th>Status</th>
+            <tr class="row">
+              <th class="col text-truncate">Date</th>
+              <th class="col text-truncate">Doctor Name</th>
+              <th class="col text-truncate">Description</th>
+              <th class="col text-truncate">Status</th>
             </tr>
           </thead>
           <tbody>
             {% for a in appointments %}
             <tr>
-              <td>{{ a.appointmentDate }}</td>
-              <td>{{ a.doctorName }}</td>
-              <td>{{ a.description }}</td>
-              <td>
+              <td class="col text-truncate">{{ a.appointmentDate }}</td>
+              <td class="col text-truncate">{{ a.doctorName }}</td>
+              <td class="col text-truncate">{{ a.description }}</td>
+              <td class="col text-truncate">
                 {% if a.status == 0 %}
                   <span class="badge bg-secondary w-100 h-100">Pending</span>
                 {% elif a.status == 1 %}

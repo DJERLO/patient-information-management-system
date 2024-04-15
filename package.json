@@ -1,0 +1,17 @@
+{
+  "name": "index.js",
+  "version": "1.0.0",
+  "description": "This is Hospital Management System Develop as a academic project Thesis led by Jerlo F. De Leon and seven aspiring members.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "HMS"
+  ],
+  "author": "Jerlo F. De Leon",
+  "license": "ISC",
+  "dependencies": {
+    "quickblox": "^2.7.0"
+  }
+}

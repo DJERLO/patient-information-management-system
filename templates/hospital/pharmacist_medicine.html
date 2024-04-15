@@ -1,0 +1,237 @@
+{% extends 'hospital/pharmacist_base.html' %}
+{% load static %}
+{% block content %}
+<br><br>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+  <link rel="stylesheet" href="//cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
+  <script src="//cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css">
+  <style type="text/css">
+    a:link {
+      text-decoration: none;
+    }
+
+    .fixed-top{
+      position: absolute;
+    }
+  
+  
+    h6 {
+      color: white;
+    }
+  
+    .order-card {
+      color: #fff;
+    }
+  
+    .bg-c-blue {
+      background: linear-gradient(45deg, #4099ff, #73b4ff);
+    }
+  
+    .bg-c-green {
+      background: linear-gradient(45deg, #2ed8b6, #59e0c5);
+    }
+  
+    .bg-c-yellow {
+      background: linear-gradient(45deg, #FFB64D, #ffcb80);
+    }
+  
+    .bg-c-pink {
+      background: linear-gradient(45deg, #FF5370, #ff869a);
+    }
+  
+    .card {
+      border-radius: 5px;
+      -webkit-box-shadow: 0 1px 2.94px 0.06px rgba(4, 26, 55, 0.16);
+      box-shadow: 0 1px 2.94px 0.06px rgba(4, 26, 55, 0.16);
+      border: none;
+      margin-bottom: 30px;
+      -webkit-transition: all 0.3s ease-in-out;
+      transition: all 0.3s ease-in-out;
+    }
+  
+    .card .card-block {
+      padding: 25px;
+      cursor: pointer;
+    }
+  
+    .card-block:hover {
+      background-color: #1f88de; /* Optional: Change background color on hover */
+    }
+  
+    .order-card i {
+      font-size: 26px;
+    }
+  
+    .f-left {
+      float: left;
+    }
+  
+    .f-right {
+      float: right;
+    }
+
+    h6:not(.m-b-20) {
+      text-align: center;
+    }
+
+
+    .table-responsive {
+      text-wrap: nowrap;
+      padding: 0 0 0 0;
+    }
+
+    .view-appointments-panel{
+      width: 100%;
+      height: 100vw;
+      position: relative;
+      margin: 1px 1px 1px 1px;
+      text-align: start;
+    }
+
+    /* Media Query for smaller screens */
+    @media only screen and (max-width: 768px) {
+      /* Adjust table font size for smaller screens */
+      table {
+        font-size: 0.5rem; /* Adjust this value as needed */
+      }
+
+      /* Adjust th and td padding for smaller screens */
+      th,
+      td {
+        padding: 0.10rem; /* Adjust this value as needed */
+      }
+    }
+
+    /* Media Query for larger screens */
+    @media only screen and (min-width: 768px) {
+      /* Adjust table font size for larger screens */
+      table {
+        font-size: 0.825rem; /* Adjust this value as needed */
+      }
+
+      /* Adjust th and td padding for larger screens */
+      th,
+      td {
+        padding: 0.75rem; /* Adjust this value as needed */
+      }
+    }
+
+  </style>
+</head>
+
+<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-3 col-xl-3">
+      <div class="card bg-c-blue order-card">
+        <div class="card-block" id="medicineListView">
+          <h6 class="m-b-20">Medicine List</h6>
+          <br>
+          <h2 class="text-right"><i class="fas fa-pills f-left"></i></h2>
+        </div>
+      </div>
+    </div>
+    
+    <div class="col-md-3 col-xl-3">
+      <div class="card bg-c-green order-card">
+        <div class="card-block" id="medicineAddNew">
+          <h6 class="m-b-20">Add Medicine</h6>
+          <br>
+          <h2 class="text-right"><i class="fas fa-plus-circle f-left"></i></h2>
+        </div>
+      </div>
+    </div>
+    
+    <div class="col-md-3 col-xl-3">
+      <div class="card bg-c-yellow order-card">
+        <div class="card-block" id="medicineExpirationDate">
+          <h6 class="m-b-20">Expiration Date</h6>
+          <br>
+          <h2 class="text-right"><i class="fas fa-calendar-times f-left"></i></h2>
+        </div>
+      </div>
+    </div>
+    
+    <div class="col-md-3 col-xl-3">
+      <div class="card bg-c-pink order-card">
+        <div class="card-block" id="medicineRestock">
+          <h6 class="m-b-20">Restock Medicines</h6>
+          <br>
+          <h2 class="text-right"><i class="fas fa-cart-plus f-left"></i></h2>
+        </div>
+      </div>
+    </div>
+    
+
+    <div class="medicine-list-panel">
+      <div class="card border border-dark">
+        <div class="card-header bg-primary text-white">
+          <h6 class="card-title h5">Medicine List</h6>
+        </div>
+        <div class="card-body">
+          <div class="table-responsive p-4">
+            <table class="table table-hover py-3" id="medicine-table">
+              <thead class="table-dark">
+                <tr class="row">
+                  <th class="col card-text text-truncate">Name</th>
+                  <th class="col card-text text-truncate">Quantity</th>
+                  <th class="col card-text text-truncate">Price</th>
+                  <th class="col card-text text-truncate">Manufacturer</th>
+                  <th class="col card-text text-truncate">Expiry Date</th>
+                  <th class="col card-text text-truncate">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for medicine in medicines %}
+                <tr class="row">
+                  <td class="col card-text text-truncate">{{ medicine.name }}</td>
+                  <td class="col card-text text-truncate">{{ medicine.quantity }}</td>
+                  <td class="col card-text text-truncate">₱ {{ medicine.unit_price }}</td>
+                  <td class="col card-text text-truncate">{{ medicine.manufacturer }}</td>
+                  <td class="col card-text text-truncate">{{ medicine.expiry_date }}</td>
+                  <td class="col card-text text-truncate"><a class="btn btn-secondary btn-sm w-100 h-100" href="{% url 'pharmacist-update-medicine' medicine.id  %}"><i class="bi bi-pencil"></i></a></td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+<script>
+  let table = new DataTable('#medicine-table');
+  let medicineListView = document.getElementById("medicineListView")
+  let medicineAddNew = document.getElementById("medicineAddNew")
+  let appointmentApprove = document.getElementById("appointmentApprove")
+  let appointmentStatus = document.getElementById("appointmentStatus")
+  
+  //EventListener
+  medicineListView.addEventListener("click", function() {
+      window.location.href = "/pharmacist-view-medicines";
+  });
+
+  medicineAddNew.addEventListener("click", function() {
+      window.location.href = "/pharmacist-add-medicine";
+  });
+
+  appointmentApprove.addEventListener("click", function() {
+      window.location.href = "#";
+  });
+
+  appointmentStatus.addEventListener("click", function() {
+    window.location.href = "#";
+  });
+
+
+</script>
+
+<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+{% endblock content %}

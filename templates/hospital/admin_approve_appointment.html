@@ -15,10 +15,6 @@
       text-align: center;
     }
 
-    .row {
-      margin: 10px auto;
-    }
-
     .table-responsive {
       text-wrap: wrap;
     }
@@ -71,24 +67,24 @@
       <div class="table-responsive">
         <table class="table table-hover py-3" id="dev-table">
           <thead class="table-dark">
-            <tr>
-              <th>Doctor Name</th>
-              <th>Patient Name</th>
-              <th>Description</th>
-              <th>Date</th>
-              <th>Approve</th>
-              <th>Reject</th>
+            <tr class="row">
+              <th class="col text-truncate">Doctor Name</th>
+              <th class="col text-truncate">Patient Name</th>
+              <th class="col text-truncate">Description</th>
+              <th class="col text-truncate">Date</th>
+              <th class="col text-truncate">Approve</th>
+              <th class="col text-truncate">Reject</th>
             </tr>
           </thead>
           <tbody>
             {% for a in appointments %}
-            <tr>
-              <td>{{ a.doctorName }}</td>
-              <td>{{ a.patientName }}</td>
-              <td>{{ a.description }}</td>
-              <td>{{ a.appointmentDate }}</td>
-              <td><a class="btn btn-success btn-sm w-100 h-100" href="{% url 'approve-appointment' a.appointment_id %}"><i class="bi bi-check"></i></a></td>
-              <td><a class="btn btn-danger btn-sm delete-btn w-100 h-100" href="{% url 'reject-appointment' a.appointment_id %}"><i class="bi bi-x"></i></a></td>
+            <tr class="row">
+              <td class="col text-truncate">{{ a.doctorName }}</td>
+              <td class="col text-truncate">{{ a.patientName }}</td>
+              <td class="col text-truncate">{{ a.description }}</td>
+              <td class="col text-truncate">{{ a.appointmentDate }}</td>
+              <td class="col text-truncate"><a class="btn btn-success btn-sm w-100 h-100" href="{% url 'approve-appointment' a.appointment_id %}"><i class="bi bi-check"></i></a></td>
+              <td class="col text-truncate"><a class="btn btn-danger btn-sm delete-btn w-100 h-100" href="{% url 'reject-appointment' a.appointment_id %}"><i class="bi bi-x"></i></a></td>
             </tr>
             {% endfor %}
           </tbody>

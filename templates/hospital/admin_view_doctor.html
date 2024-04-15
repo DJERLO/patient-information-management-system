@@ -18,10 +18,6 @@
       font-size: 1.2em;
     }
 
-    .row {
-      margin: 10px auto;
-    }
-
     table{
       width: 100%;
       table-layout: fixed;
@@ -78,25 +74,24 @@
     <div class="table-responsive p-4">
       <table class="table table-hover py-3" id="dev-table">
         <thead class="table-dark">
-          <tr>
-            <th>Name</th>
-            <th>Contact</th>
-            <th>Address</th>
-            <th>Department</th>
-            <th>View</th>
-            <th>Update</th>
+          <tr class="row">
+            <th class="col text-truncate">Name</th>
+            <th class="col text-truncate">Contact</th>
+            <th class="col text-truncate">Address</th>
+            <th class="col text-truncate">Department</th>
+            <th class="col text-truncate">View</th>
+            <th class="col text-truncate">Update</th>
           </tr>
         </thead>
         <tbody>
           {% for d in doctors %}
-          <tr>
-            
-            <td>{{ d.get_name }}</td>
-            <td>{{ d.mobile }}</td>
-            <td>{{ d.address }}</td>
-            <td>{{ d.department }}</td>
-            <td><a class="btn btn-primary btn-sm w-100 h-100" href="{% url 'admin-doctor-details' d.id %}"><i class="bi bi-eye"></i></a></td>
-            <td><a class="btn btn-secondary btn-sm w-100 h-100" href="{% url 'update-doctor' d.id  %}"><i class="bi bi-pencil"></i></a></td>
+          <tr class="row">
+            <td class="col text-truncate">{{ d.get_name }}</td>
+            <td class="col text-truncate">{{ d.mobile }}</td>
+            <td class="col text-truncate">{{ d.address }}</td>
+            <td class="col text-truncate">{{ d.department }}</td>
+            <td class="col text-truncate"><a class="btn btn-primary btn-sm w-100 h-100" href="{% url 'admin-doctor-details' d.id %}"><i class="bi bi-eye"></i></a></td>
+            <td class="col text-truncate"><a class="btn btn-secondary btn-sm w-100 h-100" href="{% url 'update-doctor' d.id  %}"><i class="bi bi-pencil"></i></a></td>
           </tr>
           {% endfor %}
         </tbody>

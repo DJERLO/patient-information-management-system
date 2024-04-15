@@ -15,10 +15,6 @@
       text-align: center;
     }
 
-    .row {
-      margin: 10px auto;
-    }
-
     .table-responsive {
       text-wrap: nowrap;
       padding: 0 0 0 0;
@@ -71,20 +67,20 @@
       <div class="table-responsive p-3">
         <table class="table table-hover py-3" id="dev-table">
           <thead class="table-dark">
-            <tr>
-              <th>Appointment Date</th>
-              <th>Patient Name</th>
-              <th>Description</th>
-              <th>Contact</th>
+            <tr class="row">
+              <th class="col text-truncate">Appointment Date</th>
+              <th class="col text-truncate">Patient Name</th>
+              <th class="col text-truncate">Description</th>
+              <th class="col text-truncate">Contact</th>
             </tr>
           </thead>
           <tbody>
             {% for a, p in appointments %}
-            <tr>
-              <td>{{ a.appointmentDate|date:"F d, Y - g:iA" }}</td>
-              <td>{{ a.patientName }}</td>
-              <td>{{ a.description }}</td>
-              <td>{{ p.mobile }}</td>
+            <tr class="row">
+              <td class="col text-truncate">{{ a.appointmentDate|date:"F d, Y - g:iA" }}</td>
+              <td class="col text-truncate">{{ a.patientName }}</td>
+              <td class="col text-truncate">{{ a.description }}</td>
+              <td class="col text-truncate">{{ p.mobile }}</td>
             </tr>
             {% endfor %}
           </tbody>

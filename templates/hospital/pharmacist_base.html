@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+{% load static %}
+{% with current_page=request.path %}
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PIMS - Pharmacist {{request.user.first_name}} {{request.user.last_name}}</title>
+  
+  <link rel="icon" type="image/x-icon" href={% static "images/favicon.ico"%}>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+  <link rel="stylesheet" href="{% static '/style.css' %}">
+
+
+  <style media="screen">
+    a:link {
+      text-decoration: none;
+    }
+
+    a {
+      color: white;
+    }
+
+    a:hover {
+      color: white;
+    }
+
+    /*---------------------------------------
+       Social section
+    -----------------------------------------*/
+    footer {
+      padding: 0px 0px 0px 0px;
+      background-color: black;
+      margin: 0px;
+    }
+
+
+    #ftr {
+      padding: 20px;
+    }
+
+    .fa {
+
+      font-size: 23px;
+      width: 60px;
+      text-align: center;
+      text-decoration: none;
+      margin: 5px 2px;
+      border-radius: 50%;
+    }
+
+    .fa:hover {
+      opacity: 0.5;
+      text-decoration: none;
+    }
+
+    .fa-facebook {
+      background: #3B5998;
+      color: white;
+      margin-top: 30px;
+    }
+
+    .fa-whatsapp {
+      background: #25d366;
+      color: white;
+    }
+
+    .fa-twitter {
+      background: #55ACEE;
+      color: white;
+    }
+
+    .fa-instagram {
+      background: #125688;
+      color: white;
+    }
+
+    p {
+      text-align: center;
+
+    }
+
+    body {
+      padding-left: 240px;
+      overflow-x: hidden;
+    }
+    main {
+      position: relative;
+      height: 100vh;
+    }
+
+    img, #preview{
+      -webkit-user-select: none; /* Safari */
+      -ms-user-select: none; /* IE 10 and IE 11 */
+      user-select: none; /* Standard syntax */
+      pointer-events: none; /* Disable mouse events on the image */
+    }
+
+    .fixed-top{
+      position: absolute;
+    }
+
+    .menu {
+      background: #03a9f4;
+      height: 100vh;
+      width: 240px;
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 5;
+      outline: none;
+      overflow-y: hidden;
+      -webkit-user-select: none; /* Safari */
+      -ms-user-select: none; /* IE 10 and IE 11 */
+      user-select: none; /* Standard syntax */
+    }
+    .menu .avatar {
+      background: rgba(0, 0, 0, 0.1);
+      padding: 2em 0.5em;
+      text-align: center;
+    }
+    .menu .avatar img {
+      width: 100px;
+      border-radius: 50%;
+      overflow: hidden;
+      border: 4px solid #ffea92;
+      box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.2);
+    }
+    .menu .avatar h2 {
+      font-weight: normal;
+      margin-bottom: 0;
+    }
+    .menu ul {
+      list-style: none;
+      padding: 0.5em 0;
+      margin: 0;
+    }
+    .menu ul li {
+      padding: 0.5em 1em 0.5em 3em;
+      font-size: 0.95em;
+      font-weight: regular;
+      background-repeat: no-repeat;
+      background-position: left 15px center;
+      background-size: auto 20px;
+      transition: all 0.15s linear;
+      cursor: pointer;
+    }
+    .menu ul li.icon-dashboard {
+      background-image: url("{% static 'images/icon-dashboard.png' %}");
+    }
+    
+    .menu ul li.icon-users {
+      background-image: url("{% static 'images/icon-users.png' %}");
+    }
+
+    .menu ul li.icon-calendar {
+      background-image: url("{% static 'images/icon-calendar.webp' %}");
+    }
+
+    .menu ul li.icon-invoice {
+      background-image: url("{% static 'images/icon-discharge.svg' %}");
+    }
+
+    .menu ul li.icon-manufacture {
+      background-image: url("{% static 'images/industry-solid.svg' %}");
+    }
+
+    .menu ul li.icon-medicine {
+      background-image: url("{% static 'images/medicine.png' %}");
+    }
+
+    .menu ul li:hover {
+      background-color: rgba(0, 0, 0, 0.1);
+    }
+
+    .menu ul li.active {
+      background-color: rgba(0, 0, 0, 0.1); 
+      font-weight: bold; 
+      color: #ffffff; 
+    }
+
+    .menu ul li:focus {
+      outline: none;
+    }
+    @media screen and (max-width: 1265px) and (min-width: 314px) and (orientation: portrait) {
+      body {
+        padding-left: 90px;
+      }
+      
+      .menu {
+        width: 90px;
+        overflow-y: visible;
+      }
+      .menu .avatar {
+        padding: 0.5em;
+        position: relative;
+      }
+      .menu .avatar img {
+        width: 60px;
+      }
+      .menu .avatar h2 {
+        opacity: 0;
+        position: absolute;
+        top: 50%;
+        left: 100px;
+        margin: 0;
+        min-width: 200px;
+        border-radius: 4px;
+        background: rgba(0, 0, 0, 0.4);
+        transform: translate3d(-20px, -50%, 0);
+        transition: all 0.15s ease-in-out;
+      }
+      .menu .avatar:hover h2 {
+        opacity: 1;
+        transform: translate3d(0px, -50%, 0);
+      }
+      .menu ul li {
+        height: 60px;
+        background-position: center center;
+        background-size: 30px auto;
+        position: relative;
+      }
+      .menu ul li span {
+        opacity: 0;
+        position: absolute;
+        background: rgba(0, 0, 0, 0.5);
+        padding: 0.2em 0.5em;
+        border-radius: 4px;
+        top: 50%;
+        left: 80px;
+        transform: translate3d(-15px, -50%, 0);
+        transition: all 0.15s ease-in-out;
+        
+      }
+      .menu ul li span:before {
+        content: '';
+        width: 0;
+        height: 0;
+        position: absolute;
+        top: 50%;
+        left: -5px;
+        border-top: 5px solid transparent;
+        border-bottom: 5px solid transparent;
+        border-right: 5px solid rgba(0, 0, 0, 0.5);
+        transform: translateY(-50%);
+      }
+      .menu ul li:hover span {
+        opacity: 1;
+        transform: translate3d(0px, -50%, 0);
+      }
+    }
+
+    @media screen and (max-width: 1265px) and (min-width: 314px) and (orientation: landscape) {
+      body {
+        padding-left: 90px;
+      }
+      
+      .menu {
+        width: 90px;
+        overflow-y: auto;
+      }
+      .menu .avatar {
+        padding: 0.5em;
+        position: relative;
+      }
+      .menu .avatar img {
+        width: 60px;
+      }
+      .menu .avatar h2 {
+        opacity: 0;
+        position: absolute;
+        top: 50%;
+        left: 100px;
+        margin: 0;
+        min-width: 200px;
+        border-radius: 4px;
+        background: rgba(0, 0, 0, 0.4);
+        transform: translate3d(-20px, -50%, 0);
+        transition: all 0.15s ease-in-out;
+      }
+      .menu .avatar:hover h2 {
+        opacity: 1;
+        transform: translate3d(0px, -50%, 0);
+      }
+      .menu ul li {
+        height: 60px;
+        background-position: center center;
+        background-size: 30px auto;
+        position: relative;
+      }
+      .menu ul li span {
+        opacity: 0;
+        position: absolute;
+        background: rgba(0, 0, 0, 0.5);
+        padding: 0.2em 0.5em;
+        border-radius: 4px;
+        top: 50%;
+        left: 0px;
+        transform: translate3d(-15px, -50%, 0);
+        transition: all 0.15s ease-in-out;
+        
+      }
+      .menu ul li span:before {
+        content: '';
+        width: 0;
+        height: 0;
+        position: absolute;
+        top: 50%;
+        left: -5px;
+        border-top: 5px solid transparent;
+        border-bottom: 5px solid transparent;
+        border-right: 5px solid rgba(0, 0, 0, 0.5);
+        transform: translateY(-50%);
+        
+      }
+      .menu ul li:hover span {
+        opacity: 1;
+        transform: translate3d(0px, -50%, 0);
+        z-index: 5;
+      }
+    }
+
+    @media screen and (max-width: 523px) and (min-width: 313px)  {
+      body {
+        padding-left: 0;
+      }
+      .menu {
+        margin-top: 55px;
+        position: fixed;
+        width: 230px;
+        box-shadow: 0 0 0 100em rgba(0, 0, 0, 0);
+        transform: translate3d(-230px, 0, 0);
+        transition: all 0.3s ease-in-out;
+        overflow-y: visible;
+        z-index: 5;
+      }
+
+      .menu .smartphone-menu-trigger {
+        width: 40px;
+        height: 40px;
+        position: absolute;
+        
+        left: 100%;
+        background: #5bc995;
+      }
+      .menu .smartphone-menu-trigger:before,
+      .menu .smartphone-menu-trigger:after {
+        content: '';
+        width: 50%;
+        height: 2px;
+        background: #fff;
+        border-radius: 10px;
+        position: absolute;
+        top: 45%;
+        left: 50%;
+        transform: translate3d(-50%, -50%, 0);
+        
+      }
+      .menu .smartphone-menu-trigger:after {
+        top: 55%;
+        transform: translate3d(-50%, -50%, 0);
+        
+      }
+      .menu ul li {
+        padding: 1em 1em 1em 3em;
+        font-size: 1.2em;
+      }
+      .menu:focus {
+        transform: translate3d(0, 0, 0);
+        box-shadow: 0 0 0 100em rgba(0, 0, 0, 0.6);
+      }
+      .menu:focus .smartphone-menu-trigger {
+        pointer-events: none;
+      }
+    }
+
+    @media screen and (max-width: 340px)  {
+      body {
+        padding-left: 0;
+      }
+      .menu {
+        margin-top: 80px;
+        position: fixed;
+        width: 230px;
+        box-shadow: 0 0 0 100em rgba(0, 0, 0, 0);
+        transform: translate3d(-230px, 0, 0);
+        transition: all 0.3s ease-in-out;
+        overflow-y: visible;
+        z-index: 5;
+      }
+
+      .menu .smartphone-menu-trigger {
+        width: 40px;
+        height: 40px;
+        position: absolute;
+        left: 100%;
+        background: #5bc995;
+      }
+      .menu .smartphone-menu-trigger:before,
+      .menu .smartphone-menu-trigger:after {
+        content: '';
+        width: 50%;
+        height: 2px;
+        background: #fff;
+        border-radius: 10px;
+        position: absolute;
+        top: 45%;
+        left: 50%;
+        transform: translate3d(-50%, -50%, 0);
+        
+      }
+      .menu .smartphone-menu-trigger:after {
+        top: 55%;
+        transform: translate3d(-50%, -50%, 0);
+        
+      }
+      .menu ul li {
+        padding: 1em 1em 1em 3em;
+        font-size: 1.2em;
+      }
+      .menu:focus {
+        transform: translate3d(0, 0, 0);
+        box-shadow: 0 0 0 100em rgba(0, 0, 0, 0.6);
+      }
+      .menu:focus .smartphone-menu-trigger {
+        pointer-events: none;
+      }
+    }
+
+    .navbar-brand {
+      font-size: 1.5em; /* Default font size */
+    }
+
+    .rounded-circle {
+      position: relative;
+    }
+
+    /* Initially hide the camera icon */
+    .bi-gear-fill {
+        font-size: 2.0em;
+        color: #19191a;
+        width: 100%;
+        opacity: 0; /* Initially hide the icon */
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+    /* Show the camera icon on hover */
+    .bi-gear-fill:hover {
+        opacity: 1; /* Show the icon on hover */
+        transform: scale(1.050);
+    }
+
+    
+
+    @media (max-width: 768px) {
+      .navbar-brand {
+        font-size: 1.2em; /* Font size for screens with a max-width of 768px */
+      }
+      .bi-gear-fill {
+        font-size: 1.2em;
+    }
+  }
+
+    @media (max-width: 576px) {
+      .navbar-brand {
+        font-size: 1em; /* Font size for screens with a max-width of 576px */
+      }
+      .bi-gear-fill:hover {
+        opacity: 1; /* Show the icon on hover */
+        transform: scale(0.725);
+    }
+    }
+      @media (max-width: 399px) {
+      .navbar-brand {
+        font-size: 0.7em; 
+      }
+    }
+
+
+  </style>
+</head>
+<body>
+  <nav class="menu" tabindex="0">
+    <div class="smartphone-menu-trigger"></div>
+    <header class="avatar">
+      <a href="#" data-bs-toggle="modal" data-bs-target="#profilePicModal" class="position-relative">
+        {% if pharmacist.profile_pic %}
+            <img class="rounded-circle" src="{{ pharmacist.profile_pic.url }}" alt="Profile Pic"/>
+            <span class="position-absolute top-50 start-50 translate-middle bi-gear-fill"></span>
+        {% else %}
+            <img class="rounded-circle" src="{% static 'images/adminpropic.png' %}" alt="Default Profile Pic"/>
+            <span class="position-absolute top-50 start-50 translate-middle bi-gear-fill"></span>
+        {% endif %}
+      </a>
+      <br><br>
+      <h6 class="text-white">Pharmacist</h6>
+      <h2>{{ request.user.first_name }}</h2>
+    </header>
+
+    <ul class="navbar-nav">
+        <li tabindex="0" id="DashboardIcon" class="icon-dashboard nav-item {% if 'dashboard' in request.path %}active{% endif %}">
+            <a class="nav-link text-white" href="/pharmacist-dashboard">
+                <span>Dashboard</span>
+            </a>
+        </li>
+
+        <li tabindex="0" id="CustomersIcon" class="icon-users nav-item {% if 'customer' in request.path or 'customers' in request.path %}active{% endif %}">
+          <a class="nav-link text-white" href="#">
+              <span>Customers</span>
+          </a>
+        </li>
+
+        <li tabindex="0" id="MedicineIcon" class="icon-medicine nav-item {% if 'medicines' in request.path or 'medicine' in request.path %}active{% endif %}">
+          <a class="nav-link text-white" href="/pharmacist-medicines">
+              <span>Medicines</span>
+          </a>
+        </li>
+
+        <li tabindex="0" id="ManufacturerIcon" class="icon-manufacture nav-item {% if 'manufacture' in request.path or 'manufacturer' in request.path %}active{% endif %}">
+          <a class="nav-link text-white" href="#">
+              <span>Manufacturers</span>
+          </a>
+        </li>
+
+        <li tabindex="0" id="adminInvoiceIcon" class="icon-invoice nav-item {% if 'bill' in request.path or 'invoice' in request.path %}active{% endif %}">
+          <a class="nav-link text-white" href="#">
+              <span>Sales</span>
+          </a>
+        </li>
+      
+    </ul>
+</nav>
+{% endwith %}
+<!-- Modal -->
+<div class="container-fluid">
+  <div class="modal fade" id="profilePicModal" tabindex="-1" aria-labelledby="profilePicModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="profilePicModalLabel">User Settings</h4>
+                <button type="button" class="btn btn-danger border border-dark btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body d-flex flex-column align-items-center">
+              <img id="profilepreview" class="border border-dark rounded-circle mb-3" src="{% if pharmacist.profile_pic %}{{ pharmacist.profile_pic.url }}{% else %}{% static 'images/adminpropic.png' %}{% endif %}" alt="Profile Pic" width="150px" height="150px"/>
+              <form id="pharmacistUserForm" method="post" enctype="multipart/form-data" action="/admin-change-profile-pic" class="w-100 h-100">
+                {% csrf_token %}
+                <input type="hidden" name="user_id" value="{{ request.user.id }}">
+                <label for="profilePicInput" class="form-label">Change Profile Pic</label>
+                <input type="file" name="profile_pic" id="profilePicInput" onchange="previewUserImage(this)" class="form-control mb-3" placeholder="No file chosen">
+                <div class="row g-3">
+                  <div class="col-md-6">
+                    <div class="mb-3">
+                      <label for="firstNameInput" class="form-label">First Name</label>
+                      <input type="text" name="first_name" class="form-control" id="firstNameInput" value="{{ request.user.first_name }}">
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="mb-3">
+                      <label for="lastNameInput" class="form-label">Last Name</label>
+                      <input type="text" name="last_name" class="form-control" id="lastNameInput" value="{{ request.user.last_name }}">
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="mb-3">
+                      <label for="usernameInput" class="form-label">Username</label>
+                      <input type="text" name="username" class="form-control" id="usernameInput" value="{{ request.user.username }}">
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <label for="password" class="form-label">Change Password</label>
+                    <div class="input-group mb-3">
+                      <input type="password" name="password" class="form-control" id="passwordInput">
+                      <button class="btn btn-outline-primary" type="button" id="togglePassword1">
+                        <i class="bi bi-eye-fill"></i>
+                      </button>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="mb-3">
+                      <label for="emailInput" class="form-label">Personal Email</label>
+                      <input type="email" name="email1" class="form-control" id="emailInput" value="{{ pharmacist.user.email }}">
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="mb-3">
+                      <label for="mobileInput" class="form-label">Mobile</label>
+                      <input type="text" name="mobile" class="form-control" id="mobileInput" value="{{ pharmacist.contact_phone }}">
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="mb-3">
+                      <label for="addressInput" class="form-label">Address</label>
+                      <textarea type="text" name="address" class="form-control" id="addressInput" cols="4" rows="4">{{ pharmacist.address }}</textarea>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="mb-2">
+                        <label for="specializationInput" class="form-label">Specialization</label>
+                        <select name="specialization" class="form-select" id="specializationInput"></select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="emailInput" class="form-label">Work Email</label>
+                        <input type="email" name="email2" class="form-control" id="emailInput" value="{{ pharmacist.contact_email }}">
+                    </div>
+                    
+                </div>
+                
+                </div>
+                <center><button type="submit" class="btn btn-primary mb-3">Save Changes</button></center>
+              </form>
+            </div>
+        </div>
+    </div>
+  </div>
+</div>
+<main>
+    
+  <!-- nav start -->
+  <div class="bs-example">
+    <nav class="navbar navbar-expand-md navbar-dark fixed-top" style="background:#337AB7;">
+        <div class="container-fluid">
+            <a href="/pharmacist-dashboard" class="navbar-brand">HOSPITAL MANAGEMENT</a>
+            <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse justify-content-end" id="navbarCollapse">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <form id="logoutForm" action="{% url 'logout/' %}" method="post">
+                            {% csrf_token %}
+                            <a href="#" class="nav-link" id="logoutLink">Logout</a>
+                        </form>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+</div>
+    <!-- nav end -->
+
+    <br><br>
+
+    <!-- content start -->
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                {% block content %}
+
+                {% endblock %}
+            </div>
+        </div>
+    </div>
+    <!-- content end -->
+    
+    <br><br><br><br>
+    
+  {% include 'hospital/footer.html' %}    
+</main>
+</body>
+
+<script>
+      document.getElementById('logoutLink').addEventListener('click', function() {
+          document.getElementById('logoutForm').submit();
+        });
+
+      document.addEventListener("DOMContentLoaded", function() {
+        // Admin Dashboard Icon
+        document.getElementById("DashboardIcon").addEventListener("click", function() {
+            window.location.href = "/pharmacist-dashboard";
+        });
+
+        
+        // Admin Doctor Icon
+        document.getElementById("CustomersIcon").addEventListener("click", function() {
+          window.location.href = "#";
+        });
+        
+        // Admin Patient Icon
+        document.getElementById("MedicineIcon").addEventListener("click", function() {
+          window.location.href = "/pharmacist-medicines";
+        });
+        
+        // Admin Appointment Icon
+        document.getElementById("ManufacturerIcon").addEventListener("click", function() {
+          window.location.href = "/pharmacist-manufacturers-view";
+        });
+
+        {% if not user.is_superuser %}
+        document.getElementById("adminInvoiceIcon").addEventListener("click", function() {
+          window.location.href = "#";
+        });
+        {% endif %}
+        
+        {% if user.is_superuser %}
+        // Admin Administrative Icon
+        document.getElementById("djangoAdminIcon").addEventListener("click", function() {
+            window.location.href = "/admin-panel";
+        });
+        {% endif %}
+    });
+
+    // Variable to store the selected file
+    let selectedFile = null;
+
+    // Function to preview the selected image and store the selected file
+    function previewUserImage(input) {
+        var preview = document.getElementById('profilepreview');
+        var file = input.files[0];
+        var reader = new FileReader();
+
+        reader.onloadend = function () {
+            preview.src = reader.result;
+        };
+
+        if (file) {
+            // Store the selected file in the variable
+            selectedFile = file;
+            reader.readAsDataURL(file);
+        } else {
+            // If no file is selected, reset the selected file variable
+            selectedFile = null;
+            preview.src = '{% if pharmacist.profile_pic %}{{ pharmacist.profile_pic.url }}{% else %}{% static "images/adminpropic.png" %}{% endif %}';
+        }
+    }
+
+    // Add an event listener to the modal when it's hidden
+    $('#profilePicModal').on('hidden.bs.modal', function (e) {
+        var preview = document.getElementById('preview');
+        // Set the src attribute of the preview image to the default profile picture URL
+        preview.src = '{% if pharmacist.profile_pic %}{{ pharmacist.profile_pic.url }}{% else %}{% static "images/adminpropic.png" %}{% endif %}';
+        // Reset the file input to the selected file (if any)
+        document.getElementById('profilePicInput').value = null;
+    });
+    
+    //REST API
+    document.addEventListener('DOMContentLoaded', function() {
+
+      // Fetch Specialization options from the API
+      fetch('/api/pharmacist/specializations')
+        .then(response => response.json())
+        .then(data => {
+          // Populate the select dropdown with the retrieved options
+          const specializationSelect = document.getElementById('specializationInput');
+          data.forEach(specialization => {
+            const option = document.createElement('option');
+            option.value = specialization[0];  // Use the first element as the value
+            option.textContent = specialization[1];  // Use the second element as the label
+            specializationSelect.appendChild(option);
+          });
+
+          // Get the current department value from Doctor user.
+          const currentSpecialization = "{{ pharmacist.specialization }}";
+          // Set the value of the department select dropdown to the current department
+          specializationSelect.value = currentSpecialization;
+        })
+        .catch(error => {
+          console.error('Error fetching department options:', error);
+        });
+
+      document.getElementById('pharmacistUserForm').addEventListener('submit', function(event) {
+        event.preventDefault(); // Prevent the default form submission
+
+        // Get the form data
+        let formData = new FormData(this);
+
+        // Send a POST request to the server
+        fetch('/pharmacist-update-profile/', {
+          method: 'POST',
+          body: formData
+        })
+        .then(response => {
+          if (response.ok) {
+            return response.json();
+          }
+          throw new Error('Network response was not ok.');
+        })
+        .then(data => {
+          // Show SweetAlert2 notification based on the response
+          if (data.success) {
+            Swal.fire({
+              icon: 'success',
+              title: 'Success!',
+              text: 'Your details have been successfully updated.',
+              showConfirmButton: true, // Show the "OK" button
+              allowOutsideClick: false // Prevent dismissing the alert by clicking outside
+            }).then((result) => {
+              if (result.isConfirmed) {
+                location.reload(); // Reload the page when the user clicks "OK"
+              }
+            });
+          } else {
+            Swal.fire({
+              icon: 'error',
+              title: 'Oops...',
+              text: 'Failed to update your details. Please try again later.'
+            });
+          }
+        })
+        .catch(error => {
+          console.error('There was an error!', error);
+        });
+      });
+    });
+
+    //Toggle Password
+    const passwordField = document.getElementById('passwordInput');
+    const togglePassword1 = document.getElementById('togglePassword1');
+    const eyeIcon1 = document.querySelector('i');
+
+    // Show & Hide Password
+    togglePassword1.addEventListener('click', function() {
+      const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
+      passwordField.setAttribute('type', type);
+      this.innerHTML = type === 'password' ? '<i class="bi bi-eye-fill"></i>' : '<i class="bi bi-eye-slash-fill"></i>';
+    });
+    
+  </script>
+</html>
