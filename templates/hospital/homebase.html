@@ -169,25 +169,30 @@
         visibility: visible;
       }
 
-      @media (max-width: 490px) {
+      @media (max-width: 568px) {
         .chatbot {
-          right: 0;
-          bottom: 0;
-          width: 100%;
-          max-width: 325px;
-          border-radius: 0;
-          bottom: 100px;
+          height: 100%;
+          width: 268px;
+          height: calc(100% - 150px);
+          max-width: 568px;
+          bottom: 40px;
           right: 40px;
           border-radius: 15px;
         }
-        .incoming p {
-          font-size: smaller;
+        .incoming, .outgoing p {
+          font-size: xx-small;
         }
         .chatbot__box {
-          height: 90%;
+          height: 100%;
+          overflow-y: auto;
         }
         .chatbot__header span {
           display: inline;
+        }
+        .incoming span {
+          width: 24px;
+          height: 24px;
+          line-height: 24px;
         }
       }
 
@@ -206,7 +211,7 @@
       <span class="material-symbols-outlined">close</span>
     </button>
     <div class="chatbot">
-      <div class="chatbot__header">
+      <div class="chatbot__header sticky-top">
         <h3 class="chatbox__title w-100">Virtual Chat</h3>
           <span class="material-symbols-outlined close">close</span>
       </div>
@@ -218,13 +223,15 @@
         <li id="chat-messages" class="chatbot__chat outgoing">
             <!--User Messages Appear here-->
         </li>
+        <li class="fixed-bottom">
+          <form class="fixed-bottom" action="" method="post">
+            <div class="chatbot__input-box">
+              <textarea class="form-control chatbot__textarea" name="userMessage" placeholder="Enter a message..."required></textarea>
+              <span id="send-btn" class="material-symbols-outlined">send</span>
+            </div>
+          </form>
+        </li>
       </ul>
-        <form action="" method="post">
-          <div class="chatbot__input-box">
-            <textarea class="form-control chatbot__textarea" name="userMessage" placeholder="Enter a message..."required></textarea>
-            <span id="send-btn" class="material-symbols-outlined">send</span>
-          </div>
-      </form>
     </div>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>

@@ -142,6 +142,7 @@ urlpatterns +=[
     path('pharmacist-dashboard', views.pharmacist_dashboard_view, name='pharmacist-dashboard'),
     path('pharmacist-medicines', views.pharmacist_medicines_view, name='pharmacist-medicines'),
     path('pharmacist-view-medicines', views.pharmacist_medicines_list_view, name='pharmacist-view-medicines'),
+    path('pharmacist-view-medicine/<int:pk>', views.pharmacist_view_medicine, name='pharmacist-view-medicine'),
     path('pharmacist-add-medicine', views.pharmacist_add_medicine, name='pharmacist-add-medicine'),
     path('pharmacist-update-medicine/<int:pk>', views.pharmacist_update_medicine, name='pharmacist-update-medicine'),
     path('pharmacist-manufacturers-view', views.pharmacist_manufacturers_view, name='pharmacist-manufacturers-view'),

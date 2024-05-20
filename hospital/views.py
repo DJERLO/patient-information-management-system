@@ -1,7 +1,6 @@
 import json
 import random
 import time
-from paymongo import Paymongo
 from django.contrib.auth.models import User
 from django.utils.dateparse import parse_date
 from django.core.exceptions import ObjectDoesNotExist
@@ -1838,7 +1837,7 @@ def failed_payment_view(request):
 #Enable Webhook for the first time, since Webhooks disabled itself after 12 tries trying to sends a payload to your URL
 def enable_webhook():
     webhook = 'hook_Mnxpti1SvGNai4a3bZx6vbr2' #Place your Webhook ID here - you can generate yours at Paymongo Webhooks API
-    url = "https://api.paymongo.com/v1/webhooks/hook_Mnxpti1SvGNai4a3bZx6vbr2/enable"
+    url = f"https://api.paymongo.com/v1/webhooks/{webhook}/enable"
 
     headers = {
         "accept": "application/json",
@@ -1941,9 +1940,12 @@ def create_payment_session(request):
                             "card",
                             "dob",
                             "dob_ubp",
+                            "brankas_bdo",
+                            "brankas_landbank",
+                            "brankas_metrobank",
                             "gcash",
                             "grab_pay",
-                            "paymaya"
+                            "paymaya",
                         ],
                         "reference_number": f"{discharge_id}",
                     }
@@ -2385,7 +2387,46 @@ def pharmacist_update_medicine(request, pk):
         form = forms.MedicineForm(instance=medicine)
     return render(request, 'hospital/pharmacist_update_medicine.html', {'form': form, 'pk':pk, 'pharmacist':pharmacist,})
 
+@login_required(login_url='adminlogin')
+@user_passes_test(is_pharmacist)
+def pharmacist_view_medicine(request, pk):
+    pharmacist = get_object_or_404(models.Pharmacist, user_id=request.user.id)  # Current User
+    medicine = get_object_or_404(models.Medicine, pk=pk)
+    
+    # Fetch related medicines from the same manufacturer
+    related_medicines = models.Medicine.objects.filter(manufacturer=medicine.manufacturer).exclude(pk=pk)
 
+    # Pagination
+    items_per_page = 4  
+    paginator = Paginator(related_medicines, items_per_page)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    # Calculate the total number of pages
+    num_pages = paginator.num_pages
+
+    # Define the maximum number of page links to display
+    max_page_links = 5
+
+    # Calculate the range of pages to display
+    current_page = page_obj.number
+    start_page = max(1, current_page - max_page_links // 2)
+    end_page = min(num_pages, start_page + max_page_links - 1)
+
+    # Adjust start_page and end_page if not enough pages to display
+    if end_page - start_page + 1 < max_page_links:
+        start_page = max(1, end_page - max_page_links + 1)
+
+    page_range = range(start_page, end_page + 1)
+
+    context = {
+        "pharmacist": pharmacist,
+        "medicine": medicine,
+        "related_medicines": page_obj,
+        'page_range': page_range,
+    }
+
+    return render(request, 'hospital/pharmacist_view_medicine.html', context)
 
 #--------Pharmacist Manufacturers
 @login_required(login_url='adminlogin')

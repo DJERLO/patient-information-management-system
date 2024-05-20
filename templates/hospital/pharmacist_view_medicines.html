@@ -205,7 +205,7 @@
                   </div>
                 </div>
                 <div class="card-footer mx-6">
-                  <a href="#" class="btn btn-primary">View</a>
+                  <a href="{% url 'pharmacist-view-medicine' medicine.id  %}" class="btn btn-primary">View</a>
                   <a href="{% url 'pharmacist-update-medicine' medicine.id  %}" class="btn btn-secondary">Edit</a>
                 </div>
               </div>
