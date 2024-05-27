@@ -86,10 +86,6 @@
       text-align: center;
     }
 
-    .row {
-      margin: 10px;
-    }
-
     .table{
       text-wrap: wrap;
     }
@@ -173,7 +169,7 @@
               <td class="col text-truncate">{{ p.symptoms }}</td>
               <td class="col text-truncate">{{ p.mobile }}</td>
               <td class="col text-truncate">{{ p.address }}</td>
-              <td><a class="btn btn-primary btn-sm w-100 h-100" href="{% url 'doctor-patient-details' p.id %}"><i class="bi bi-eye"></i></a></td>
+              <td class="col text-truncate"><a class="btn btn-primary btn-sm w-100 h-100" href="{% url 'doctor-patient-details' p.id %}"><i class="bi bi-eye"></i></a></td>
             </tr>
             {% endfor %}
           </tbody>

@@ -152,7 +152,11 @@
               <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">Manufacturers</a>
               <ul class="dropdown-menu">
                 {% for manufacturer in manufacturers %}
-                  <li><a class="dropdown-item {% if selected_manufacturer %}active{% endif %}" href="?manufacturer={{manufacturer.name}}">{{manufacturer.name}}</a></li>
+                <li>
+                  <a class="dropdown-item {% if selected_manufacturer == manufacturer.name %}active{% endif %}" href="?manufacturer={{ manufacturer.name }}">
+                    {{ manufacturer.name }}
+                  </a>
+                </li>
                 {% endfor %}
               </ul>
             </li>

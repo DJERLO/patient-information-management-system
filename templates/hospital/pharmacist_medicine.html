@@ -127,7 +127,7 @@
 <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
 <div class="container-fluid">
   <div class="row">
-    <div class="col-md-3 col-xl-3">
+    <div class="col-md-4 col-xl-4">
       <div class="card bg-c-blue order-card">
         <div class="card-block" id="medicineListView">
           <h6 class="m-b-20">Medicine List</h6>
@@ -137,7 +137,7 @@
       </div>
     </div>
     
-    <div class="col-md-3 col-xl-3">
+    <div class="col-md-4 col-xl-4">
       <div class="card bg-c-green order-card">
         <div class="card-block" id="medicineAddNew">
           <h6 class="m-b-20">Add Medicine</h6>
@@ -147,27 +147,16 @@
       </div>
     </div>
     
-    <div class="col-md-3 col-xl-3">
+    <div class="col-md-4 col-xl-4">
       <div class="card bg-c-yellow order-card">
         <div class="card-block" id="medicineExpirationDate">
-          <h6 class="m-b-20">Expiration Date</h6>
+          <h6 class="m-b-20">Manage Inventory</h6>
           <br>
-          <h2 class="text-right"><i class="fas fa-calendar-times f-left"></i></h2>
+          <h2 class="text-right"><i class="fas fa-clipboard-list f-left"></i></h2>
         </div>
       </div>
     </div>
     
-    <div class="col-md-3 col-xl-3">
-      <div class="card bg-c-pink order-card">
-        <div class="card-block" id="medicineRestock">
-          <h6 class="m-b-20">Restock Medicines</h6>
-          <br>
-          <h2 class="text-right"><i class="fas fa-cart-plus f-left"></i></h2>
-        </div>
-      </div>
-    </div>
-    
-
     <div class="medicine-list-panel">
       <div class="card border border-dark">
         <div class="card-header bg-primary text-white">
@@ -213,7 +202,7 @@
   let table = new DataTable('#medicine-table');
   let medicineListView = document.getElementById("medicineListView")
   let medicineAddNew = document.getElementById("medicineAddNew")
-  let appointmentApprove = document.getElementById("appointmentApprove")
+  let medicineExpirationDate = document.getElementById("medicineExpirationDate")
   let appointmentStatus = document.getElementById("appointmentStatus")
   
   //EventListener
@@ -225,8 +214,8 @@
       window.location.href = "/pharmacist-add-medicine";
   });
 
-  appointmentApprove.addEventListener("click", function() {
-      window.location.href = "#";
+  medicineExpirationDate.addEventListener("click", function() {
+      window.location.href = "/pharmacist-manage-medicines";
   });
 
   appointmentStatus.addEventListener("click", function() {

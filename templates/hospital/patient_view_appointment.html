@@ -15,10 +15,6 @@
       text-align: center;
     }
 
-    .table-responsive {
-      text-wrap: nowrap;
-      padding: 0 0 0 0;
-    }
 
     .view-your-current-appointments-panel{
       width: 100%;
@@ -49,8 +45,10 @@
           </thead>
           <tbody>
             {% for a in appointments %}
-            <tr>
-              <td class="col text-truncate">{{ a.appointmentDate }}</td>
+            <tr class="row">
+              {% with unix_timestamp=a.appointmentDate|date:"U" %}
+              <td class="col text-truncate" data-order="{{unix_timestamp}}">{{ a.appointmentDate }}</td>
+              {% endwith %}
               <td class="col text-truncate">{{ a.doctorName }}</td>
               <td class="col text-truncate">{{ a.description }}</td>
               <td class="col text-truncate">

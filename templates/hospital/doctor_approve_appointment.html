@@ -16,10 +16,6 @@
       text-align: center;
     }
 
-    .row {
-      margin: 10px auto;
-    }
-
     .table-responsive {
       text-wrap: wrap;
     }
@@ -81,7 +77,9 @@
         <tbody>
           {% for appointment in appointments %}
           <tr class="row">
-            <td class="col text-truncate">{{ appointment.appointmentDate|date:"F d, Y - g:iA" }}</td>
+            {% with unix_timestamp=l.expiry_date|date:"U" %}
+            <td class="col text-truncate" data-order="{{unix_timestamp}}">{{ appointment.appointmentDate|date:"F d, Y - g:iA" }}</td>
+            {% endwith %}
             <td class="col text-truncate">{{ appointment.doctorName }}</td>
             <td class="col text-truncate">{{ appointment.patientName }}</td>
             <td class="col text-truncate">{{ appointment.description }}</td>

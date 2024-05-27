@@ -573,13 +573,13 @@
                   <div class="col-md-6">
                     <div class="mb-3">
                       <label for="usernameInput" class="form-label">Username</label>
-                      <input type="text" name="username" class="form-control" id="usernameInput" value="{{ request.user.username }}">
+                      <input type="text" name="username" class="form-control" id="usernameInput" value="{{ request.user.username }}" autocomplete="username">
                     </div>
                   </div>
                   <div class="col-md-6">
                     <label for="password" class="form-label">Change Password</label>
                     <div class="input-group mb-3">
-                      <input type="password" name="password" class="form-control" id="passwordInput">
+                      <input type="password" name="password" class="form-control" id="passwordInput" autocomplete="current-password">
                       <button class="btn btn-outline-primary" type="button" id="togglePassword1">
                         <i class="bi bi-eye-fill"></i>
                       </button>
@@ -588,7 +588,7 @@
                   <div class="col-md-6">
                     <div class="mb-3">
                       <label for="emailInput" class="form-label">Personal Email</label>
-                      <input type="email" name="email1" class="form-control" id="emailInput" value="{{ pharmacist.user.email }}">
+                      <input type="email" name="email1" class="form-control" id="emailInput1" value="{{ pharmacist.user.email }}">
                     </div>
                   </div>
                   <div class="col-md-6">
@@ -610,7 +610,7 @@
                     </div>
                     <div class="mb-3">
                         <label for="emailInput" class="form-label">Work Email</label>
-                        <input type="email" name="email2" class="form-control" id="emailInput" value="{{ pharmacist.contact_email }}">
+                        <input type="email" name="email2" class="form-control" id="emailInput2" value="{{ pharmacist.contact_email }}">
                     </div>
                     
                 </div>

@@ -72,9 +72,9 @@
           <thead class="table-dark">
             <tr class="row">
               <th class="col text-truncate">Invoice No.</th>
-              <th class="col text-truncate">Release Date</th>
-              <th class="col text-truncate">Admission Date</th>
               <th class="col text-truncate">Name</th>
+              <th class="col text-truncate">Admission Date</th>
+              <th class="col text-truncate">Release Date</th>
               <th class="col text-truncate">Contact</th>
               <th class="col text-truncate">Status</th>
               <th class="col text-truncate">View Profile</th>
@@ -85,9 +85,13 @@
             {% for record in patient_records %}
             <tr class="row">
               <td class="col text-truncate">{{ record.id }}</td>
-              <td class="col text-truncate">{{ record.releaseDate }}</td>
-              <td class="col text-truncate">{{ record.admitDate }}</td>
               <td class="col text-truncate">{{ record.patientName }}</td>
+              {% with unix_timestamp=record.admitDate|date:"U" %}
+                <td class="col text-truncate" data-order="{{unix_timestamp}}">{{ record.admitDate }}</td>
+              {% endwith %}
+              {% with unix_timestamp=record.releaseDate|date:"U" %}
+                <td class="col text-truncate" data-order="{{unix_timestamp}}">{{ record.releaseDate }}</td>
+              {% endwith %}
               <td class="col text-truncate">{{ record.mobile }}</td>
               <td class="col text-truncate">
                 {% if record.is_Paid %}

@@ -82,7 +82,9 @@
               <td class="col text-truncate">{{ a.doctorName }}</td>
               <td class="col text-truncate">{{ a.patientName }}</td>
               <td class="col text-truncate">{{ a.description }}</td>
-              <td class="col text-truncate">{{ a.appointmentDate }}</td>
+              {% with unix_timestamp=a.appointmentDate|date:"U" %}
+              <td class="col text-truncate" data-order="{{unix_timestamp}}">{{ a.appointmentDate|date:"F d, Y - g:iA" }}</td>
+              {% endwith %}
               <td class="col text-truncate"><a class="btn btn-success btn-sm w-100 h-100" href="{% url 'approve-appointment' a.appointment_id %}"><i class="bi bi-check"></i></a></td>
               <td class="col text-truncate"><a class="btn btn-danger btn-sm delete-btn w-100 h-100" href="{% url 'reject-appointment' a.appointment_id %}"><i class="bi bi-x"></i></a></td>
             </tr>

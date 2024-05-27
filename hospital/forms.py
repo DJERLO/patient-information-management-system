@@ -285,7 +285,7 @@ class MedicineForm(forms.ModelForm):
     symptoms = forms.ModelMultipleChoiceField(queryset=models.Symptom.objects.all(), widget=forms.SelectMultiple)
     class Meta:
         model = models.Medicine
-        fields = ['name', 'description', 'manufacturer', 'dosage', 'unit_price', 'quantity', 'expiry_date', 'category', 'profile_pic', 'symptoms']
+        fields = ['name', 'description', 'manufacturer', 'dosage', 'unit_price', 'quantity', 'expiry_date', 'category', 'profile_pic', 'symptoms', 'sale', 'barcode']
 
     widgets = {
         'expiry_date': forms.DateInput(attrs={'type': 'date'}),

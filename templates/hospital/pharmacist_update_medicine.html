@@ -68,6 +68,19 @@
       border-color: #011020 !important; /* Change border color on hover */
   }
 
+  .form-check-input-lg {
+        transform: scale(1.5);
+        width: 1.5em;
+        height: 1.5em;
+        margin-left: 1.5em;
+        margin-right: 1.5em;
+        border-radius: 15px !important;
+    }
+    .form-check-label-lg {
+        font-size: 1.2em;
+        padding: 0 !important;
+    }
+
   </style>
   
 </head>
@@ -77,10 +90,11 @@
   <div class="container register-form">
     <div class="form">
       <div class="note">
-        <p>Update Medicine</p>
+        <p>Update Item</p>
       </div>
+      
       <div class="form-content">
-        <div class="row">
+        <div class="row border border-dark-0 border-1 rounded-3">
           <div class="col-md-12">
             <center>
               <img id="preview" class="mb-1" src="{{ form.initial.profile_pic.url }}" alt="Preview" style="max-width: 100%; max-height: 150px; display: block;">
@@ -95,7 +109,15 @@
                 Please provide a valid image file.
               </div>
             </div>
+            <div class="col-md-12 px-3">
+              <div class="form-switch my-4 d-flex justify-content-between align-items-center flex-grow-1">
+                <label class="form-check-label form-check-label-lg fs-bold" for="{{ form.sale.id_for_label }}">Sale:</label>
+                  {{ form.sale|add_class:"form-check-input form-check-input-lg" }}
+              </div>
           </div>
+          </div>
+          
+          
           <div class="col-md-6">
             <div class="form-floating my-2">
               {% render_field form.name class="form-control" placeholder="Medicine Name" %}
@@ -127,8 +149,8 @@
                 Please provide the dosage information.
               </div>
             </div>
-            
           </div>
+          
           <div class="col-md-6">
             <div class="form-floating my-2">
               {% render_field form.unit_price class="form-control" placeholder="Unit Price" %}
@@ -160,10 +182,11 @@
                 Please provide the expiry date of the medicine.
               </div>
             </div>
-            
           </div>
-        </div>
-        <div class="col-md-12">
+          
+          
+        
+        <div class="col-md-6">
           <div class="form-floating my-2">
             {% render_field form.category class="form-control" %}
             <label class="fw-bold" for="{{ form.category.id_for_label }}">Category:</label>
@@ -174,6 +197,22 @@
               Please select a category for the medicine.
             </div>
           </div>
+        </div>
+
+        <div class="col-md-6">
+          <div class="form-floating my-2">
+            {% render_field form.barcode class="form-control" %}
+            <label class="fw-bold" for="{{ form.category.id_for_label }}">Barcode:</label>
+            <div class="valid-feedback">
+              Looks good!
+            </div>
+            <div class="invalid-feedback">
+              Please select a category for the medicine.
+            </div>
+          </div>
+        </div>
+        
+        <div class="col-md-12">
           <div class="form-floating my-2">
             {% render_field form.description class="form-control" placeholder="Description" style="height: 191px;" %}
             <label class="fw-bold" for="floatingDescription">Description:</label>
@@ -195,8 +234,10 @@
               </div>
           </div>
         </div>
-        <center><button type="submit" class="btnSubmit mt-3"><i class="bis bi-save"></i> Save</button></center> 
+          <center><button type="submit" class="btnSubmit m-3"><i class="bis bi-save"></i> Save</button></center> 
+        </div>
       </div>
+    
     </div>
   </div>
 </form>
@@ -259,7 +300,11 @@
         }).then((result) => {
           // Redirect back to the previous page when the user clicks OK
           if (result.isConfirmed) {
-            window.location.href = "/pharmacist-view-medicines";
+            // Get the last history URL
+            const lastHistoryURL = document.referrer;
+            // Redirect the user to the last history URL
+            window.location.href = lastHistoryURL;
+
           }
         });
       } else {
@@ -272,8 +317,8 @@
       console.error('Error updating medicine:', error);
     }).finally(() => {
         // Add the 'was-validated' class to the form after form validation
-        this.classList.remove('need-validation');
-        this.classList.add('was-validated');
+        //this.classList.remove('need-validation');
+        //this.classList.add('was-validated');
     });
   });
   </script>

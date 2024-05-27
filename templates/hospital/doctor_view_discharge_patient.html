@@ -15,10 +15,6 @@
       text-align: center;
     }
 
-    .row {
-      margin: 100px;
-    }
-
     /* Media Query for smaller screens */
   @media only screen and (max-width: 768px) {
     /* Adjust table font size for smaller screens */
@@ -49,7 +45,7 @@
 
   </style>
 </head>
-
+<br><br><br>
 <div class="container-fluid">
   <div class="card">
     <div class="card-header bg-primary text-white">
@@ -71,8 +67,12 @@
           {% for p in dischargedpatients %}
           <tr class="row">
             <td class="col text-truncate">{{ p.patientName }}</td>
-            <td class="col text-truncate">{{ p.admitDate }}</td>
-            <td class="col text-truncate">{{ p.releaseDate }}</td>
+            {% with unix_timestamp=p.admitDate|date:"U" %}
+            <td class="col text-truncate" data-order="{{unix_timestamp}}">{{ p.admitDate }}</td>
+            {% endwith %}
+            {% with unix_timestamp=p.releaseDate|date:"U" %}
+            <td class="col text-truncate" data-order="{{unix_timestamp}}">{{ p.releaseDate }}</td>
+            {% endwith %}
             <td class="col text-truncate">{{ p.symptoms }}</td>
             <td class="col text-truncate">{{ p.mobile }}</td>
             <td class="col text-truncate">{{ p.address }}</td>

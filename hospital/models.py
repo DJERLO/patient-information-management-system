@@ -85,6 +85,12 @@ class Medicine(models.Model):
     category = models.CharField(max_length=20, choices=CATEGORY_CHOICES, default='Other')
     profile_pic = models.ImageField(blank=True, null=True, upload_to='medicine/thumbnails/')
     symptoms = models.ManyToManyField(Symptom, related_name='medicines', blank=True)
+    barcode = models.IntegerField(max_length=13, unique=True, blank=True, null=True)  #Ean-13
+    sale = models.BooleanField(default=True) #Setting medicine to True so it shows to the pharmacy meaning its sale! 
+    
+    @property
+    def get_name(self):
+        return self.name
 
     def __str__(self):
         return f"{self.name} - {self.dosage} ({self.category})"

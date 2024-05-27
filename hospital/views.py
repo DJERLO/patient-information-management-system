@@ -2299,6 +2299,7 @@ def pharmacist_medicines_list_view(request):
     search = request.GET.get('search')
     category = request.GET.get('category')
     manufacturer = request.GET.get('manufacturer')
+    selected_manufacturer = request.GET.get('manufacturer', '')
     
     if category:
         medicines = medicines.filter(category=category)
@@ -2348,7 +2349,7 @@ def pharmacist_medicines_list_view(request):
         'medicines': page_obj,
         'page_range': page_range,
         'selected_category': category,
-        'selected_manfacturer': manufacturer,
+        'selected_manufacturer': selected_manufacturer,
         'pharmacist': pharmacist,
     }
     return render(request, 'hospital/pharmacist_view_medicines.html', context)
@@ -2428,6 +2429,100 @@ def pharmacist_view_medicine(request, pk):
 
     return render(request, 'hospital/pharmacist_view_medicine.html', context)
 
+#------Expiration Date View For Medicines
+@login_required(login_url='adminlogin')
+@user_passes_test(is_pharmacist)
+def pharmacist_manage_medicines(request):
+    
+    pharmacist = get_object_or_404(models.Pharmacist, user_id = request.user.id) # Current User
+    # Get the current date
+    current_date = timezone.now().date()
+
+    #Low stocks medicine adjust the limit accordingly
+    low_stock_value = 10
+    low_stocks = models.Medicine.objects.filter(quantity__lte = low_stock_value, sale=True)
+
+    # Calculate the date one month from now
+    one_month_from_now = current_date + timedelta(days=30)
+
+    # Query for expired medicines that on sale
+    expired_medicines = models.Medicine.objects.filter(expiry_date__lt=current_date, sale=True)
+
+    # Query for medicines near expiration date (within one month) that on sale
+    near_expiration_date = models.Medicine.objects.filter(expiry_date__range=[current_date, one_month_from_now], sale=True)
+
+    context = {
+        "pharmacist":pharmacist,
+        "expired_medicines": expired_medicines,
+        "near_expiration_date": near_expiration_date,
+        "low_stocks":low_stocks,
+    }
+
+    return render(request, 'hospital/pharmacist_manage_medicines.html', context)
+
+#----Dispose/Restocking Medicines
+@login_required(login_url='adminlogin')
+@user_passes_test(is_pharmacist)
+def dispose_medicine(request, pk):
+    medicine = get_object_or_404(models.Medicine, id=pk)
+    if request.method == 'GET':
+        quantity = int(request.GET.get('dispose_quantity', 0))
+        new_stock_quantity = int(request.GET.get('new_stock_quantity', 0))
+        expiration_date = request.GET.get('exp', None)
+        
+        if quantity > 0:
+            if quantity <= medicine.quantity:
+                medicine.quantity -= quantity
+               
+                if new_stock_quantity > 0:
+                    medicine.quantity += new_stock_quantity
+                
+                if expiration_date:
+                    medicine.expiry_date = expiration_date
+
+                if medicine.quantity == 0:
+                    medicine.sale = False
+                
+                medicine.save()
+                messages.success(request, f'{quantity} units of "{medicine.get_name}" have been disposed of successfully.')
+                return redirect('pharmacist-manage-medicines')
+            else:
+                messages.error(request, 'Quantity to dispose exceeds available quantity.')
+                return redirect('pharmacist-manage-medicines')
+        else:
+            messages.error(request, 'Please enter a valid quantity to dispose.')
+            return redirect('pharmacist-manage-medicines')
+        
+    return redirect('pharmacist-manage-medicines')
+
+@login_required(login_url='adminlogin')
+@user_passes_test(is_pharmacist)
+def restock_medicine(request, pk):
+    if request.method == 'GET':
+        medicine = get_object_or_404(models.Medicine, id=pk)
+        new_stock_quantity = int(request.GET.get('new_stock_quantity', 0))
+        expiration_date = request.GET.get('exp', None)
+        
+        if new_stock_quantity > 0:
+            # Add the restocked quantity to the available quantity
+            medicine.quantity += new_stock_quantity
+            
+            # Update the expiry date if provided
+            if expiration_date:
+                medicine.expiry_date = expiration_date
+            
+            # Save the changes
+            medicine.save()
+            
+            # Redirect to the appropriate page or handle the response as needed
+            messages.success(request, f'{new_stock_quantity} units of "{medicine.name}" have been restocked successfully.')
+            return redirect('pharmacist-manage-medicines')
+        else:
+            messages.error(request, 'Please enter a valid quantity to restock.')
+
+    # Redirect to the appropriate page or handle the response as needed
+    return redirect('pharmacist-manage-medicines')
+
 #--------Pharmacist Manufacturers
 @login_required(login_url='adminlogin')
 @user_passes_test(is_pharmacist)
@@ -2488,7 +2583,7 @@ def pharmacist_manufacturers_delete(request):
 #-------END of Pharmacist Manufacturers
 
 #---------------------------------------------------------------------------------
-#------------------------ PHARMACIST RELATED VIEWS START -------------------------
+#------------------------ PHARMACIST RELATED VIEWS END -------------------------
 #---------------------------------------------------------------------------------
 
 #---------------------------------------------------------------------------------

@@ -179,7 +179,9 @@
               <tbody>
                 {% for p in patients %}
                 <tr class="row">
-                  <td class="col text-truncate">{{p.admit_date|date:"F d, Y"}}</td>
+                  {% with unix_timestamp=p.admit_date|date:"U" %}
+                  <td class="col text-truncate" data-order="{{unix_timestamp}}">{{p.admit_date|date:"F d, Y"}}</td>
+                  {% endwith %}
                   <td class="col text-truncate">{{p.get_name}}</td>
                   <td class="col text-truncate">{{p.mobile}}</td>
                   {% if p.status %}

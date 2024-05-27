@@ -109,7 +109,7 @@
                 <tr class="row">
                   <th class="col text-truncate">Name</th>
                   <th class="col text-truncate">Manufacturer</th>
-                  <th class="col text-truncate">Dosage</th>
+                  
                   <th class="col text-truncate">Unit Price</th>
                   <th class="col text-truncate">Quantity</th>
                 </tr>
@@ -119,7 +119,7 @@
                 <tr class="row">
                   <td class="col text-truncate">{{ medicine.name }}</td>
                   <td class="col text-truncate">{{ medicine.manufacturer }}</td>
-                  <td class="col text-truncate">{{ medicine.dosage }}</td>
+                  
                   <td class="col text-truncate">{{ medicine.unit_price }}</td>
                   <td class="col text-truncate">{{ medicine.quantity }}</td>
                 </tr>
@@ -196,7 +196,9 @@
 </div>
 
 <script>
-  let table1 = new DataTable('#low-stock-medicines-table');
+  let table1 = new DataTable('#low-stock-medicines-table',{
+    "order": [[3, "asc"]]  // Sort by the first column (index 4) in ascending order by default
+  });
   let table2 = new DataTable('#best-selling-medicines-table',{
     "order": [[0, "desc"]]  // Sort by the first column (index 0) in descending order by default
   });

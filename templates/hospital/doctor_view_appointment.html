@@ -77,7 +77,9 @@
           <tbody>
             {% for a, p in appointments %}
             <tr class="row">
-              <td class="col text-truncate">{{ a.appointmentDate|date:"F d, Y - g:iA" }}</td>
+              {% with unix_timestamp=a.appointmentDate|date:"U" %}
+              <td class="col text-truncate" data-order="{{unix_timestamp}}">{{ a.appointmentDate|date:"F d, Y - g:iA" }}</td>
+              {% endwith %}
               <td class="col text-truncate">{{ a.patientName }}</td>
               <td class="col text-truncate">{{ a.description }}</td>
               <td class="col text-truncate">{{ p.mobile }}</td>
