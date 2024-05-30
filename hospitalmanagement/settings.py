@@ -44,6 +44,9 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+#Paymongo Developer API for Channel Payment
+PAYMONGO_PUBLIC_KEY = 'pk_test_1SdHcHdznyX2MYoSy7eMjXZW'
+PAYMONGO_SECRET_KEY = 'sk_test_NxgR9PSu9bkbeX7PYk5TTt5G'
 
 # Application definition
 

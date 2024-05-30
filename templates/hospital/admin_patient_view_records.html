@@ -18,11 +18,6 @@
       text-align: center;
       font-size: 1.2em;
     }
-    
-
-    .row {
-      margin: 10px auto;
-    }
 
     .table-responsive {
       text-wrap: wrap;
@@ -75,34 +70,38 @@
       <div class="table-responsive p-3">
         <table class="table table-hover py-3" id="dev-table">
           <thead class="table-dark">
-            <tr>
-              <th>Invoice No.</th>
-              <th>Release Date</th>
-              <th>Admission Date</th>
-              <th>Name</th>
-              <th>Contact</th>
-              <th>Status</th>
-              <th>View Profile</th>
-              <th>View Invoice</th>
+            <tr class="row">
+              <th class="col text-truncate">Invoice No.</th>
+              <th class="col text-truncate">Name</th>
+              <th class="col text-truncate">Admission Date</th>
+              <th class="col text-truncate">Release Date</th>
+              <th class="col text-truncate">Contact</th>
+              <th class="col text-truncate">Status</th>
+              <th class="col text-truncate">View Profile</th>
+              <th class="col text-truncate">View Invoice</th>
             </tr>
           </thead>
           <tbody>
             {% for record in patient_records %}
-            <tr>
-              <td>{{ record.id }}</td>
-              <td>{{ record.releaseDate }}</td>
-              <td>{{ record.admitDate }}</td>
-              <td>{{ record.patientName }}</td>
-              <td>{{ record.mobile }}</td>
-              <td>
+            <tr class="row">
+              <td class="col text-truncate">{{ record.id }}</td>
+              <td class="col text-truncate">{{ record.patientName }}</td>
+              {% with unix_timestamp=record.admitDate|date:"U" %}
+                <td class="col text-truncate" data-order="{{unix_timestamp}}">{{ record.admitDate }}</td>
+              {% endwith %}
+              {% with unix_timestamp=record.releaseDate|date:"U" %}
+                <td class="col text-truncate" data-order="{{unix_timestamp}}">{{ record.releaseDate }}</td>
+              {% endwith %}
+              <td class="col text-truncate">{{ record.mobile }}</td>
+              <td class="col text-truncate">
                 {% if record.is_Paid %}
-                  <span class="badge bg-success w-100 h-100">Paid</span>
+                  <span class="badge bg-success w-100">Paid</span>
                 {% else %}
-                  <span class="badge bg-danger w-100 h-100">Unpaid</span>
+                  <span class="badge bg-danger w-100">Unpaid</span>
                 {% endif %}
               </td>
-              <td><a class="btn btn-primary btn-sm  w-100  h-100" href="{% url 'admin-patient-details' record.patientId %}"><i class="bi bi-eye"></i></a></td>
-              <td><a class="btn btn-secondary btn-sm  w-100 h-100" href="{% url 'admin-view-patient-invoice' patientId=record.patientId discharge_id=record.id %}"><i class="bi bi-file-earmark-text"></i></a></td>
+              <td class="col text-truncate"><a class="btn btn-primary btn-sm  w-100  h-100" href="{% url 'admin-patient-details' record.patientId %}"><i class="bi bi-eye"></i></a></td>
+              <td class="col text-truncate"><a class="btn btn-secondary btn-sm  w-100 h-100" href="{% url 'admin-view-patient-invoice' patientId=record.patientId discharge_id=record.id %}"><i class="bi bi-file-earmark-text"></i></a></td>
             </tr>
             {% endfor %}
           </tbody>

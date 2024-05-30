@@ -1,0 +1,286 @@
+{% extends 'hospital/pharmacist_base.html' %}
+{% block content %}
+{%load static%}
+
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <link rel="stylesheet" href="//cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
+  <script src="//cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+
+  <style media="screen">
+    a:link {
+      text-decoration: none;
+    }
+
+    h6 {
+      text-align: center;
+      font-size: 1.2em;
+    }
+    
+    .table-responsive {
+      text-wrap: wrap;
+      text-overflow: clip;
+      
+    }
+
+    .view-medicine-panel{
+      width: 100%;
+      height: 100%;
+      position: relative;
+      margin: 1px 1px 1px 1px;
+    }
+    /* Media Query for smaller screens */
+    @media only screen and (max-width: 768px) {
+      /* Adjust table font size for smaller screens */
+      table {
+        font-size: 0.5rem; /* Adjust this value as needed */
+      }
+
+      /* Adjust th and td padding for smaller screens */
+      th,
+      td {
+        padding: 0.10rem; /* Adjust this value as needed */
+      }
+    }
+
+    /* Media Query for larger screens */
+    @media only screen and (min-width: 768px) {
+      /* Adjust table font size for larger screens */
+      table {
+        font-size: 0.825rem; /* Adjust this value as needed */
+      }
+
+      /* Adjust th and td padding for larger screens */
+      th,
+      td {
+        padding: 0.75rem; /* Adjust this value as needed */
+      }
+    }
+  </style>
+</head>
+<br><br>
+<!-- Display messages -->
+{% if messages %}
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col">
+        {% for message in messages %}
+          <div class="alert {{ message.tags }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+{% endif %}
+
+<!--Low Stock Medicine List-->
+<div class="view-medicine-panel1">
+  <div class="card border border-dark">
+    <div class="card-header bg-primary text-white">
+      <h6 class="card-title">Low Stock Medicines</h6>
+    </div>
+    <div class="card-body">
+      <div class="table-responsive p-3">
+        <table class="table table-hover py-3" id="dev-table1">
+          <thead class="table-dark">
+            <tr class="row">
+              <th class="col text-truncate">Name</th>
+              <th class="col text-truncate">Qty</th>
+              <th class="col text-truncate">Expiry</th>
+              <th class="col text-truncate">View</th>
+              <th class="col text-truncate">Update</th>
+              <th class="col text-truncate">Restock</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for l in low_stocks %}
+            <tr class="row">
+              <td class="col text-truncate">{{ l.name }}</td>
+              <td class="col text-truncate">{{ l.quantity }}</td>
+              {% with unix_timestamp=l.expiry_date|date:"U" %}
+              <td class="col text-truncate" data-order="{{ unix_timestamp }}">{{ l.expiry_date }}</td>
+              {% endwith %}
+              <td class="col text-truncate"><a class="btn btn-primary btn-sm w-100 h-100" href="{% url 'pharmacist-view-medicine' l.id  %}"><i class="bi bi-eye"></i></a></td>
+              <td class="col text-truncate"><a class="btn btn-secondary btn-sm w-100 h-100" href="{% url 'pharmacist-update-medicine' l.id  %}"><i class="bi bi-pencil"></i></a></td>
+              <td class="col text-truncate"><a class="btn btn-success restock-btn btn-sm w-100 h-100" href="{% url 'restock-medicine' l.id  %}"><i class="bi bi-arrow-clockwise"></i></a></td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--Expired Medicine List-->
+<div class="view-medicine-panel1">
+  <div class="card border border-dark">
+    <div class="card-header bg-primary text-white">
+      <h6 class="card-title">Past Expiration Items</h6>
+    </div>
+    <div class="card-body">
+      <div class="table-responsive p-3">
+        <table class="table table-hover py-3" id="dev-table2">
+          <thead class="table-dark">
+            <tr class="row">
+              <th class="col text-truncate">Name</th>
+              <th class="col text-truncate">Expiry</th>
+              <th class="col text-truncate">Manufacturer</th>
+              <th class="col text-truncate">View</th>
+              <th class="col text-truncate">Update</th>
+              <th class="col text-truncate">Dispose</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for e in expired_medicines %}
+            <tr class="row">
+              <td class="col text-truncate">{{ e.name }}</td>
+              {% with unix_timestamp=e.expiry_date|date:"U" %}
+              <td class="col text-truncate" data-order="{{ unix_timestamp }}">{{ e.expiry_date }}</td>
+              {% endwith %}
+              <td class="col text-truncate">{{ e.manufacturer }}</td>
+              <td class="col text-truncate"><a class="btn btn-primary btn-sm w-100 h-100" href="{% url 'pharmacist-view-medicine' e.id  %}"><i class="bi bi-eye"></i></a></td>
+              <td class="col text-truncate"><a class="btn btn-secondary btn-sm w-100 h-100" href="{% url 'pharmacist-update-medicine' e.id  %}"><i class="bi bi-pencil"></i></a></td>
+              <td class="col text-truncate"><a class="btn btn-danger dispose-btn btn-sm w-100 h-100" href="{% url 'dispose-medicine' e.id  %}"><i class="bi bi-trash"></i></a></td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Near Expiration Items List-->
+<div class="view-medicine-panel2">
+  <div class="card border border-dark">
+    <div class="card-header bg-primary text-white">
+      <h6 class="card-title">Near Expiration Date</h6>
+    </div>
+    <div class="card-body">
+      <div class="table-responsive p-3">
+        <table class="table table-hover py-3" id="dev-table3">
+          <thead class="table-dark">
+            <tr class="row">
+              <th class="col text-truncate">Name</th>
+              <th class="col text-truncate">Expiry</th>
+              <th class="col text-truncate">Manufacturer</th>
+              <th class="col text-truncate">View</th>
+              <th class="col text-truncate">Update</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for n in near_expiration_date %}
+            <tr class="row">
+              <td class="col text-truncate">{{ n.name }}</td>
+              {% with unix_timestamp=n.expiry_date|date:"U" %}
+              <td class="col text-truncate" data-order="{{ unix_timestamp }}">{{ n.expiry_date }}</td>
+              {% endwith %}
+              <td class="col text-truncate">{{ n.manufacturer }}</td>
+              <td class="col text-truncate"><a class="btn btn-primary btn-sm w-100 h-100" href="{% url 'pharmacist-view-medicine' n.id  %}"><i class="bi bi-eye"></i></a></td>
+              <td class="col text-truncate"><a class="btn btn-secondary btn-sm w-100 h-100" href="{% url 'pharmacist-update-medicine' n.id  %}"><i class="bi bi-pencil"></i></a></td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  let table1 = new DataTable('#dev-table1',{
+        "order": [[ 1, "asc" ]] // Sort by the second column in ascending order (Qty column)
+    });
+  let table2 = new DataTable('#dev-table2',{
+        "order": [[ 1, "asc" ]] // Sort by the second column in ascending order (Expiration Date column [Past expiration Date])
+    });
+  let table3 = new DataTable('#dev-table3',{
+        "order": [[ 1, "asc" ]] // Sort by the second column in ascending order (Expiration Date column [Near Expiration Date])
+    });
+  
+  document.addEventListener("DOMContentLoaded", function() {
+    
+    //Restock Item
+    document.querySelectorAll('.restock-btn').forEach(item => {
+        item.addEventListener('click', function(event) {
+            event.preventDefault();
+            const url = this.getAttribute('href');
+
+            // Show SweetAlert2 modal with form for quantity input
+            Swal.fire({
+                title: 'Set Quantity & Expiry Date',
+                html: '<div class="container-fluid"><div class="row d-flex flex-column justify-content-center"><div class="col-md-12"><input id="newStockQuantityInput" class="swal2-input w-75" type="number" placeholder="New Stock Quantity"><input id="expirationDateInput" class="swal2-input w-75" type="date" placeholder="Expiration Date"></div></div></div>',
+                showCancelButton: true,
+                confirmButtonText: 'Restock',
+                preConfirm: () => {
+                    const newStockQuantity = Swal.getPopup().querySelector('#newStockQuantityInput').value;
+                    const expirationDate = Swal.getPopup().querySelector('#expirationDateInput').value;
+            
+                    if (newStockQuantity && newStockQuantity <= 0) {
+                        Swal.showValidationMessage('Please enter a valid new stock quantity');
+                    }
+                    
+                    return { 
+                        newStockQuantity: parseInt(newStockQuantity),
+                        expirationDate: expirationDate, 
+                    };
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const newStockQuantity = result.value.newStockQuantity;
+                    const expirationDate = result.value.expirationDate;
+                    // Redirect to dispose_medicine view with the quantity and expiration date as parameters
+                    window.location.href = `${url}?new_stock_quantity=${newStockQuantity}&exp=${expirationDate}`;
+                }
+            });
+        });
+    });
+    
+    //Disposing Item
+    document.querySelectorAll('.dispose-btn').forEach(item => {
+        item.addEventListener('click', function(event) {
+            event.preventDefault();
+            const url = this.getAttribute('href');
+
+            // Show SweetAlert2 modal with form for quantity input
+            Swal.fire({
+                title: 'Set Quantity & New Expiry Date',
+                html: '<div class="container-fluid"><div class="row d-flex flex-column justify-content-center"><div class="col-md-12"><input id="disposeQuantityInput" class="swal2-input w-75" type="number" placeholder="Dispose Quantity"><input id="newStockQuantityInput" class="swal2-input w-75" type="number" placeholder="New Stock Quantity"><input id="expirationDateInput" class="swal2-input w-75" type="date" placeholder="Expiration Date"></div></div></div>',
+                showCancelButton: true,
+                confirmButtonText: 'Dispose',
+                preConfirm: () => {
+                    const disposeQuantity = Swal.getPopup().querySelector('#disposeQuantityInput').value;
+                    const newStockQuantity = Swal.getPopup().querySelector('#newStockQuantityInput').value;
+                    const expirationDate = Swal.getPopup().querySelector('#expirationDateInput').value;
+                    if (!disposeQuantity || disposeQuantity <= 0) {
+                        Swal.showValidationMessage('Please enter a valid dispose quantity');
+                    }
+                    if (newStockQuantity && newStockQuantity <= 0) {
+                        Swal.showValidationMessage('Please enter a valid new stock quantity');
+                    }
+                    return { 
+                        disposeQuantity: parseInt(disposeQuantity), 
+                        newStockQuantity: parseInt(newStockQuantity),
+                        expirationDate: expirationDate, 
+                    };
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const disposeQuantity = result.value.disposeQuantity;
+                    const newStockQuantity = result.value.newStockQuantity;
+                    const expirationDate = result.value.expirationDate;
+                    // Redirect to dispose_medicine view with the quantity and expiration date as parameters
+                    window.location.href = `${url}?dispose_quantity=${disposeQuantity}&new_stock_quantity=${newStockQuantity}&exp=${expirationDate}`;
+                }
+            });
+        });
+    });
+
+});
+  </script>
+{% endblock content %}

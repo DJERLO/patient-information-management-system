@@ -17,10 +17,6 @@
       text-align: center;
     }
 
-    .row {
-      margin: 10px auto;
-    }
-
     .table-responsive {
       text-wrap: wrap;
     }
@@ -70,20 +66,20 @@
       <div class="table-responsive p-3">
           <table class="table table-hover py-3" id="dev-table">
               <thead class="table-dark">
-                  <tr>
-                      <th>Date</th>
-                      <th>Patient Name</th>
-                      <th>Description</th>
-                      <th>Complete</th>
+                  <tr class="row">
+                      <th class="col text-truncate">Date</th>
+                      <th class="col text-truncate">Patient Name</th>
+                      <th class="col text-truncate">Description</th>
+                      <th class="col text-truncate">Complete</th>
                   </tr>
               </thead>
               <tbody>
                   {% for a, p in appointments %}
-                  <tr>
-                      <td>{{ a.appointmentDate }}</td>
-                      <td>{{ a.patientName }}</td>
-                      <td>{{ a.description }}</td>
-                      <td>
+                  <tr class="row">
+                      <td class="col text-truncate">{{ a.appointmentDate }}</td>
+                      <td class="col text-truncate">{{ a.patientName }}</td>
+                      <td class="col text-truncate">{{ a.description }}</td>
+                      <td class="col text-truncate">
                           <!-- Add onclick event to show confirmation dialog -->
                           <button class="btn btn-success btn-sm w-100 h-100" onclick="completeAppointment({{ a.appointment_id }})">
                               <i class="bi bi-calendar-check"></i>

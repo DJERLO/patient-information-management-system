@@ -13,6 +13,12 @@
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 
   <style type="text/css">
+
+    /* Define your custom color variable */
+    :root {
+      --main-color: #970404; /* Change this to your desired main color */
+    }
+
     .bs-example {
       margin: 0px;
       text-align: center;
@@ -71,6 +77,7 @@
     height: 2px; 
     transform: scaleX(1);
   }
+
   </style>
 </head>
 
@@ -91,12 +98,21 @@
 
         <div class="navbar-nav mx-3">
           <a href="/" class="nav-item nav-link {% if current_page == '/' or current_page == '/logout' %}active{% endif %}">Home</a>
-          <a href="/adminclick" class="nav-item nav-link {% if '/admin' in current_page %}active{% endif %}">Admin</a>
+          <div class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle {% if current_page == '/adminclick' or current_page == '/pharmacistclick' or current_page == '/receptionistclick' %}active{% endif %}" href="#" id="staffDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  Staffs
+              </a>
+              <ul class="dropdown-menu" aria-labelledby="staffDropdown">
+                  <li><a class="dropdown-item {% if current_page == '/adminclick' %}active{% endif %}" href="/adminclick">Admin</a></li>
+                  <li><a class="dropdown-item {% if current_page == '/pharmacistclick' %}active{% endif %}" href="/pharmacistclick">Pharmacist</a></li>
+                  <li><a class="dropdown-item {% if current_page == '/receptionistclick' %}active{% endif %}" href="/receptionistclick">Receptionist</a></li>
+              </ul>
+          </div>
           <a href="/doctorclick" class="nav-item nav-link {% if '/doctor' in current_page %}active{% endif %}">Doctor</a>
           <a href="/patientclick" class="nav-item nav-link {% if '/patient' in current_page %}active{% endif %}">Patient</a>
           <a href="/aboutus" class="nav-item nav-link {% if current_page == '/aboutus' %}active{% endif %}">About</a>
           <a href="/contactus" class="nav-item nav-link {% if current_page == '/contactus' %}active{% endif %}">Contact</a>
-        </div>
+      </div>
 
       </div>
     </nav>

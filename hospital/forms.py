@@ -2,6 +2,8 @@ from datetime import timezone
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
+
+from .departments import SPECIALIZATION_CHOICES
 from . import models
 from django.core.validators import RegexValidator
 
@@ -108,9 +110,6 @@ class DoctorForm(forms.ModelForm):
             'profile_pic': forms.FileInput(attrs={'required': 'required'}),
         }
     
-    
-
-
 class PatientUserForm(forms.ModelForm):
     password1 = forms.CharField(
         label="Password",
@@ -186,16 +185,12 @@ class UpdatePatientForm(forms.ModelForm):
     assigned_doctor_id = forms.ChoiceField(required=False, widget=forms.Select)
     assigned_doctor = forms.ChoiceField(required=False, widget=forms.Select)
 
-    
-
     class Meta:
         model = models.Patient
         fields = ['first_name', 'last_name', 'gender', 'date_of_birth', 'address', 'mobile', 'status', 'symptoms', 'profile_pic', 'assigned_doctor', 'assigned_doctor_id']
         widgets = {
             'date_of_birth': forms.DateInput(attrs={'type': 'date'}),
         }
-
-
 
 class AppointmentForm(forms.ModelForm):
     doctorId=forms.ModelChoiceField(queryset=models.Doctor.objects.all().filter(status=models.Doctor.STATUS_AVAILABLE),empty_label="Doctor Name and Department", to_field_name="user_id")
@@ -255,6 +250,48 @@ class InsuranceForm(forms.ModelForm):
             'effective_date': forms.DateInput(attrs={'type': 'date'}),
             'expiration_date': forms.DateInput(attrs={'type': 'date'}),
         }
+
+# For Pharmacist User Creation
+class PharmacistUserSignUpForm(UserCreationForm):
+    email = forms.EmailField(max_length=150, required=True)
+
+    class Meta:
+        model = User
+        fields = ['first_name', 'last_name', 'username', 'email', 'password1', 'password2']
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['password1'].label = 'Password'
+        self.fields['password2'].label = 'Confirm Password'
+
+class PharmacistSignUpForm(forms.ModelForm):
+    first_name = forms.CharField(max_length=50, required=True)
+    last_name = forms.CharField(max_length=50, required=True)
+    contact_email = forms.EmailField(required=True)
+    contact_phone = forms.CharField(max_length=20, required=True)
+    license_number = forms.CharField(max_length=7, required=True, widget=forms.TextInput(attrs={'pattern': '[0-9]{7}', 'title': 'License number must be 7 digits.'}))
+    address = forms.CharField(widget=forms.Textarea, required=True)
+    specialization = forms.ChoiceField(choices=SPECIALIZATION_CHOICES)  # Use ChoiceField for select input
+    profile_pic = forms.ImageField(required=True)  # Include a profile picture field
+
+    class Meta:
+        model = models.Pharmacist
+        fields = ['first_name', 'last_name', 'contact_email', 'contact_phone', 'license_number', 'address', 'specialization', 'profile_pic']
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+class MedicineForm(forms.ModelForm):
+    symptoms = forms.ModelMultipleChoiceField(queryset=models.Symptom.objects.all(), widget=forms.SelectMultiple)
+    class Meta:
+        model = models.Medicine
+        fields = ['name', 'description', 'manufacturer', 'dosage', 'unit_price', 'quantity', 'expiry_date', 'category', 'profile_pic', 'symptoms', 'sale', 'barcode']
+
+    widgets = {
+        'expiry_date': forms.DateInput(attrs={'type': 'date'}),
+    }
+
+    profile_pic = forms.ImageField(required=False)  # Include a profile picture field for medicine thumbnail
 
 #for contact us page
 class ContactusForm(forms.Form):

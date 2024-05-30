@@ -6,17 +6,16 @@ from hospital import views
 from django.contrib.auth.views import LoginView,LogoutView
 
 
-
-
 #-------------REST API
 from hospital.views import PatientListCreate, PatientRetrieveUpdateDestroy
 
 urlpatterns = [
     path('patients/', PatientListCreate.as_view(), name='patient-list-create'),
     path('patients/id=<int:pk>/', PatientRetrieveUpdateDestroy.as_view(), name='patient-retrieve-update-destroy'),
+   
 ]
-#-------------FOR ADMIN RELATED URLS
-urlpatterns = [
+#-------------FOR ADMIN/RECEPTIONIST RELATED URLS
+urlpatterns += [
     path('admin/', admin.site.urls, name='superadmin'),
     path('api/', include('hospital.urls')),
     path('',views.home_view,name=''),
@@ -28,11 +27,15 @@ urlpatterns = [
 
     path('adminclick', views.adminclick_view),
     path('doctorclick', views.doctorclick_view),
+    path('receptionistclick', views.receptionistclick_view),
+    path('pharmacistclick', views.pharmacistclick_view),
     path('patientclick', views.patientclick_view),
 
     path('adminsignup', views.staff_admin_signup_view),
-    path('doctorsignup', views.doctor_signup_view,name='doctorsignup'),
+    path('pharmacistsignup', views.pharmacist_signup_view,  name='pharmacistsignup'),
+    path('doctorsignup', views.doctor_signup_view, name='doctorsignup'),
     path('patientsignup', views.patient_signup_view),
+    
     
     path('adminlogin', views.adminlogin_view, name='adminlogin'),
     path('adminlogin', LoginView.as_view(template_name='hospital/adminlogin.html')),
@@ -134,11 +137,29 @@ urlpatterns +=[
     path('toggle-doctor-status/', views.doctor_toggle_availability, name='toggle-doctor-status'),
 ]   
 
-
+#---------FOR PHARMACIST RELATED URLS-------------------------------------
+urlpatterns +=[
+    path('pharmacist-dashboard', views.pharmacist_dashboard_view, name='pharmacist-dashboard'),
+    path('pharmacist-medicines', views.pharmacist_medicines_view, name='pharmacist-medicines'),
+    path('pharmacist-view-medicines', views.pharmacist_medicines_list_view, name='pharmacist-view-medicines'),
+    path('pharmacist-view-medicine/<int:pk>', views.pharmacist_view_medicine, name='pharmacist-view-medicine'),
+    path('pharmacist-manage-medicines',views.pharmacist_manage_medicines, name='pharmacist-manage-medicines'),
+    path('dispose-medicine/<int:pk>', views.dispose_medicine, name='dispose-medicine'),
+    path('restock-medicine/<int:pk>', views.restock_medicine, name='restock-medicine'),
+    path('pharmacist-add-medicine', views.pharmacist_add_medicine, name='pharmacist-add-medicine'),
+    path('pharmacist-update-medicine/<int:pk>', views.pharmacist_update_medicine, name='pharmacist-update-medicine'),
+    path('pharmacist-manufacturers-view', views.pharmacist_manufacturers_view, name='pharmacist-manufacturers-view'),
+    path('pharmacist-manufacturers-update', views.pharmacist_manufacturers_update, name='pharmacist-manufacturers-update'),
+    path('pharmacist-manufacturers-delete', views.pharmacist_manufacturers_delete, name='pharmacist-manufacturers-delete'),
+]
 
 
 #---------FOR PATIENT RELATED URLS-------------------------------------
-urlpatterns +=[
+urlpatterns +=[ 
+    path('create-payment-session/', views.create_payment_session, name='create_payment_session'),
+    path('payment-expire/', views.set_checkout_expiry_date, name='get_checkout_expiry_date'),
+    path('view-success-payment/', views.success_payment_view, name='view-success-payment'),
+    path('view-failed-payment/', views.failed_payment_view, name='view-failed-payment'),
     path('patient-dashboard', views.patient_dashboard_view,name='patient-dashboard'),
     path('patient-appointment', views.patient_appointment_view,name='patient-appointment'),
     path('patient-book-appointment', views.patient_book_appointment_view,name='patient-book-appointment'),
@@ -148,11 +169,24 @@ urlpatterns +=[
 ]
 
 
-#---------FOR CHANGING PROFILE URL-------------------------------------
+#---------FOR USER SETTINGS URL-------------------------------------
 urlpatterns += [
-    path('admin-change-profile-pic/', views.admin_change_profile_pic, name='admin-change-profile-pic'),
-    path('doctor-change-profile-pic/', views.doctor_change_profile_pic, name='doctor-change-profile-pic'),
-    path('patient-change-profile-pic/', views.patient_change_profile_pic, name='patient-change-profile-pic'),
+    path('admin-update-profile-details/', views.admin_update_profile_details, name='admin-update-profile-details'),
+    path('pharmacist-update-profile/', views.pharmacist_update_profile_details, name='pharmacist-update-profile'),
+    path('doctor-update-profile/', views.doctor_update_profile, name='doctor-update-profile'),
+    path('patient-update-profile-details/', views.patient_update_profile_details, name='patient-update-profile-details'),
+]
+
+#------AUTOCOMPLETION QUERY URLS------------------------------------
+urlpatterns+=[
+    path('autocomplete/', views.autocomplete_view, name='autocomplete'),
+]
+
+#---- Agents 
+urlpatterns +=[
+    # Other URL patterns...
+     path('webhooks', views.handle_webhook, name='webhooks'),
+     path('chatgpt4/', views.chatgpt4, name='chatgpt4'),
 ]
 
 # Serve media files during development

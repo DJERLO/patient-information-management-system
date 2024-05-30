@@ -15,10 +15,6 @@
       text-align: center;
     }
 
-    .row {
-      margin: 100px;
-    }
-
     /* Media Query for smaller screens */
   @media only screen and (max-width: 768px) {
     /* Adjust table font size for smaller screens */
@@ -49,7 +45,7 @@
 
   </style>
 </head>
-
+<br><br><br>
 <div class="container-fluid">
   <div class="card">
     <div class="card-header bg-primary text-white">
@@ -58,24 +54,28 @@
     <div class="table-responsive p-3">
       <table class="table table-hover py-3" id="dev-table">
         <thead class="table-dark">
-          <tr>
-            <th>Name</th>
-            <th>Admit Date</th>
-            <th>Release Date</th>
-            <th>Symptoms</th>
-            <th>Contact</th>
-            <th>Address</th>
+          <tr class="row">
+            <th class="col text-truncate">Name</th>
+            <th class="col text-truncate">Admit Date</th>
+            <th class="col text-truncate">Release Date</th>
+            <th class="col text-truncate">Symptoms</th>
+            <th class="col text-truncate">Contact</th>
+            <th class="col text-truncate">Address</th>
           </tr>
         </thead>
         <tbody>
           {% for p in dischargedpatients %}
-          <tr>
-            <td>{{ p.patientName }}</td>
-            <td>{{ p.admitDate }}</td>
-            <td>{{ p.releaseDate }}</td>
-            <td>{{ p.symptoms }}</td>
-            <td>{{ p.mobile }}</td>
-            <td>{{ p.address }}</td>
+          <tr class="row">
+            <td class="col text-truncate">{{ p.patientName }}</td>
+            {% with unix_timestamp=p.admitDate|date:"U" %}
+            <td class="col text-truncate" data-order="{{unix_timestamp}}">{{ p.admitDate }}</td>
+            {% endwith %}
+            {% with unix_timestamp=p.releaseDate|date:"U" %}
+            <td class="col text-truncate" data-order="{{unix_timestamp}}">{{ p.releaseDate }}</td>
+            {% endwith %}
+            <td class="col text-truncate">{{ p.symptoms }}</td>
+            <td class="col text-truncate">{{ p.mobile }}</td>
+            <td class="col text-truncate">{{ p.address }}</td>
           </tr>
           {% endfor %}
         </tbody>

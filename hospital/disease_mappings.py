@@ -45,3 +45,42 @@ disease_to_department = {
     'braces': 'Orthodontists',  
     # Add More Key/Values if you add more departments
 }
+
+#products for pharmacy management system used for filtering
+pharmacy_products = {
+    "Acid Reflux": ["Antacids", "H2 Blockers", "Proton Pump Inhibitors"],
+    "Acne": ["Topical Treatments", "Oral Medications", "Skincare Products"],
+    "Allergy": ["Antihistamines", "Decongestants", "Nasal Sprays"],
+    "Amoebiasis": ["Antibiotics", "Antiprotozoal Medications"],
+    "Arthritis": ["Nonsteroidal Anti-Inflammatory Drugs (NSAIDs)", "Disease-Modifying Antirheumatic Drugs (DMARDs)"],
+    "Asthma": ["Inhaled Corticosteroids", "Bronchodilators", "Leukotriene Modifiers"],
+    "Chickenpox": ["Antiviral Medications", "Pain Relievers", "Antihistamines"],
+    "Cough": ["Cough Suppressants", "Expectorants", "Antihistamines"],
+    "COVID 19": ["Antiviral Medications", "Vaccines", "Symptomatic Treatments"],
+    "Diabetes": ["Insulin", "Oral Antidiabetic Drugs", "Blood Glucose Monitors"],
+    "Diarrhea": ["Antidiarrheal Medications", "Oral Rehydration Solutions"],
+    "Dysmenorrhea": ["Nonsteroidal Anti-Inflammatory Drugs (NSAIDs)", "Oral Contraceptives"],
+    "Dyspepsia": ["Antacids", "Proton Pump Inhibitors", "H2 Blockers"],
+    "Eczema": ["Topical Steroids", "Emollients", "Antihistamines"],
+    "Erectile Dysfunction": ["Phosphodiesterase Inhibitors", "Testosterone Replacement Therapy"],
+    "Fever": ["Antipyretics", "Nonsteroidal Anti-Inflammatory Drugs (NSAIDs)"],
+    "Flu": ["Antiviral Medications", "Pain Relievers", "Antihistamines"],
+    "Fungal infection": ["Antifungal Creams", "Antifungal Tablets", "Antifungal Shampoos"],
+    "Gout": ["Nonsteroidal Anti-Inflammatory Drugs (NSAIDs)", "Colchicine", "Corticosteroids"],
+    "Headache": ["Analgesics", "Triptans", "Combination Medications"],
+    "Heart Disease": ["Anticoagulants", "Antiplatelet Drugs", "ACE Inhibitors"],
+    "Herpes": ["Antiviral Medications", "Topical Treatments", "Pain Relievers"],
+    "High Cholesterol": ["Statins", "Bile Acid Sequestrants", "Fibrates"],
+    "Hyperacidity": ["Antacids", "H2 Blockers", "Proton Pump Inhibitors"],
+    "Hypertension": ["ACE Inhibitors", "Beta Blockers", "Calcium Channel Blockers"],
+    "Kidney Disorder": ["Diuretics", "ACE Inhibitors", "Angiotensin II Receptor Blockers"],
+    "Leptospirosis": ["Antibiotics", "Pain Relievers"],
+    "Muscle Pain": ["Analgesics", "Muscle Relaxants", "Nonsteroidal Anti-Inflammatory Drugs (NSAIDs)"],
+    "Osteoporosis": ["Bisphosphonates", "Calcium Supplements", "Vitamin D Supplements"],
+    "Pneumonia": ["Antibiotics", "Bronchodilators", "Corticosteroids"],
+    "Prostate Enlargement": ["Alpha Blockers", "5-alpha Reductase Inhibitors", "Phytotherapy"],
+    "Psoriasis": ["Topical Steroids", "Topical Retinoids", "Immunosuppressants"],
+    "Toothache": ["Analgesics", "Antibiotics", "Topical Anesthetics"],
+    "Tuberculosis": ["Antibiotics", "Antitubercular Drugs", "Directly Observed Therapy"],
+    "Urinary Tract Infection": ["Antibiotics", "Urinary Analgesics", "Phenazopyridine"]
+}
