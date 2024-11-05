@@ -1,0 +1,206 @@
+{% extends 'hospital/pharmacist_base.html' %}
+{% load static %}
+{% block content %}
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Latest compiled and minified CSS -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
+  <script src="//cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+  <style type="text/css">
+     h6 {
+      color: white;
+    }
+    
+    .fixed-top{
+      position: absolute;
+    }
+
+   .chart{
+    width: 100%;
+    max-width: 768px;
+    height: auto;
+   }
+
+   .bg-orange{
+    color: rgb(255, 159, 64);
+   }
+
+  /* Media Query for smaller screens */
+  @media only screen and (max-width: 768px) {
+    /* Adjust table font size for smaller screens */
+    table {
+      font-size: 0.5rem; /* Adjust this value as needed */
+    }
+
+    /* Adjust th and td padding for smaller screens */
+    th,
+    td {
+      padding: 0.10rem; /* Adjust this value as needed */
+    }
+  }
+
+  /* Media Query for larger screens */
+  @media only screen and (min-width: 768px) {
+    /* Adjust table font size for larger screens */
+    table {
+      font-size: 0.825rem; /* Adjust this value as needed */
+    }
+
+    /* Adjust th and td padding for larger screens */
+    th,
+    td {
+      padding: 0.75rem; /* Adjust this value as needed */
+    }
+  }
+
+  </style>
+  
+<br><br><br>
+{%include 'hospital/pharmacist_dashboard_cards.html'%}
+<div class="container-fluid">
+  <div class="row">
+
+    <div class="col-md-12 col-lg-12 col-xl-6">
+      <div class="card border border-dark">
+        <div class="card-header bg-primary text-white" style="text-align:center;">
+          <h6 class="card-title">Best Selling Medicines</h6>
+        </div>
+        <div class="card-body">
+          <div class="table-responsive  p-4">
+            <table  id="best-selling-medicines-table" class="table table-sm table-hover table-striped py-3">
+              <thead class="table-dark">
+                <tr class="row">
+                  <th class="col text-truncate">Name</th> 
+                  <th class="col text-truncate">Manufacturer</th>
+                  <th class="col text-truncate">Dosage</th>
+                  <th class="col text-truncate">Unit Price</th>
+                  <th class="col text-truncate">Qty Sold</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for medicine in best_selling_medicines %}
+                <tr class="row">
+                  <td class="col text-truncate">{{ medicine.name }}</td>
+                  <td class="col text-truncate">{{ medicine.manufacturer }}</td>
+                  <td class="col text-truncate">{{ medicine.dosage }}</td>
+                  <td class="col text-truncate">{{ medicine.unit_price }}</td>
+                  <td class="col text-truncate">{{ medicine.sold_quantity }}</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="col-md-12 col-lg-12 col-xl-6">
+      <div class="card border border-dark">
+        <div class="card-header bg-primary text-white" style="text-align:center;">
+          <h6 class="card-title">Low Stock Medicines List</h6>
+        </div>
+        <div class="card-body">
+          <div class="table-responsive p-4">
+            <table id="low-stock-medicines-table" class="table table-sm table-hover table-striped py-3">
+              <thead class="table-dark">
+                <tr class="row">
+                  <th class="col text-truncate">Name</th>
+                  <th class="col text-truncate">Manufacturer</th>
+                  
+                  <th class="col text-truncate">Unit Price</th>
+                  <th class="col text-truncate">Quantity</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for medicine in low_stock_medicines %}
+                <tr class="row">
+                  <td class="col text-truncate">{{ medicine.name }}</td>
+                  <td class="col text-truncate">{{ medicine.manufacturer }}</td>
+                  
+                  <td class="col text-truncate">{{ medicine.unit_price }}</td>
+                  <td class="col text-truncate">{{ medicine.quantity }}</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+
+    <div class="col-lg-4 col-xl-4">
+      <div class="card border border-dark">
+        <div class="card-header bg-primary text-white" style="text-align:center;">
+          <h6 class="card-title">Medicine Stock Overview</h6>
+        </div>
+        <div class="card-body">
+          <div class="d-flex justify-content-center" style="width:100%; overflow-x:auto;">
+            <img class="chart" src="https://quickchart.io/chart?c={type:'doughnut',data:{labels:['Available', 'Low Stock', 'Out of Stock'],datasets:[{label:'Count',data:[{{available_medicines_count}},{{low_stock_medicines_count}},{{out_of_stock_medicines_count}}]}]}}">
+          </div>
+        </div>
+        <div class="card-footer text-center text-dark">
+          <div class="row"> 
+            <div class="col-4 badge bg-primary flex-row">Available: {{available_medicines_count}}</div>
+            <div class="bg-orange col-4 badge bg-warning text-dark">Low Stock: {{low_stock_medicines_count}}</div>
+            <div class="col-4 badge bg-danger">Out of Stock: {{out_of_stock_medicines_count}}</div>
+          </div>  
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-4 col-xl-4">
+      <div class="card border border-dark">
+        <div class="card-header bg-primary text-white" style="text-align:center;">
+          <h6 class="card-title">Medicine Expiration Timeline</h6>
+        </div>
+        <div class="card-body">
+          <div class="d-flex justify-content-center" style="width:100%; overflow-x:auto;">
+            <img class="chart" src="https://quickchart.io/chart?c={type:'line',data:{labels:[{% for date, count in expiration_timeline %}'{{ date }}',{% endfor %}],datasets:[{label:'Expirations',data:[{% for date, count in expiration_timeline %}{{ count }},{% endfor %}]}]}}">
+          </div>
+        </div>
+        <div class="card-footer text-center text-dark">
+          <div class="row"> 
+            <div class="col-12 badge bg-light text-dark">Timeline of Medicine Expirations</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-4 col-xl-4">
+      <div class="card border border-dark">
+        <div class="card-header bg-primary text-white" style="text-align:center;">
+          <h6 class="card-title">Medicine Distribution Overview</h6>
+        </div>
+        <div class="card-body">
+          <div class="d-flex justify-content-center" style="width:100%; overflow-x:auto;">
+            <img class="chart" src="https://quickchart.io/chart?c={type:'pie',data:{labels:['Dispensed','Pending','Completed'],datasets:[{label:'Count',data:[{{dispensed_medicines_count}},{{pending_medicines_count}},{{completed_medicines_count}}]}]}}">
+          </div>
+        </div>
+        <div class="card-footer text-center text-dark">
+          <div class="row"> 
+            <div class="col-4 badge bg-primary">Dispensed: {{dispensed_medicines_count}}</div>
+            <div class="col-4 badge bg-warning text-dark">Pending: {{pending_medicines_count}}</div>
+            <div class="col-4 badge bg-danger">Completed: {{completed_medicines_count}}</div>
+          </div>  
+        </div>
+      </div>
+    </div>
+
+    
+
+  </div>
+</div>
+
+<script>
+  let table1 = new DataTable('#low-stock-medicines-table',{
+    "order": [[3, "asc"]]  // Sort by the first column (index 4) in ascending order by default
+  });
+  let table2 = new DataTable('#best-selling-medicines-table',{
+    "order": [[0, "desc"]]  // Sort by the first column (index 0) in descending order by default
+  });
+</script>
+{% endblock content %}

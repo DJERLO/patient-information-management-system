@@ -3,6 +3,9 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+#Node_Modoles
+node_modules/
+
 # Local development settings
 *.sqlite3
 

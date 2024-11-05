@@ -82,10 +82,6 @@
     }
     
 
-    .row {
-      margin: 10px auto;
-    }
-
     .table-responsive {
       text-wrap: wrap;
       text-overflow: clip;
@@ -160,22 +156,22 @@
           <div class="table-responsive p-3">
             <table class="table table-hover py-3" id="dev-table">
               <thead class="table-dark">
-                <tr>
-                  <th>Name</th>
-                  <th>Contact</th>
-                  <th>Address</th>
-                  <th>View Profile</th>
-                  <th>View Records</th>
+                <tr class="row">
+                  <th class="col text-truncate">Name</th>
+                  <th class="col text-truncate">Contact</th>
+                  <th class="col text-truncate">Address</th>
+                  <th class="col text-truncate">View Profile</th>
+                  <th class="col text-truncate">View Records</th>
                 </tr>
               </thead>
               <tbody>
                 {% for p in patientDischargeRecords %}
-                <tr>
-                  <td>{{ p.patientName }}</td>
-                  <td>{{ p.mobile }}</td>
-                  <td>{{ p.address }}</td>
-                  <td><a class="btn btn-primary btn-sm w-100 h-100" href="{% url 'admin-patient-details' p.patientId %}"><i class="bi bi-eye"></i></a></td>
-                  <td><a class="btn btn-secondary btn-sm w-100 h-100" href="{% url 'admin-view-invoice-records' p.patientId %}"><i class="bi bi-file-earmark-text"></i></a></td>
+                <tr class="row">
+                  <td class="col text-truncate">{{ p.patientName }}</td>
+                  <td class="col text-truncate">{{ p.mobile }}</td>
+                  <td class="col text-truncate">{{ p.address }}</td>
+                  <td class="col text-truncate"><a class="btn btn-primary btn-sm w-100 h-100" href="{% url 'admin-patient-details' p.patientId %}"><i class="bi bi-eye"></i></a></td>
+                  <td class="col text-truncate"><a class="btn btn-secondary btn-sm w-100 h-100" href="{% url 'admin-view-invoice-records' p.patientId %}"><i class="bi bi-file-earmark-text"></i></a></td>
                 </tr>
                 {% endfor %}
               </tbody>

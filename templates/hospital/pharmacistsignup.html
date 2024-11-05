@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+{% load static %}
+{% load widget_tweaks %}
+<html lang="en" dir="ltr">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PIMS - Register Pharmacist</title>
+  <link rel="icon" type="image/x-icon" href={% static "images/favicon.ico"%}>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+  <style type="text/css">
+    body {
+      color: #aa082e;
+      background-color: #b6bde7;
+      font-family: 'Roboto', sans-serif;
+      overflow-x: hidden;
+      height: 100dvh;
+    }
+    
+    a:link {
+      text-decoration: none;
+    }
+
+    .note {
+      text-align: center;
+      height: 80px;
+      background: -webkit-linear-gradient(left, #0072ff, #8811c5);
+      color: #fff;
+      font-weight: bold;
+      line-height: 80px;
+    }
+    
+    .form-content {
+      display: flex;
+      align-content:center ;
+      flex-direction: column;
+      padding: 5%;
+      border: 1px solid #ced4da;
+      margin-bottom: 2%;
+    }
+
+    .form-control, .form-floating {
+      border-radius: 1.5rem;
+    }
+
+    
+    .btnSubmit {
+      margin-top: 25px;
+      border: none;
+      border-radius: 1.5rem;
+      padding: 1%;
+      width: 20%;
+      min-width: 200px;
+      cursor: pointer;
+      background: #0062cc;
+      color: #fff;
+    }
+  </style>
+
+</head>
+
+<body>
+  {% include "hospital/navbar.html" %}
+  <br>
+  <br>
+  <br>
+  <br>
+
+  <form id="pharmacist-form" class="needs-validation" method="post" enctype="multipart/form-data" novalidate>
+    {% csrf_token %}
+    <div class="container register-form">
+        <div class="form">
+            <div class="note">
+                <p>Apply Pharmacist Registration</p>
+            </div>
+            <div class="form-content">
+              <!-- Add this code where you want to display alerts -->
+              <div class="alert-container">
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+              </div>
+              <div class="row">
+                <div class="col-md-12">
+                  <center>
+                    <label for="{{ profile_form.profile_pic.id_for_label }}">Profile Picture</label>
+                    <img class="mb-1" id="preview" src="{% static 'images/profile.webp' %}" alt="Preview" style="max-width: 100%; max-height: 150px; display: block;">
+                  </center>
+                  <div class="form-group my-2">
+                    {% render_field profile_form.profile_pic class="form-control form-control-lg" onchange="previewImage(this)" %}
+                    <div class="valid-feedback">
+                        Looks nice!
+                    </div>
+                    <div class="invalid-feedback">
+                        Provide your Profile Picture
+                    </div>
+                  </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="form-floating my-2">
+                      {% render_field user_form.first_name class="form-control" placeholder="First Name" id="floatingFirstName" name="first_name" %}
+                      <label class="fw-bold" for="floatingFirstName">First Name:</label>
+                      <div class="valid-feedback">
+                          Looks good!
+                      </div>
+                      <div class="invalid-feedback">
+                          Provide a First Name
+                      </div>
+                    </div>
+                    <div class="form-floating my-2">
+                      {% render_field user_form.last_name class="form-control" placeholder="Last Name" id="floatingLastName" name="last_name" %}
+                      <label class="fw-bold" for="floatingLastName">Last Name:</label>
+                      <div class="valid-feedback">
+                          Looks good!
+                      </div>
+                      <div class="invalid-feedback">
+                          Provide a Last Name
+                      </div>
+                    </div>
+                    <div class="form-floating my-2">
+                        {% render_field user_form.username class="form-control" placeholder="Username" id="floatingUsername" %}
+                        <label class="fw-bold" for="floatingUsername">Username:</label>
+                        <div class="valid-feedback">
+                            Looks good!
+                        </div>
+                        <div class="invalid-feedback">
+                            Provide a Username
+                        </div>
+                    </div>
+                    <div class="form-floating my-2">
+                        {% render_field user_form.email class="form-control" placeholder="Email" id="floatingEmail" %}
+                        <label class="fw-bold" for="floatingEmail">Email:</label>
+                        <div class="valid-feedback">
+                            Looks good!
+                        </div>
+                        <div class="invalid-feedback">
+                            Provide a valid email address
+                        </div>
+                    </div>
+                    <div class="input-group my-2 flex-nowrap">
+                        <button class="btn btn-outline-primary" type="button" id="togglePassword1">
+                          <i class="bi bi-eye-fill"></i>
+                        </button>
+                        <div class="form-floating flex-grow-1">
+                            {% render_field user_form.password1 class="form-control" placeholder="Password" id="floatingPassword1" pattern="^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*\W)(?!.* ).{8,32}$" data-bs-toggle="tooltip" data-bs-placement="top" title="Password must contain at least one digit, one lowercase letter, one uppercase letter, one special character, and be between 8 to 32 characters long" %}
+                          <label class="fw-bold" for="floatingPassword1">Password</label>
+                        </div> 
+                    </div>
+                      
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="form-floating my-2">
+                        {% render_field profile_form.contact_email class="form-control" placeholder="Contact Email" id="floatingContactEmail" %}
+                        <label class="fw-bold" for="floatingContactEmail">Contact Email:</label>
+                        <div class="valid-feedback">
+                            Looks good!
+                        </div>
+                        <div class="invalid-feedback">
+                            Provide a Contact Email
+                        </div>
+                    </div>
+                    <div class="form-floating my-2">
+                        {% render_field profile_form.contact_phone class="form-control" placeholder="Contact Phone" id="floatingContactPhone" pattern="(^(\+)(\d){12}$)|(^\d{11}$)" %}
+                        <label class="fw-bold" for="floatingContactPhone">Contact Phone:</label>
+                        <div class="valid-feedback">
+                            Looks good!
+                        </div>
+                        <div class="invalid-feedback">
+                            Provide a Contact Phone
+                        </div>
+                    </div>
+                    <div class="form-floating my-2">
+                        {% render_field profile_form.license_number class="form-control" placeholder="License Number" id="floatingLicenseNumber" %}
+                        <label class="fw-bold" for="floatingLicenseNumber">License Number:</label>
+                        <div class="valid-feedback">
+                            Looks good!
+                        </div>
+                        <div class="invalid-feedback">
+                            Provide a License Number
+                        </div>
+                    </div>
+                    <div class="form-floating my-2">
+                        {% render_field profile_form.address class="form-control" placeholder="Address" id="floatingAddress" %}
+                        <label class="fw-bold" for="floatingAddress">Address:</label>
+                        <div class="valid-feedback">
+                            Looks good!
+                        </div>
+                        <div class="invalid-feedback">
+                            Provide an Address
+                        </div>
+                    </div>
+                    <div class="input-group my-2 flex-nowrap">
+                      <button class="btn btn-outline-primary" type="button" id="togglePassword2">
+                        <i class="bi bi-eye-fill"></i>
+                      </button>
+                      <div class="form-floating flex-grow-1">
+                          {% render_field user_form.password2 class="form-control" placeholder="Password" id="floatingPassword2" pattern="^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*\W)(?!.* ).{8,32}$" data-bs-toggle="tooltip" data-bs-placement="top" title="Password must contain at least one digit, one lowercase letter, one uppercase letter, one special character, and be between 8 to 32 characters long" %}
+                        <label class="fw-bold" for="floatingPassword1">Repeat Password</label>
+                      </div> 
+                    </div>
+                </div>
+                <div class="col-md-12">
+                  <div class="form-floating my-2">
+                    {% render_field profile_form.specialization class="form-control" placeholder="Specialization" id="floatingSpecialization" %}
+                    <label class="fw-bold" for="floatingSpecialization">Specialization:</label>
+                    <div class="valid-feedback">
+                        Looks good!
+                    </div>
+                    <div class="invalid-feedback">
+                        Provide a Specialization
+                    </div>
+                </div>
+                </div>
+            </div>
+                    <center><button type="submit" class="btnSubmit">Submit</button></center> 
+                    <div class="text-center">Already have an account? <a href="adminlogin">Login here</a></div>
+                </div>
+               
+            </div>
+        </div>
+    </div>
+</form>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+    const passwordField1 = document.getElementById('floatingPassword1');
+    const passwordField2 = document.getElementById('floatingPassword2'); // Define passwordField2
+    const togglePassword1 = document.getElementById('togglePassword1');
+    const togglePassword2 = document.getElementById('togglePassword2'); // Define togglePassword2
+    const eyeIcon1 = document.querySelector('i');
+
+    // Function to check if passwords match and meet additional rules
+    function passwordsMatch() {
+      const password1 = passwordField1.value.trim();
+      const password2 = passwordField2.value.trim();
+
+      // Check if passwords are not blank
+      if (password1 === '' && password2 === '') {
+        // If both passwords are blank, return true (no validation needed)
+        return true;
+      } else if (password1 === '' || password2 === '') {
+        // If one of the passwords is blank while the other is not, return false
+        return false;
+      } else {
+        // If both passwords are not blank, check if they match
+        return password1 === password2;
+      }
+    }
+
+    // Disable Bootstrap form validation
+    var forms = document.querySelectorAll('.needs-validation');
+    Array.prototype.slice.call(forms)
+      .forEach(function(form) {
+        form.addEventListener('submit', function(event) {
+          if (!passwordsMatch()) {
+            // Prevent form submission
+            event.preventDefault();
+            // Display password validation alert
+            const alertContainer = document.querySelector('.alert-container');
+            alertContainer.innerHTML = '<div class="alert alert-danger alert-dismissible fade show" role="alert">Passwords do not match! <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>';
+            // Add invalid-feedback class to password fields
+            passwordField1.classList.add('is-invalid');
+            passwordField2.classList.add('is-invalid');
+          } else {
+            const alertContainer = document.querySelector('.alert-container');
+            alertContainer.innerHTML = '<div class="alert alert-danger alert-dismissible fade show" role="alert">Please fill in all fields before submitting.<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>';
+            // Remove invalid-feedback class if passwords match
+            passwordField1.classList.remove('is-invalid');
+            passwordField2.classList.remove('is-invalid');
+          }
+          if (!form.checkValidity()) {
+            event.preventDefault();
+            event.stopPropagation();
+          }
+          form.classList.remove('needs-validation');
+          form.classList.add('was-validated');
+        }, false);
+      });
+
+    // Show & Hide Password
+    togglePassword1.addEventListener('click', function() {
+      const type = passwordField1.getAttribute('type') === 'password' ? 'text' : 'password';
+      passwordField1.setAttribute('type', type);
+      this.innerHTML = type === 'password' ? '<i class="bi bi-eye-fill"></i>' : '<i class="bi bi-eye-slash-fill"></i>';
+    });
+
+    togglePassword2.addEventListener('click', function() {
+      const type = passwordField2.getAttribute('type') === 'password' ? 'text' : 'password';
+      passwordField2.setAttribute('type', type);
+      this.innerHTML = type === 'password' ? '<i class="bi bi-eye-fill"></i>' : '<i class="bi bi-eye-slash-fill"></i>';
+    });
+
+  });
+
+  var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+  var tooltipList = tooltipTriggerList.map(function(tooltipTriggerEl) {
+    return new bootstrap.Tooltip(tooltipTriggerEl)
+  })
+
+  function previewImage(input) {
+    var preview = document.getElementById('preview');
+    var file = input.files[0];
+    var reader = new FileReader();
+
+    reader.onloadend = function() {
+      preview.src = reader.result;
+      preview.style.display = 'block';
+    };
+
+    if (file) {
+      reader.readAsDataURL(file);
+    } else {
+      preview.src = '{% load static %}';
+    }
+  }
+</script>
+
+</body>
+
+</html>

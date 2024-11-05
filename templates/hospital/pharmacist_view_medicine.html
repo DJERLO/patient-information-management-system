@@ -1,0 +1,128 @@
+{% extends 'hospital/pharmacist_base.html' %}
+{% block content %}
+<div class="container">
+    <h2 class="mt-5 mb-4 text-center">Medicine Details</h2>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="card-title mb-0">Medicine Information</h3>
+                </div>
+                <div class="card-body">
+                  <div class="container">
+                    
+                    <div class="row">
+                      
+                      <div class="col-md-6">
+                        <img class="img-thumbnail" src="{{medicine.profile_pic.url}}" alt="medicine_image" srcset="" width="100%">
+                      </div>
+
+                      <div class="col-md-6">
+                        <ul class="list-group list-group-flush">
+                          <li class="list-group-item">Name: {{ medicine.name }}</li>
+                          <li class="list-group-item">Description: {{ medicine.description }}</li>
+                          <li class="list-group-item">Dosage: {{ medicine.dosage }}</li>
+                          <li class="list-group-item">Expiry Date: {{ medicine.expiry_date }}</li>
+                          <li class="list-group-item">Price: ₱ {{ medicine.unit_price }}</li>
+                          <li class="list-group-item">Quantity: {{ medicine.quantity }}</li>
+                          <li class="list-group-item">Category: {{ medicine.category }}</li>
+                          <li class="list-group-item">Manufacturer: {{ medicine.manufacturer }}</li>
+                        </ul>
+                      </div>
+                    
+                    </div>
+
+                  </div>
+
+                </div>
+                
+                <div class="row mt-4">
+                  <div class="col-md-12">
+                      <div class="card mb-4">
+                          <div class="card-header bg-primary text-white">
+                              <h3 class="card-title mb-0">Related Medicines</h3>
+                          </div>
+                          <div class="card-body flex-grow-1" style="overflow: auto;">
+                              <div class="table-responsive p-4">
+                                  <div class="card-container row justify-content-center">
+                                      {% if related_medicines %}
+                                          {% for related_medicine in related_medicines %}
+                                              <div class="col-xl-3 col-lg-4 col-md-6 col-sm-12 mb-3"> <!-- Adjust column sizes to make the card smaller -->
+                                                  <div class="card text-center">
+                                                      <img src="{{ related_medicine.profile_pic.url }}" class="card-img-top" alt="Medicine Image" width="150px" height="150px">
+                                                      {% if related_medicine.category == 'Prescription' %}
+                                                          <span class="fs-4 py-6 badge bg-dark position-absolute top-0 left-0">RX</span>
+                                                      {% endif %}
+                                                      <div class="card-body">
+                                                          <h5 class="card-title text-truncate">{{ related_medicine.name }}</h5>
+                                                          <div class="row">
+                                                              <p class="card-text">Price: ₱ {{ related_medicine.unit_price }}</p>
+                                                              <p class="card-text">Quantity: {{ related_medicine.quantity }}</p>
+                                                              <p class="card-text text-truncate">Manufacturer: {{ related_medicine.manufacturer }}</p>
+                                                              <p class="card-text text-truncate">Expiry Date: {{ related_medicine.expiry_date }}</p>
+                                                          </div>
+                                                      </div>
+                                                      <div class="card-footer mx-6">
+                                                          <a href="{% url 'pharmacist-view-medicine' related_medicine.id %}" class="btn btn-primary">View</a>
+                                                          <a href="{% url 'pharmacist-update-medicine' related_medicine.id %}" class="btn btn-secondary">Edit</a>
+                                                      </div>
+                                                  </div>
+                                              </div>
+                                          {% endfor %}
+                                      {% else %}
+                                          <div class="col-xl-3 col-lg-4 col-md-6 col-sm-12 mb-3 text-center">
+                                              <h1 class="display-6 text-wrap">No Related Medicines Found</h1>
+                                          </div>
+                                      {% endif %}
+                                  </div>  
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+                
+                  {% if related_medicines %}
+                  <!-- Pagination -->
+                  <nav aria-label="Page navigation">
+                    <ul class="pagination justify-content-center">
+                      {% if related_medicines.has_previous %}
+                      <li class="page-item">
+                        <a class="page-link" href="?page=1" aria-label="First">
+                          <span aria-hidden="true">&laquo;&laquo;</span>
+                        </a>
+                      </li>
+                      <li class="page-item">
+                        <a class="page-link" href="?page={{ medicines.previous_page_number }}" aria-label="Previous">
+                          <span aria-hidden="true">&laquo;</span>
+                        </a>
+                      </li>
+                      {% endif %}
+                  
+                      {% for num in page_range %}
+                      <li class="page-item {% if num == medicines.number %}active{% endif %}">
+                        <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                      </li>
+                      {% endfor %}
+                  
+                      {% if medicines.has_next %}
+                      <li class="page-item">
+                        <a class="page-link" href="?page={{ related_medicines.next_page_number }}" aria-label="Next">
+                          <span aria-hidden="true">&raquo;</span>
+                        </a>
+                      </li>
+                      <li class="page-item">
+                        <a class="page-link" href="?page={{ related_medicines.paginator.num_pages }}" aria-label="Last">
+                          <span aria-hidden="true">&raquo;&raquo;</span>
+                        </a>
+                      </li>
+                      {% endif %}
+                    </ul>
+                  </nav>
+                  {% endif %}
+                
+                  
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

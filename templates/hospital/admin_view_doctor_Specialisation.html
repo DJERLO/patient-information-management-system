@@ -14,10 +14,6 @@
       text-align: center;
     }
 
-    .row {
-      margin: 10px auto;
-    }
-
     .table-responsive {
       text-wrap: wrap;
     }
@@ -60,7 +56,7 @@
   </style>
 </head>
 <br><br>
-<div class="container-fluid view-departments-doctors-panel">
+<div class="view-departments-doctors-panel">
   <div class="card border border-dark">
     <div class="card-header bg-primary text-white">
       <h6 class="card-title">Department & Staffs</h6>
@@ -69,32 +65,32 @@
       <div class="table-responsive">
         <table class="table table-hover py-3" id="dev-table">
           <thead class="table-dark">
-            <tr>
-              <th>Department</th>
-              <th>Staff Name</th>
-              <th>Contact</th>
+            <tr class="row px-4">
+              <th class="col text-truncate">Department</th>
+              <th class="col text-truncate">Staff Name</th>
+              <th class="col text-truncate">Contact</th>
             </tr>
           </thead>
           <tbody>
             {% for doctor in doctors %}
-            <tr>
-              <td>{{ doctor.department }}</td>
-              <td>{{ doctor.get_name }}</td>
-              <td>{{ doctor.mobile }}</td>
+            <tr class="row px-4">
+              <td class="col text-truncate">{{ doctor.department }}</td>
+              <td class="col text-truncate">{{ doctor.get_name }}</td>
+              <td class="col text-truncate">{{ doctor.mobile }}</td>
             </tr>
             {% endfor %}
             {% for staff_member in staff %}
               {% if staff_member.user.is_superuser %}
-              <tr>
-                  <td>Medical Staff Admin</td>
-                  <td>{{ staff_member.user.get_full_name }}</td>
-                  <td>{{ staff_member.mobile }}</td>
+              <tr class="row px-4">
+                  <td class="col text-truncate">Medical Staff Admin</td>
+                  <td class="col text-truncate">{{ staff_member.user.get_full_name }}</td>
+                  <td class="col text-truncate">{{ staff_member.mobile }}</td>
               </tr>
               {% else %}
-              <tr>
-                  <td>Medical Staff</td>
-                  <td>{{ staff_member.user.get_full_name }}</td>
-                  <td>{{ staff_member.mobile }}</td>
+              <tr class="row px-4">
+                  <td class="col text-truncate">Medical Staff</td>
+                  <td class="col text-truncate">{{ staff_member.user.get_full_name }}</td>
+                  <td class="col text-truncate">{{ staff_member.mobile }}</td>
               </tr>
               {% endif %}
             {% endfor %}

@@ -7,14 +7,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>PIMS - Patient {{request.user.first_name}} {{request.user.last_name}}</title>
   <link rel="icon" type="image/x-icon" href={% static "images/favicon.ico"%}>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
+  
   <style media="screen">
     a:link {
       text-decoration: none;
@@ -84,7 +83,6 @@
 
     p {
       text-align: center;
-
     }
 
 
@@ -356,7 +354,7 @@
     }
 
     /* Initially hide the camera icon */
-    .bi-camera-fill {
+    .bi-gear-fill {
         font-size: 2.5em;
         color: #19191a;
         width: 100%;
@@ -368,7 +366,7 @@
     }
 
     /* Show the camera icon on hover */
-    .bi-camera-fill:hover {
+    .bi-gear-fill:hover {
         opacity: 1; /* Show the icon on hover */
         transform: scale(1.050);
     }
@@ -379,7 +377,7 @@
       .navbar-brand {
         font-size: 1.2em; /* Font size for screens with a max-width of 768px */
       }
-      .bi-camera-fill {
+      .bi-gear-fill {
         font-size: 1.2em;
     }
   }
@@ -388,7 +386,7 @@
       .navbar-brand {
         font-size: 1em; /* Font size for screens with a max-width of 576px */
       }
-      .bi-camera-fill:hover {
+      .bi-gear-fill:hover {
         opacity: 1; /* Show the icon on hover */
         transform: scale(0.725);
     }
@@ -401,7 +399,6 @@
 
   </style>
 </head>
-
 <body>
   <!-- partial:index.partial.html -->
   <nav class="menu" tabindex="0">
@@ -410,10 +407,10 @@
       <a href="#" data-bs-toggle="modal" data-bs-target="#profilePicModal" class="position-relative">
       {% if patient.profile_pic %}
         <img class="rounded-circle" src="{{ patient.profile_pic.url }}" alt="Profile Pic"/>
-        <span class="position-absolute top-50 start-50 translate-middle bi-camera-fill"></span>
+        <span class="position-absolute top-50 start-50 translate-middle bi-gear-fill"></span>
       {% else %}
         <img class="rounded-circle" src="{% static 'images/adminpropic.png' %}" alt="Default Profile Pic"/>
-        <span class="position-absolute top-50 start-50 translate-middle bi-camera-fill"></span>
+        <span class="position-absolute top-50 start-50 translate-middle bi-gear-fill"></span>
       {% endif %}
       </a>
       <br><br>
@@ -444,49 +441,113 @@
     </ul>
   </nav>
   <!-- Modal -->
-  <div class="container-fluid">
+<div class="container-fluid">
     <div class="modal fade" id="profilePicModal" tabindex="-1" aria-labelledby="profilePicModalLabel" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
           <div class="modal-content">
               <div class="modal-header">
-                  <h4 class="modal-title" id="profilePicModalLabel">Change Profile Picture</h4>
+                  <h4 class="modal-title" id="profilePicModalLabel">User Settings</h4>
                   <button type="button" class="btn btn-danger border border-dark btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
               </div>
               <div class="modal-body d-flex flex-column align-items-center">
                 <img id="preview" class="border border-dark rounded-circle mb-3" src="{% if patient.profile_pic %}{{ patient.profile_pic.url }}{% else %}{% static 'images/adminpropic.png' %}{% endif %}" alt="Profile Pic" width="150px" height="150px"/>
-                <form id="profilePicForm" method="post" enctype="multipart/form-data" action="/patient-change-profile-pic" class="w-100">
-                  {% csrf_token %}  
+                <form id="patientUserForm" method="post" enctype="multipart/form-data" action="/patient-update-profile-details/" class="w-100 h-100">
+                  {% csrf_token %}
                   <input type="hidden" name="user_id" value="{{ request.user.id }}">
-                  <input type="file" name="profile_pic" id="profilePicInput" onchange="previewImage(this)" class="form-control mb-3" placeholder="No file chosen">
-                  <center><button type="submit" class="btn btn-primary">Save Changes</button></center>
+                  <label for="profilePicInput" class="form-label">Change Profile Pic</label>
+                  <input type="file" name="profile_pic" id="profilePicInput" onchange="previewImage(this)" class="form-control mb-2" placeholder="No file chosen">
+                  <div class="row g-3">
+                    <div class="col-md-6">
+                      <div class="mb-2">
+                        <label for="firstNameInput" class="form-label">First Name</label>
+                        <input type="text" name="first_name" class="form-control" id="firstNameInput" value="{{ request.user.first_name }}">
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="mb-2">
+                        <label for="lastNameInput" class="form-label">Last Name</label>
+                        <input type="text" name="last_name" class="form-control" id="lastNameInput" value="{{ request.user.last_name }}">
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="mb-2">
+                        <label for="usernameInput" class="form-label">Username</label>
+                        <input type="text" name="username" class="form-control" id="usernameInput" value="{{ request.user.username }}">
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <label for="password" class="form-label">Change Password</label>
+                      <div class="input-group mb-2">
+                        <input type="password" name="password" class="form-control" id="passwordInput">
+                        <button class="btn btn-outline-primary" type="button" id="togglePassword1">
+                          <i class="bi bi-eye-fill"></i>
+                        </button>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="mb-2">
+                        <label for="emailInput" class="form-label">Email</label>
+                        <input type="email" name="email" class="form-control" id="emailInput" value="{{ request.user.email }}">
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="mb-2">
+                        <label for="mobileInput" class="form-label">Mobile</label>
+                        <input type="text" name="mobile" class="form-control" id="mobileInput" value="{{ patient.mobile }}">
+                      </div>
+                    </div>
+                    <div class="col-md-12">
+                      <div class="mb-2">
+                        <label for="addressInput" class="form-label">Address</label>
+                        <input type="text" name="address" class="form-control" id="addressInput" value="{{ patient.address }}">
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="mb-2">
+                        <label for="genderInput" class="form-label">Gender</label>
+                        <select name="gender" class="form-select" id="genderInput">
+                          <option value="Male" {% if patient.gender == 'Male' %} selected {% endif %}>Male</option>
+                          <option value="Female" {% if patient.gender == 'Female' %} selected {% endif %}>Female</option>
+                          <option value="Other" {% if patient.gender == 'Other' %} selected {% endif %}>Other</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="mb-2">
+                          <label for="DOBInput" class="form-label">Date of Birth</label>
+                          <input type="date" name="DOB" class="form-control" id="DOBInput" value="{% if patient.date_of_birth %}{{ patient.date_of_birth|date:'Y-m-d' }}{% endif %}">
+                      </div>
+                  </div>
+                  <center><button type="submit" class="btn btn-primary mb-3">Save Changes</button></center>
                 </form>
               </div>
           </div>
       </div>
     </div>
   </div>
-  <main>
-    <!-- nav start -->
-  <div class="bs-example">
-    <nav class="navbar navbar-expand-md navbar-dark fixed-top" style="background:#337AB7;">
-        <div class="container-fluid">
-            <a href="/patient-dashboard" class="navbar-brand">HOSPITAL MANAGEMENT</a>
-            <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse justify-content-end" id="navbarCollapse">
-                <ul class="navbar-nav">
-                    <li class="nav-item">
-                        <form id="logoutForm" action="{% url 'logout' %}" method="post">
-                            {% csrf_token %}
-                            <a href="#" class="nav-link" id="logoutLink">Logout</a>
-                        </form>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
-  </div>
+</div>
+<main>
+   <!-- nav start -->
+<div class="bs-example">
+  <nav class="navbar navbar-expand-md navbar-dark fixed-top" style="background:#337AB7;">
+    <div class="container-fluid">
+      <a href="/patient-dashboard" class="navbar-brand">HOSPITAL MANAGEMENT</a>
+      <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse justify-content-end" id="navbarCollapse">
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <form id="logoutForm" action="{% url 'logout/' %}" method="post">
+              {% csrf_token %}
+              <a href="#" class="nav-link" id="logoutLink">Logout</a>
+            </form>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+</div>
     <!-- nav end -->
     <br><br>
     <!-- content start-->
@@ -503,6 +564,7 @@
     <br><br><br><br><br><br><br><br><br><br><br><br>
       {% include 'hospital/footer.html' %}
   </main>
+</body>
   <script>
         document.getElementById('logoutLink').addEventListener('click', function() {
             document.getElementById('logoutForm').submit();
@@ -530,32 +592,49 @@
           });
     });
 
+    // Variable to store the selected file
+    let selectedFile = null;
+
+    // Function to preview the selected image and store the selected file
     function previewImage(input) {
-      var preview = document.getElementById('preview');
-      var file = input.files[0];
-      var reader = new FileReader();
+        var preview = document.getElementById('preview');
+        var file = input.files[0];
+        var reader = new FileReader();
 
-      reader.onloadend = function () {
-        preview.src = reader.result;
-      };
+        reader.onloadend = function () {
+            preview.src = reader.result;
+        };
 
-      if (file) {
-        reader.readAsDataURL(file);
-      } else {
-        preview.src = '{% if patient.profile_pic %}{{ patient.profile_pic.url }}{% else %}{% static "images/adminpropic.png" %}{% endif %}';
-      }
+        if (file) {
+            // Store the selected file in the variable
+            selectedFile = file;
+            reader.readAsDataURL(file);
+        } else {
+            // If no file is selected, reset the selected file variable
+            selectedFile = null;
+            preview.src = '{% if patient.profile_pic %}{{ patient.profile_pic.url }}{% else %}{% static "images/adminpropic.png" %}{% endif %}';
+        }
     }
 
-    //API
+    // Add an event listener to the modal when it's hidden
+    $('#profilePicModal').on('hidden.bs.modal', function (e) {
+        var preview = document.getElementById('preview');
+        // Set the src attribute of the preview image to the default profile picture URL
+        preview.src = '{% if patient.profile_pic %}{{ patient.profile_pic.url }}{% else %}{% static "images/adminpropic.png" %}{% endif %}';
+        // Reset the file input to the selected file (if any)
+        document.getElementById('profilePicInput').value = null;
+    });
+
+    //REST API
     document.addEventListener('DOMContentLoaded', function() {
-      document.getElementById('profilePicForm').addEventListener('submit', function(event) {
+      document.getElementById('patientUserForm').addEventListener('submit', function(event) {
         event.preventDefault(); // Prevent the default form submission
 
         // Get the form data
         let formData = new FormData(this);
 
         // Send a POST request to the server
-        fetch('/patient-change-profile-pic/', {
+        fetch('/patient-update-profile-details/', {
           method: 'POST',
           body: formData
         })
@@ -571,7 +650,7 @@
             Swal.fire({
               icon: 'success',
               title: 'Success!',
-              text: 'Profile picture updated successfully!',
+              text: 'Your details have been successfully updated.',
               showConfirmButton: true, // Show the "OK" button
               allowOutsideClick: false // Prevent dismissing the alert by clicking outside
             }).then((result) => {
@@ -583,7 +662,7 @@
             Swal.fire({
               icon: 'error',
               title: 'Oops...',
-              text: 'Profile picture upload failed!'
+              text: 'Failed to update your details. Please try again later.'
             });
           }
         })
@@ -593,7 +672,17 @@
       });
     });
 
-    </script>
+    //Toggle Password
+    const passwordField = document.getElementById('passwordInput');
+    const togglePassword1 = document.getElementById('togglePassword1');
+    const eyeIcon1 = document.querySelector('i');
 
-</body>
+    // Show & Hide Password
+    togglePassword1.addEventListener('click', function() {
+      const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
+      passwordField.setAttribute('type', type);
+      this.innerHTML = type === 'password' ? '<i class="bi bi-eye-fill"></i>' : '<i class="bi bi-eye-slash-fill"></i>';
+    });
+
+    </script>
 </html>

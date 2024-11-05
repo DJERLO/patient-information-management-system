@@ -6,6 +6,7 @@ Welcome to the Patient Information Management System (PIMS). This project effici
 
 ## Features Added:
 ### Added, Changes, and Fixes:
+- **Added User Settings Form:** Implemented a user settings form to allow users to update & manage their profiles.
 - **Added New Charts on Admin Dashboard**
 - **Admin, Doctor, Patient Dashboard Overhaul**
 - **Floating Forms with Toggleable Passwords**
@@ -18,6 +19,10 @@ Welcome to the Patient Information Management System (PIMS). This project effici
 - **Improved Contact Us Form:** Enhanced the Contact Us form for better communication and user interaction.
 
 ### User Experience Enhancements:
+- **Integration of Main Functions:** Combined various main functions into a single page rather than segregating them.
+- **Streamlining Data Actions:** Managed different data actions within each profile for better organization and efficiency.
+- **Register Forms Validation:** Adjusted register forms so validation does not occur initially.
+- **Billing Management:** Transferred billing management responsibility from Admin to Staff, aligning with appropriate roles.
 - **Strong Passwords & View Toggle Password for All Users:** Implemented strong password functionality with the ability to toggle password visibility.
 - **Session Timeouts:** Automatically logs out users after a certain period of inactivity or when the browser is closed.
 - **Avatar Menu Update:** Users can easily change their profile pictures with a few clicks.
@@ -45,10 +50,9 @@ Welcome to the Patient Information Management System (PIMS). This project effici
 - Password Reset Functionality
 - Email Verification (6-digit code)
 - Planning to change Schema DB for HospitalStaff and Doctor to have Shift Time (Schedules)
-- User Setting Profile (Updating their own)
 - Prescription System For Doctors & Patients (2025)
 - Pharmacy Management System (2025)
-- Chat Rooms
+- Chat Rooms (2025)
 
 # Screenshots
 

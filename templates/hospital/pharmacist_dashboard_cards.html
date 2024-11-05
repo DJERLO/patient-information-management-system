@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+  <meta charset="utf-8">
+  <title></title>
+  
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+  <style media="screen">
+    
+    .market-update-block {
+      display: flex;
+      justify-content: space-between;
+      flex-direction: row;
+      flex-basis: calc(50% - 1.6em);
+      margin-bottom: 1.6em;
+      padding: 2em 2em;
+      background: #999;
+      box-sizing: border-box;
+      resize: both;
+      width: 100%;
+      height: auto;
+    }
+    
+    .fixed-top{
+      position: absolute;
+    }
+    
+    img{
+      max-width: 100%;
+      margin-bottom: 15px;
+      border-radius: 20px;
+    }
+  
+    .market-update-block h3 {
+      color: #fff;
+      font-size: 2.5em;
+      font-family: 'Carrois Gothic', sans-serif;
+    }
+  
+    .market-update-block h4 {
+      font-size: 1.2em;
+      color: #fff;
+      font-family: 'Carrois Gothic', sans-serif;
+    }
+  
+    .market-update-block p {
+      color: #fff;
+      font-size: 0.8em;
+      line-height: 1.8em;
+    }
+  
+    .market-update-block.clr-block-1 {
+      background: #f44336;
+    }
+  
+    .market-update-block.clr-block-2 {
+      background: #FC8213;
+    }
+  
+    .market-update-block.clr-block-3 {
+      background: #3f51b5;
+    }
+  
+    .market-update-block:hover {
+      background: #3C3C3C;
+      transform: scale3d(1.025, 1.025, 1.025);
+    }
+  
+    .market-update-right i {
+      float: right;
+      font-size: 2.5em;
+      width: 80px;
+      height: 80px;
+      background: #fff;
+      text-align: center;
+      border-radius: 50px;
+      -webkit-border-radius: 50px;
+      -moz-border-radius: 50px;
+      -o-border-radius: 50px;
+      line-height: 1.2em; 
+      margin-top: 0.465em;
+      margin-right: 1.0em;
+    }
+  
+    .market-update-right i.fa.fa-user-o {
+      color: #68AE00;
+    }
+  
+    .market-update-right i.fa.fa-user-md {
+      color: #FC8213;
+    }
+  
+    .market-update-right i.fa.fa-calendar {
+      color: #337AB7;
+    }
+  
+    .market-update-left {
+      float: left;
+      padding: 0px;
+      margin-right: 2em;
+      text-wrap: nowrap;
+    }
+
+    @media screen and (min-width: 768px) and (max-width: 1130px) {
+      .market-update-block{
+        height: auto;
+        padding: 2em 2em;
+      }
+
+        .market-update-right i {
+          margin-right: 1.0rem;
+      }
+    }
+
+    @media screen and (min-width: 200px) and (max-width: 767px) {
+      .market-update-block{
+        height: auto;
+        padding: 0.5em 0.5em;
+      }
+
+        .market-update-right i {
+          margin-right: 0.5rem;
+      }
+    }
+
+  </style>
+  
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<div class="container-fluid market-updates">
+  <div class="row">
+    
+    <div class="col-xl-4">
+      <div class="market-update-block clr-block-1">
+        <div class="market-update-left col-xl-6">
+          <h3>{{ medicines_count }}</h3>
+          <h4>Total Medicines</h4>
+          <p>Low Stock: {{ medicines_low_stock_count }}</p>
+        </div>
+        <div class="market-update-right col-xl-6">
+          <i class="fa fa-medkit"></i>
+        </div>
+      </div>
+    </div>
+    
+    <div class="col-xl-4">
+      <div class="market-update-block clr-block-2">
+        <div class="market-update-left col-xl-6">
+          <h3>{{ total_manufacturers }}</h3>
+          <h4>Total Manufacturers</h4>
+          <p>Needs Approval: 0</p> <!-- Needs to be updated -->
+        </div>
+        <div class="market-update-right col-xl-6">
+          <i class="fa fa-industry"></i>
+        </div>
+      </div>
+    </div>
+    
+    <div class="col-xl-4">
+      <div class="market-update-block clr-block-3">
+        <div class="market-update-left col-xl-6">
+          <h3>{{ expired_medicines_count }}</h3>
+          <h4>Expired Medicines</h4>
+          <p>Near Expiration Date: {{ near_expiration_medicines_count }}</p>
+        </div>
+        <div class="market-update-right col-xl-6">
+          <i class="fa fa-pills"></i>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+</html>

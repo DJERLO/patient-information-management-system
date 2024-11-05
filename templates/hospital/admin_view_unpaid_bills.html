@@ -19,11 +19,6 @@
       font-size: 1.2em;
     }
     
-
-    .row {
-      margin: 10px auto;
-    }
-
     .table-responsive {
       text-wrap: wrap;
       text-overflow: clip;
@@ -75,26 +70,26 @@
       <div class="table-responsive p-3">
         <table class="table table-hover py-3" id="dev-table">
           <thead class="table-dark">
-            <tr>
-              <th>Invoice No.</th>
-              <th>Name</th>
-              <th>Contact</th>
-              <th>Address</th>
-              <th>View Profile</th>
-              <th>Invoice</th>
-              <th>Mark Paid</th>
+            <tr class="row">
+              <th class="col text-truncate">Invoice No.</th>
+              <th class="col text-truncate">Name</th>
+              <th class="col text-truncate">Contact</th>
+              <th class="col text-truncate">Address</th>
+              <th class="col text-truncate">View Profile</th>
+              <th class="col text-truncate">Invoice</th>
+              <th class="col text-truncate">Mark Paid</th>
             </tr>
           </thead>
           <tbody>
             {% for p in patients_with_unpaid_bills %}
-            <tr>
-              <td>{{ p.id }}</td>
-              <td>{{ p.patientName }}</td>
-              <td>{{ p.mobile }}</td>
-              <td>{{ p.address }}</td>
-              <td><a class="btn btn-primary btn-sm w-100 h-100" href="{% url 'admin-patient-details' p.patientId %}"><i class="bi bi-eye"></i></a></td>
-              <td><a class="btn btn-secondary btn-sm w-100 h-100" href="{% url 'admin-view-patient-invoice' patientId=p.patientId discharge_id=p.id %}"><i class="bi bi-file-earmark-text"></i></a></td>              
-              <td><a class="btn btn-success btn-sm pay-btn w-100 h-100" href="{% url 'mark-as-paid' patientId=p.patientId discharge_id=p.id %}"><i class="bi bi-check2"></i></a></td>
+            <tr class="row">
+              <td class="col text-truncate">{{ p.id }}</td>
+              <td class="col text-truncate">{{ p.patientName }}</td>
+              <td class="col text-truncate">{{ p.mobile }}</td>
+              <td class="col text-truncate">{{ p.address }}</td>
+              <td class="col text-truncate"><a class="btn btn-primary btn-sm w-100 h-100" href="{% url 'admin-patient-details' p.patientId %}"><i class="bi bi-eye"></i></a></td>
+              <td class="col text-truncate"><a class="btn btn-secondary btn-sm w-100 h-100" href="{% url 'admin-view-patient-invoice' patientId=p.patientId discharge_id=p.id %}"><i class="bi bi-file-earmark-text"></i></a></td>              
+              <td class="col text-truncate"><a class="btn btn-success btn-sm pay-btn w-100 h-100" href="{% url 'mark-as-paid' patientId=p.patientId discharge_id=p.id %}"><i class="bi bi-check2"></i></a></td>
             </tr>
             {% endfor %}
           </tbody>

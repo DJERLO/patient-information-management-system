@@ -20,10 +20,6 @@
     }
     
 
-    .row {
-      margin: 10px auto;
-    }
-
     .table-responsive {
       text-wrap: wrap;
       text-overflow: clip;
@@ -75,22 +71,22 @@
       <div class="table-responsive p-3">
         <table class="table table-hover py-3" id="dev-table">
           <thead class="table-dark">
-            <tr>
-              <th>Name</th>
-              <th>Contact</th>
-              <th>Address</th>
-              <th>View</th>
-              <th>Re-Admit</th>
+            <tr class="row">
+              <th class="col text-truncate">Name</th>
+              <th class="col text-truncate">Contact</th>
+              <th class="col text-truncate">Address</th>
+              <th class="col text-truncate">View</th>
+              <th class="col text-truncate">Re-Admit</th>
             </tr>
           </thead>
           <tbody>
             {% for p in deactivated_patients %}
             <tr>
-              <td>{{ p.get_name }}</td>
-              <td>{{ p.mobile }}</td>
-              <td>{{ p.address }}</td>
-              <td><a class="btn btn-primary btn-sm w-100 h-100" href="{% url 'admin-patient-details' p.id %}"><i class="bi bi-eye"></i></a></td>
-              <td><a class="btn btn-success btn-sm w-100 h-100" href="{% url 'admin-activate-patient' p.id %}"><i class="bi bi-arrow-repeat"></i></a></td>
+              <td class="col text-truncate">{{ p.get_name }}</td>
+              <td class="col text-truncate">{{ p.mobile }}</td>
+              <td class="col text-truncate">{{ p.address }}</td>
+              <td class="col text-truncate"><a class="btn btn-primary btn-sm w-100 h-100" href="{% url 'admin-patient-details' p.id %}"><i class="bi bi-eye"></i></a></td>
+              <td class="col text-truncate"><a class="btn btn-success btn-sm w-100 h-100" href="{% url 'admin-activate-patient' p.id %}"><i class="bi bi-arrow-repeat"></i></a></td>
             </tr>
             {% endfor %}
           </tbody>

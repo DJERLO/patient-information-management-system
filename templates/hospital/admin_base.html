@@ -448,8 +448,8 @@
     }
 
     /* Initially hide the camera icon */
-    .bi-camera-fill {
-        font-size: 2.5em;
+    .bi-gear-fill {
+        font-size: 2.0em;
         color: #19191a;
         width: 100%;
         opacity: 0; /* Initially hide the icon */
@@ -460,7 +460,7 @@
     }
 
     /* Show the camera icon on hover */
-    .bi-camera-fill:hover {
+    .bi-gear-fill:hover {
         opacity: 1; /* Show the icon on hover */
         transform: scale(1.050);
     }
@@ -471,7 +471,7 @@
       .navbar-brand {
         font-size: 1.2em; /* Font size for screens with a max-width of 768px */
       }
-      .bi-camera-fill {
+      .bi-gear-fill {
         font-size: 1.2em;
     }
   }
@@ -480,7 +480,7 @@
       .navbar-brand {
         font-size: 1em; /* Font size for screens with a max-width of 576px */
       }
-      .bi-camera-fill:hover {
+      .bi-gear-fill:hover {
         opacity: 1; /* Show the icon on hover */
         transform: scale(0.725);
     }
@@ -501,10 +501,10 @@
       <a href="#" data-bs-toggle="modal" data-bs-target="#profilePicModal" class="position-relative">
         {% if admin.profile_pic %}
             <img class="rounded-circle" src="{{ admin.profile_pic.url }}" alt="Profile Pic"/>
-            <span class="position-absolute top-50 start-50 translate-middle bi-camera-fill"></span>
+            <span class="position-absolute top-50 start-50 translate-middle bi-gear-fill"></span>
         {% else %}
             <img class="rounded-circle" src="{% static 'images/adminpropic.png' %}" alt="Default Profile Pic"/>
-            <span class="position-absolute top-50 start-50 translate-middle bi-camera-fill"></span>
+            <span class="position-absolute top-50 start-50 translate-middle bi-gear-fill"></span>
         {% endif %}
       </a>
       <br><br>
@@ -558,19 +558,67 @@
 <!-- Modal -->
 <div class="container-fluid">
   <div class="modal fade" id="profilePicModal" tabindex="-1" aria-labelledby="profilePicModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title" id="profilePicModalLabel">Change Profile Picture</h4>
+                <h4 class="modal-title" id="profilePicModalLabel">User Settings</h4>
                 <button type="button" class="btn btn-danger border border-dark btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body d-flex flex-column align-items-center">
               <img id="preview" class="border border-dark rounded-circle mb-3" src="{% if admin.profile_pic %}{{ admin.profile_pic.url }}{% else %}{% static 'images/adminpropic.png' %}{% endif %}" alt="Profile Pic" width="150px" height="150px"/>
-              <form id="profilePicForm" method="post" enctype="multipart/form-data" action="/admin-change-profile-pic" class="w-100">
+              <form id="adminUserForm" method="post" enctype="multipart/form-data" action="/admin-change-profile-pic" class="w-100 h-100">
                 {% csrf_token %}
                 <input type="hidden" name="user_id" value="{{ request.user.id }}">
+                <label for="profilePicInput" class="form-label">Change Profile Pic</label>
                 <input type="file" name="profile_pic" id="profilePicInput" onchange="previewImage(this)" class="form-control mb-3" placeholder="No file chosen">
-                <center><button type="submit" class="btn btn-primary">Save Changes</button></center>
+                <div class="row g-3">
+                  <div class="col-md-6">
+                    <div class="mb-3">
+                      <label for="firstNameInput" class="form-label">First Name</label>
+                      <input type="text" name="first_name" class="form-control" id="firstNameInput" value="{{ request.user.first_name }}">
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="mb-3">
+                      <label for="lastNameInput" class="form-label">Last Name</label>
+                      <input type="text" name="last_name" class="form-control" id="lastNameInput" value="{{ request.user.last_name }}">
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="mb-3">
+                      <label for="usernameInput" class="form-label">Username</label>
+                      <input type="text" name="username" class="form-control" id="usernameInput" value="{{ request.user.username }}">
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <label for="password" class="form-label">Change Password</label>
+                    <div class="input-group mb-3">
+                      <input type="password" name="password" class="form-control" id="passwordInput">
+                      <button class="btn btn-outline-primary" type="button" id="togglePassword1">
+                        <i class="bi bi-eye-fill"></i>
+                      </button>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="mb-3">
+                      <label for="emailInput" class="form-label">Email</label>
+                      <input type="email" name="email" class="form-control" id="emailInput" value="{{ admin.email }}">
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="mb-3">
+                      <label for="mobileInput" class="form-label">Mobile</label>
+                      <input type="text" name="mobile" class="form-control" id="mobileInput" value="{{ admin.mobile }}">
+                    </div>
+                  </div>
+                  <div class="col-md-12">
+                    <div class="mb-3">
+                      <label for="addressInput" class="form-label">Address</label>
+                      <input type="text" name="address" class="form-control" id="addressInput" value="{{ admin.address }}">
+                    </div>
+                  </div>
+                </div>
+                <center><button type="submit" class="btn btn-primary mb-3">Save Changes</button></center>
               </form>
             </div>
         </div>
@@ -663,32 +711,49 @@
         {% endif %}
     });
 
+    // Variable to store the selected file
+    let selectedFile = null;
+
+    // Function to preview the selected image and store the selected file
     function previewImage(input) {
-      var preview = document.getElementById('preview');
-      var file = input.files[0];
-      var reader = new FileReader();
+        var preview = document.getElementById('preview');
+        var file = input.files[0];
+        var reader = new FileReader();
 
-      reader.onloadend = function () {
-        preview.src = reader.result;
-      };
+        reader.onloadend = function () {
+            preview.src = reader.result;
+        };
 
-      if (file) {
-        reader.readAsDataURL(file);
-      } else {
-        preview.src = '{% if admin.profile_pic %}{{ admin.profile_pic.url }}{% else %}{% static "images/adminpropic.png" %}{% endif %}';
-      }
+        if (file) {
+            // Store the selected file in the variable
+            selectedFile = file;
+            reader.readAsDataURL(file);
+        } else {
+            // If no file is selected, reset the selected file variable
+            selectedFile = null;
+            preview.src = '{% if admin.profile_pic %}{{ admin.profile_pic.url }}{% else %}{% static "images/adminpropic.png" %}{% endif %}';
+        }
     }
+
+    // Add an event listener to the modal when it's hidden
+    $('#profilePicModal').on('hidden.bs.modal', function (e) {
+        var preview = document.getElementById('preview');
+        // Set the src attribute of the preview image to the default profile picture URL
+        preview.src = '{% if admin.profile_pic %}{{ admin.profile_pic.url }}{% else %}{% static "images/adminpropic.png" %}{% endif %}';
+        // Reset the file input to the selected file (if any)
+        document.getElementById('profilePicInput').value = null;
+    });
     
-    //API
+    //REST API
     document.addEventListener('DOMContentLoaded', function() {
-      document.getElementById('profilePicForm').addEventListener('submit', function(event) {
+      document.getElementById('adminUserForm').addEventListener('submit', function(event) {
         event.preventDefault(); // Prevent the default form submission
 
         // Get the form data
         let formData = new FormData(this);
 
         // Send a POST request to the server
-        fetch('/admin-change-profile-pic/', {
+        fetch('/admin-update-profile-details/', {
           method: 'POST',
           body: formData
         })
@@ -704,7 +769,7 @@
             Swal.fire({
               icon: 'success',
               title: 'Success!',
-              text: 'Profile picture updated successfully!',
+              text: 'Your details have been successfully updated.',
               showConfirmButton: true, // Show the "OK" button
               allowOutsideClick: false // Prevent dismissing the alert by clicking outside
             }).then((result) => {
@@ -716,7 +781,7 @@
             Swal.fire({
               icon: 'error',
               title: 'Oops...',
-              text: 'Profile picture upload failed!'
+              text: 'Failed to update your details. Please try again later.'
             });
           }
         })
@@ -726,6 +791,17 @@
       });
     });
 
+    //Toggle Password
+    const passwordField = document.getElementById('passwordInput');
+    const togglePassword1 = document.getElementById('togglePassword1');
+    const eyeIcon1 = document.querySelector('i');
+
+    // Show & Hide Password
+    togglePassword1.addEventListener('click', function() {
+      const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
+      passwordField.setAttribute('type', type);
+      this.innerHTML = type === 'password' ? '<i class="bi bi-eye-fill"></i>' : '<i class="bi bi-eye-slash-fill"></i>';
+    });
     
   </script>
 </html>

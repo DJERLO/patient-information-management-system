@@ -1,0 +1,311 @@
+{% extends 'hospital/pharmacist_base.html' %}
+{% load static %}
+{% block content %}
+<br><br>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+  <link rel="stylesheet" href="//cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
+  <script src="//cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css">
+  <style type="text/css">
+    a:link {
+      text-decoration: none;
+    }
+
+    .fixed-top{
+      position: absolute;
+    }
+  
+  
+    h6 {
+      color: white;
+    }
+  
+    .order-card {
+      color: #fff;
+    }
+  
+    .bg-c-blue {
+      background: linear-gradient(45deg, #4099ff, #73b4ff);
+    }
+  
+    .bg-c-green {
+      background: linear-gradient(45deg, #2ed8b6, #59e0c5);
+    }
+  
+    .bg-c-yellow {
+      background: linear-gradient(45deg, #FFB64D, #ffcb80);
+    }
+  
+    .bg-c-pink {
+      background: linear-gradient(45deg, #FF5370, #ff869a);
+    }
+  
+    .card {
+      border-radius: 5px;
+      -webkit-box-shadow: 0 1px 2.94px 0.06px rgba(4, 26, 55, 0.16);
+      box-shadow: 0 1px 2.94px 0.06px rgba(4, 26, 55, 0.16);
+      border: none;
+      margin-bottom: 30px;
+      -webkit-transition: all 0.3s ease-in-out;
+      transition: all 0.3s ease-in-out;
+    }
+  
+    .card .card-block {
+      padding: 25px;
+      cursor: pointer;
+    }
+  
+    .card-block:hover {
+      background-color: #1f88de; /* Optional: Change background color on hover */
+    }
+  
+    .order-card i {
+      font-size: 26px;
+    }
+  
+    .f-left {
+      float: left;
+    }
+  
+    .f-right {
+      float: right;
+    }
+
+    h6:not(.m-b-20) {
+      text-align: center;
+    }
+
+    .row {
+      margin: 10px auto;
+    }
+
+    .table-responsive {
+      text-wrap: nowrap;
+      padding: 0 0 0 0;
+    }
+
+    .view-appointments-panel{
+      width: 100%;
+      height: 100vw;
+      position: relative;
+      margin: 1px 1px 1px 1px;
+      text-align: start;
+    }
+
+    #suggestionsList {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      z-index: 1000;
+      width: 100%;
+      background-color: white;
+      border: 1px solid #ccc;
+      border-top: none;
+  }
+
+  .suggestion-item {
+      padding: 5px 10px;
+      cursor: pointer;
+  }
+
+  .suggestion-item:hover {
+      background-color: #f0f0f0;
+  }
+
+  .card-img-top{
+      width: 100%;
+      height: 100%;  
+      aspect-ratio: 1/1;
+    }
+
+  @media only screen and (max-width:767px) {
+    .card-img-top{
+      width: 100%;
+      height: 100%;
+      min-width: 150px;
+      min-height: 150px;
+    }
+   
+  }
+  </style>
+</head>
+<div class="medicine-list-panel">
+  <div class="card border border-dark">
+    <div class="card-header bg-primary text-white">
+      <h6 class="card-title h5">Medicine Catalog</h6>
+    </div>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <div class="container-fluid">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <li class="nav-item">
+              <a class="nav-link {% if not selected_category or selected_manufacturer  %}active{% endif %}" href="?">All</a>
+            </li>
+            <li class="nav-item dropdown ">
+              <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">Manufacturers</a>
+              <ul class="dropdown-menu">
+                {% for manufacturer in manufacturers %}
+                <li>
+                  <a class="dropdown-item {% if selected_manufacturer == manufacturer.name %}active{% endif %}" href="?manufacturer={{ manufacturer.name }}">
+                    {{ manufacturer.name }}
+                  </a>
+                </li>
+                {% endfor %}
+              </ul>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link {% if selected_category == 'OTC' %}active{% endif %}" href="?category=OTC">Over-the-counter</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link {% if selected_category == 'Prescription' %}active{% endif %}" href="?category=Prescription">Prescription</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link {% if selected_category == 'Other' %}active{% endif %}" href="?category=Other">Other</a>
+            </li>
+          </ul>
+          
+          <form class="d-flex" method="GET" action="">
+            <a class="btn btn-primary me-2" href="/pharmacist-add-medicine"><i class="bi bi-plus"></i></a>
+            <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" name="search" id="searchInput">
+            <button class="btn btn-outline-success" type="submit">Search</button>
+          </form>
+        
+          <!-- List to display autocomplete suggestions -->
+          <div id="suggestionsList">
+            <!-- AutoSuggestions appear here-->
+          </div>
+
+        </div>
+      </div>
+    </nav>
+
+    <div class="card-body flex-grow-1" style="overflow: auto;">
+      <div class="table-responsive p-4">
+        <div class="card-container row justify-content-center">
+          {% if medicines %}
+            {% for medicine in medicines %}
+            <div class="col-xl-3 col-lg-4 col-md-6 col-sm-12 mb-3"> <!-- Adjust column sizes to make the card smaller -->
+              <div class="card text-center">
+                <img src="{{ medicine.profile_pic.url }}" class="card-img-top" alt="Medicine Image">
+                {% if medicine.category == 'Prescription' %}
+                    <span class="fs-4 py-6 badge bg-dark position-absolute top-0 left-0">RX</span>
+                {% endif %}
+                <div class="card-body">
+                  <h5 class="card-title text-truncate">
+                    {{ medicine.name }}
+                  </h5>
+                  <div class="row">
+                    <p class="card-text">Price: ₱ {{ medicine.unit_price }}</p>
+                    <p class="card-text">Quantity: {{ medicine.quantity }}</p>
+                    <p class="card-text text-truncate">Manufacturer: {{ medicine.manufacturer }}</p>
+                    <p class="card-text text-truncate">Expiry Date: {{ medicine.expiry_date }}</p>
+                  </div>
+                </div>
+                <div class="card-footer mx-6">
+                  <a href="{% url 'pharmacist-view-medicine' medicine.id  %}" class="btn btn-primary">View</a>
+                  <a href="{% url 'pharmacist-update-medicine' medicine.id  %}" class="btn btn-secondary">Edit</a>
+                </div>
+              </div>
+            </div>
+            {% endfor %}
+          {% else %}
+            <div class="col-xl-3 col-lg-4 col-md-6 col-sm-12 mb-3 text-center">
+              <h1 class="display-6 text-wrap">No Items Found</h1>
+            </div>
+          {% endif %}
+        </div>  
+      </div>
+    </div>
+    
+    {% if medicines %}
+    <!-- Pagination -->
+    <nav aria-label="Page navigation">
+      <ul class="pagination justify-content-center">
+        {% if medicines.has_previous %}
+        <li class="page-item">
+          <a class="page-link" href="?page=1" aria-label="First">
+            <span aria-hidden="true">&laquo;&laquo;</span>
+          </a>
+        </li>
+        <li class="page-item">
+          <a class="page-link" href="?page={{ medicines.previous_page_number }}" aria-label="Previous">
+            <span aria-hidden="true">&laquo;</span>
+          </a>
+        </li>
+        {% endif %}
+    
+        {% for num in page_range %}
+        <li class="page-item {% if num == medicines.number %}active{% endif %}">
+          <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+        </li>
+        {% endfor %}
+    
+        {% if medicines.has_next %}
+        <li class="page-item">
+          <a class="page-link" href="?page={{ medicines.next_page_number }}" aria-label="Next">
+            <span aria-hidden="true">&raquo;</span>
+          </a>
+        </li>
+        <li class="page-item">
+          <a class="page-link" href="?page={{ medicines.paginator.num_pages }}" aria-label="Last">
+            <span aria-hidden="true">&raquo;&raquo;</span>
+          </a>
+        </li>
+        {% endif %}
+      </ul>
+    </nav>
+    {% endif %}
+  </div>
+</div>
+<script>
+  let table = new DataTable('#medicine-table');
+  //Autocomplete Generation for medicines
+  $(document).ready(function() {
+    $('#searchInput').on('input', function() {
+        var query = $(this).val().trim();
+        if (query !== '') {
+            // Make an AJAX request to fetch suggestions
+            $.ajax({
+                url: '/autocomplete/', // Replace with the URL to your autocomplete endpoint
+                method: 'GET',
+                data: { query: query },
+                success: function(response) {
+                    // Update suggestions list based on the response
+                    var suggestions = response.suggestions;
+                    var suggestionsList = $('#suggestionsList');
+                    suggestionsList.empty(); // Clear previous suggestions
+                    $.each(suggestions, function(index, suggestion) {
+                        // Create list item for each suggestion
+                        var listItem = $('<div class="suggestion-item">' + suggestion + '</div>');
+                        // Append to the suggestions list
+                        suggestionsList.append(listItem);
+                    });
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error fetching autocomplete suggestions:', error);
+                }
+            });
+        } else {
+            // If search query is empty, clear the suggestions list
+            $('#suggestionsList').empty();
+        }
+    });
+
+    // Handle click events on suggestion items
+    $('#suggestionsList').on('click', '.suggestion-item', function() {
+        var selectedSuggestion = $(this).text();
+        $('#searchInput').val(selectedSuggestion);
+        // Optionally, you can clear the suggestions list after selecting a suggestion
+        $('#suggestionsList').empty();
+    });
+});
+
+</script>
+{% endblock content %}

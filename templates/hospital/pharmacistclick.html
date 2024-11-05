@@ -1,0 +1,97 @@
+{% extends 'hospital/homebase.html' %}
+
+{% block content %}
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    /* Mobile-first approach */
+    body {
+      font-size: 16px; /* Base font size */
+    }
+
+    .jumbotron {
+      margin: 0;
+      padding: 10vh 0 10vh 0;
+      width: 100%;
+      height: 100vh;
+    }
+
+    .jumbotron h1.display-4 {
+      font-size: 2rem;
+    }
+
+    .jumbotron p.lead,
+    .jumbotron p.responsive-text {
+      font-size: 1rem;
+    }
+
+    /* Media queries for larger screens */
+    @media (min-width: 768px) {
+      .jumbotron {
+        padding: 15vh 0;
+      }
+
+      .jumbotron h1.display-4 {
+        font-size: 3rem;
+      }
+
+      .jumbotron p.lead,
+      .jumbotron p.responsive-text {
+        font-size: 1.25rem;
+      }
+    }
+
+    /* Media queries for smaller device screens */
+    @media (max-width: 768px) {
+      .jumbotron {
+        padding: 10vh 5px;
+      }
+
+      .jumbotron h1.display-4 {
+        font-size: 3rem;
+      }
+
+      .jumbotron p.lead,
+      .jumbotron p.responsive-text {
+        font-size: 0.7rem;
+      }
+      .btn{
+        padding: 0.8rem;
+      }
+    }
+
+    
+  </style>
+</head>
+
+<body>
+<div class="jumbotron text-center">
+  <h1 class="display-4">Hello, Pharmacist</h1>
+  <p class="lead">Welcome to the Pharmacist Portal of the Patient Information Management System (PIMS).</p>
+  <hr class="my-4">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-md-8 mx-auto">
+        <p class="responsive-text">As a pharmacist, you play a crucial role in managing patient medications and ensuring their safety.</p>
+        <p class="responsive-text">Our system is designed to assist you in efficiently handling medication dispensing, tracking, and communication with healthcare providers.</p>
+        <p class="responsive-text">You can access patient medication records, update dispensing schedules, and ensure accurate medication administration.</p>
+        <p class="responsive-text">Explore our platform to streamline your workflow and enhance patient care.</p>
+      </div>
+    </div>
+    <div class="row justify-content-center mt-4">
+      <div class="col-md-6 mx-auto">
+        <a class="btn btn-danger btn-lg btn-block mb-2" href="/pharmacistsignup" role="button">Apply</a>
+        <a class="btn btn-success btn-lg btn-block" href="/adminlogin" role="button">Login</a>
+      </div>
+    </div>
+    <div class="row justify-content-center mt-4">
+      <div class="col-md-6 mx-auto">
+        <a href="/aboutus" class="text-muted text-center">Learn more about our features</a>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+
+{% endblock content %}

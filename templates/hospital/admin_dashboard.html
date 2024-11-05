@@ -72,25 +72,25 @@
           <div class="table-responsive p-4">
             <table id="dev-doctor-table" class="table table-hover table-striped py-3">
               <thead class="table-dark">
-                <tr>
-                  <th>Name</th>
-                  <th>Department</th>
-                  <th>Contact</th>
-                  <th>Status</th>
+                <tr class="row">
+                  <th class="col text-truncate">Name</th>
+                  <th class="col text-truncate">Department</th>
+                  <th class="col text-truncate">Contact</th>
+                  <th class="col text-truncate">Status</th>
                 </tr>
               </thead>
               <tbody>
                 {% for d in doctors %}
-                <tr>
-                  <td>{{d.get_name}}</td>
-                  <td>{{d.department}}</td>
-                  <td>{{d.mobile}}</td>
+                <tr class="row">
+                  <td class="col text-truncate">{{d.get_name}}</td>
+                  <td class="col text-truncate">{{d.department}}</td>
+                  <td class="col text-truncate">{{d.mobile}}</td>
                   {% if d.status == 0 %}
-                  <td><span class="badge bg-primary w-100">On Hold</span></td>
+                  <td class="col text-truncate"><span class="badge bg-primary w-100">On Hold</span></td>
                   {% elif d.status == 1 %}
-                  <td><span class="badge bg-success w-100">Available</span></td>
+                  <td class="col text-truncate"><span class="badge bg-success w-100">Available</span></td>
                   {% elif d.status == 2 %}
-                  <td><span class="badge bg-danger w-100">Not Available</span></td>
+                  <td class="col text-truncate"><span class="badge bg-danger w-100">Not Available</span></td>
                   {% endif %}
                 </tr>
                 {% endfor %}
@@ -169,23 +169,25 @@
           <div class="table-responsive  p-4">
             <table  id="dev-patient-table" class="table table-sm table-hover table-striped py-3">
               <thead class="table-dark">
-                <tr>
-                  <th>Admission Date</th>
-                  <th>Name</th>
-                  <th>Contact</th>
-                  <th>Status</th>
+                <tr class="row">
+                  <th class="col text-truncate">Admission Date</th>
+                  <th class="col text-truncate">Name</th>
+                  <th class="col text-truncate">Contact</th>
+                  <th class="col text-truncate">Status</th>
                 </tr>
               </thead>
               <tbody>
                 {% for p in patients %}
-                <tr>
-                  <td>{{p.admit_date|date:"F d, Y"}}</td>
-                  <td>{{p.get_name}}</td>
-                  <td>{{p.mobile}}</td>
+                <tr class="row">
+                  {% with unix_timestamp=p.admit_date|date:"U" %}
+                  <td class="col text-truncate" data-order="{{unix_timestamp}}">{{p.admit_date|date:"F d, Y"}}</td>
+                  {% endwith %}
+                  <td class="col text-truncate">{{p.get_name}}</td>
+                  <td class="col text-truncate">{{p.mobile}}</td>
                   {% if p.status %}
-                  <td><span class="badge bg-success w-100">Admitted</span></td>
+                  <td class="col text-truncate"><span class="badge bg-success w-100">Admitted</span></td>
                   {% else %}
-                  <td><span class="badge bg-primary w-100">On Hold</span></td>
+                  <td class="col text-truncate"><span class="badge bg-primary w-100">On Hold</span></td>
                   {% endif %}
                 </tr>
                 {% endfor %}

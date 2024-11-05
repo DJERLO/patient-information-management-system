@@ -17,10 +17,6 @@
       text-align: center;
     }
 
-    .row {
-      margin: 10px auto;
-    }
-
     .table-responsive {
       text-wrap: wrap;
       
@@ -74,26 +70,26 @@
       <div class="table-responsive p-4">
         <table class="table table-hover py-3" id="dev-table">
           <thead class="table-dark">
-            <tr>
-              <th>Name</th>
-              <th>Contact</th>
-              <th>Address</th>
-              <th>Department</th>
-              <th>View</th>
-              <th>Approve</th>
-              <th>Reject</th>
+            <tr class="row">
+              <th class="col text-truncate">Name</th>
+              <th class="col text-truncate">Contact</th>
+              <th class="col text-truncate">Address</th>
+              <th class="col text-truncate">Department</th>
+              <th class="col text-truncate">View</th>
+              <th class="col text-truncate">Approve</th>
+              <th class="col text-truncate">Reject</th>
             </tr>
           </thead>
           <tbody>
             {% for d in doctors %}
-            <tr>
-              <td>{{ d.get_name }}</td>
-              <td>{{ d.mobile }}</td>
-              <td>{{ d.address }}</td>
-              <td>{{ d.department }}</td>
-              <td><a class="btn btn-primary btn-sm w-100 h-100" href="{% url 'admin-doctor-details' d.id %}"><i class="bi bi-eye"></i></a></td>
-              <td><a class="btn btn-success btn-sm w-100 h-100" href="{% url 'approve-doctor' d.id %}"><i class="bi bi-check"></i></a></td>
-              <td><a class="btn btn-danger btn-sm w-100 h-100 delete-btn" href="{% url 'reject-doctor' d.id %}"><i class="bi bi-x"></i></a></td>
+            <tr class="row mb-2">
+              <td class="col text-truncate">{{ d.get_name }}</td>
+              <td class="col text-truncate">{{ d.mobile }}</td>
+              <td class="col text-truncate">{{ d.address }}</td>
+              <td class="col text-truncate">{{ d.department }}</td>
+              <td class="col text-truncate"><a class="btn btn-primary btn-sm w-100 h-100" href="{% url 'admin-doctor-details' d.id %}"><i class="bi bi-eye"></i></a></td>
+              <td class="col text-truncate"><a class="btn btn-success btn-sm w-100 h-100" href="{% url 'approve-doctor' d.id %}"><i class="bi bi-check"></i></a></td>
+              <td class="col text-truncate"><a class="btn btn-danger btn-sm w-100 h-100 delete-btn" href="{% url 'reject-doctor' d.id %}"><i class="bi bi-x"></i></a></td>
             </tr>
             {% endfor %}
           </tbody>

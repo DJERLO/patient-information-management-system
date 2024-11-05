@@ -1,0 +1,327 @@
+{% extends 'hospital/pharmacist_base.html' %}
+{% load static %}
+{% load widget_tweaks %}
+{% block content %}
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+  <style>
+    body {
+      font-size: 1rem;
+    }
+    
+    a:link {
+      text-decoration: none;
+    }
+
+    .fixed-top{
+      position: absolute;
+    }
+
+    .note {
+      text-align: center;
+      height: 80px;
+      background: -webkit-linear-gradient(left, #0072ff, #8811c5);
+      color: #fff;
+      font-weight: bold;
+      line-height: 80px;
+    }
+
+    .form-content {
+      padding: 5%;
+      border: 1px solid #ced4da;
+      margin-bottom: 2%;
+    }
+
+    .form-control, .form-floating {
+      border-radius: 10px;
+    }
+
+    .btnSubmit {
+      border: none;
+      border-radius: 1.5rem;
+      padding: 1%;
+      width: 20%;
+      cursor: pointer;
+      background: #0062cc;
+      color: #fff;
+    }
+
+    /* Target the Select2 tags */
+    .select2-selection__choice {
+      font-weight: bold;
+      background-color: #0072ff !important; /* Change background color */
+      color: #fff; /* Change text color to white */
+      border: 1px solid #011020; /* Change border color */
+  }
+
+  /* Hover effect for the tags */
+  .select2-selection__choice:hover {
+      background-color: #0056b3 !important; /* Change background color on hover */
+      border-color: #011020 !important; /* Change border color on hover */
+  }
+
+  .form-check-input-lg {
+        transform: scale(1.5);
+        width: 1.5em;
+        height: 1.5em;
+        margin-left: 1.5em;
+        margin-right: 1.5em;
+        border-radius: 15px !important;
+    }
+    .form-check-label-lg {
+        font-size: 1.2em;
+        padding: 0 !important;
+    }
+
+  </style>
+  
+</head>
+<br><br><br>
+<form id="medicine-form" class="needs-validation" method="post" enctype="multipart/form-data" novalidate>
+  {% csrf_token %}
+  <div class="container register-form">
+    <div class="form">
+      <div class="note">
+        <p>Add New Medicine</p>
+      </div>
+      <div class="form-content">
+        <div class="row border border-dark-0 border-1 rounded-3">
+          <div class="col-md-12">
+            <center>
+              <img id="preview" class="mb-1" src="{% static 'images/medicine.jpg' %}" alt="Preview" style="max-width: 100%; max-height: 150px; display: block;">
+            </center>
+            <div class="form-group my-2">
+              <label class="fw-bold" for="floatingMedicineName">Change Profile:</label>
+              <input type="file" name="profile_pic" id="id_profile_pic" class="form-control form-control-lg" onchange="previewImage(this)">
+              <div class="valid-feedback">
+                Looks nice!
+              </div>
+              <div class="invalid-feedback">
+                Please provide a valid image file.
+              </div>
+            </div>
+            <div class="col-md-12 px-3">
+              <div class="form-switch my-4 d-flex justify-content-between align-items-center flex-grow-1">
+                <label class="form-check-label form-check-label-lg fs-bold" for="{{ form.sale.id_for_label }}">Sale:</label>
+                  {{ form.sale|add_class:"form-check-input form-check-input-lg" }}
+              </div>
+          </div>
+          </div>
+          
+          
+          <div class="col-md-6">
+            <div class="form-floating my-2">
+              {% render_field form.name class="form-control" placeholder="Medicine Name" %}
+              <label class="fw-bold" for="floatingMedicineName">Medicine Name:</label>
+              <div class="valid-feedback">
+                Looks good!
+              </div>
+              <div class="invalid-feedback">
+                Please provide a name for the medicine.
+              </div>
+            </div>
+            <div class="form-floating my-2">
+              {% render_field form.manufacturer class="form-control" %}
+              <label class="fw-bold" for="{{ form.manufacturer.id_for_label }}">Manufacturer:</label>
+              <div class="valid-feedback">
+                Looks good!
+              </div>
+              <div class="invalid-feedback">
+                Please select a manufacturer for the medicine.
+              </div>
+            </div>
+            <div class="form-floating my-2">
+              {% render_field form.dosage class="form-control" placeholder="Dosage" %}
+              <label class="fw-bold" for="floatingDosage">Dosage:</label>
+              <div class="valid-feedback">
+                Looks good!
+              </div>
+              <div class="invalid-feedback">
+                Please provide the dosage information.
+              </div>
+            </div>
+          </div>
+          
+          <div class="col-md-6">
+            <div class="form-floating my-2">
+              {% render_field form.unit_price class="form-control" placeholder="Unit Price" %}
+              <label class="fw-bold" for="floatingUnitPrice">Unit Price(₱):</label>
+              <div class="valid-feedback">
+                Looks good!
+              </div>
+              <div class="invalid-feedback">
+                Please provide the unit price of the medicine.
+              </div>
+            </div>
+            <div class="form-floating my-2">
+              {% render_field form.quantity class="form-control" placeholder="Quantity" %}
+              <label class="fw-bold" for="floatingQuantity">Quantity:</label>
+              <div class="valid-feedback">
+                Looks good!
+              </div>
+              <div class="invalid-feedback">
+                Please provide the quantity of the medicine.
+              </div>
+            </div>
+            <div class="form-floating my-2">
+              {% render_field form.expiry_date type="date" class="form-control" placeholder="Expiry Date" %}
+              <label class="fw-bold" for="floatingExpiryDate">Expiry Date:</label>
+              <div class="valid-feedback">
+                Looks good!
+              </div>
+              <div class="invalid-feedback">
+                Please provide the expiry date of the medicine.
+              </div>
+            </div>
+          </div>
+          
+          
+        
+        <div class="col-md-6">
+          <div class="form-floating my-2">
+            {% render_field form.category class="form-control" %}
+            <label class="fw-bold" for="{{ form.category.id_for_label }}">Category:</label>
+            <div class="valid-feedback">
+              Looks good!
+            </div>
+            <div class="invalid-feedback">
+              Please select a category for the medicine.
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <div class="form-floating my-2">
+            {% render_field form.barcode class="form-control" %}
+            <label class="fw-bold" for="{{ form.category.id_for_label }}">Barcode:</label>
+            <div class="valid-feedback">
+              Looks good!
+            </div>
+            <div class="invalid-feedback">
+              Please select a category for the medicine.
+            </div>
+          </div>
+        </div>
+        
+        <div class="col-md-12">
+          <div class="form-floating my-2">
+            {% render_field form.description class="form-control" placeholder="Description" style="height: 191px;" %}
+            <label class="fw-bold" for="floatingDescription">Description:</label>
+            <div class="valid-feedback">
+              Looks good!
+            </div>
+            <div class="invalid-feedback">
+              Please provide a description for the medicine.
+            </div>
+          </div>
+          <div class="form-group my-2">
+              <label class="fw-bold" for="floatingSymptoms">Select Symptoms/Tags:</label>
+              {% render_field form.symptoms class="select2 form-control" multiple="multiple" %}
+              <div class="valid-feedback">
+                  Looks good!
+              </div>
+              <div class="invalid-feedback">
+                  Please select symptoms for the medicine.
+              </div>
+          </div>
+        </div>
+          <center><button type="submit" class="btnSubmit m-3"><i class="bis bi-save"></i> Save</button></center> 
+        </div>
+      </div>
+    </div>
+  </div>
+</form>
+
+<script>
+
+$(document).ready(function() {
+        $('.select2').select2();
+    });
+
+  function previewImage(input) {
+      var preview = document.getElementById('preview');
+      var file = input.files[0];
+      var reader = new FileReader();
+
+      reader.onloadend = function () {
+          preview.src = reader.result;
+      };
+
+      if (file) {
+          reader.readAsDataURL(file);
+      } else {
+          preview.src = "{% static 'images/medicine.jpg' %}";
+      }
+  }
+
+  // Add an event listener to the form's submit event
+  document.addEventListener('DOMContentLoaded', function() {
+      const form = document.getElementById('form');
+      
+      form.addEventListener('submit', function(event) {
+          // Prevent the default form submission behavior
+          event.preventDefault();
+
+          // Create a FormData object from the form
+          const formData = new FormData(this);
+
+          // Define the URL for the AJAX request
+          const url = '/pharmacist-add-medicine/';
+
+          // Make a POST request using fetch
+          fetch(url, {
+              method: 'POST',
+              body: formData
+          })
+          .then(response => {
+              // Check if the response is OK (status code 200)
+              if (response.ok) {
+                  // Parse the JSON response
+                  return response.json();
+              } else {
+                  // If the response is not OK, throw an error
+                  throw new Error('Failed to add medicine');
+              }
+          })
+          .then(data => {
+              // Check if the addition was successful
+              if (data.success) {
+                  // If successful, show a SweetAlert2 success message
+                  Swal.fire({
+                      icon: 'success',
+                      title: 'Success!',
+                      text: 'Medicine added successfully',
+                      confirmButtonText: 'OK'
+                  }).then((result) => {
+                      // Redirect back to the previous page when the user clicks OK
+                      if (result.isConfirmed) {
+                          window.history.back();
+                      }
+                  });
+              } else {
+                  // If not successful, log the error message
+                  console.log('Medicine addition was not successful:', data.message);
+              }
+          })
+          .catch(error => {
+              // Handle any errors that occurred during the fetch request
+              console.error('Error adding medicine:', error);
+          })
+          .finally(() => {
+              // Add the 'was-validated' class to the form after form validation
+              this.classList.remove('need-validation');
+              form.classList.add('was-validated');
+          });
+      });
+  });
+
+</script>
+
+{% endblock content %}

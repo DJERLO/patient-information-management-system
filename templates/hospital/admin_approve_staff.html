@@ -17,10 +17,6 @@
       text-align: center;
     }
 
-    .row {
-      margin: 10px auto;
-    }
-
     .table-responsive {
       text-wrap: wrap;
       
@@ -74,24 +70,34 @@
       <div class="table-responsive p-4">
         <table class="table table-hover py-3" id="dev-table">
           <thead class="table-dark">
-            <tr>
-              <th>Name</th>
-              <th>Contact</th>
-              <th>Address</th>
-              <th>View</th>
-              <th>Approve</th>
-              <th>Reject</th>
+            <tr class="row">
+              <th class="col text-truncate">Name</th>
+              <th class="col text-truncate">Contact</th>
+              <th class="col text-truncate">Address</th>
+              <th class="col text-truncate">View</th>
+              <th class="col text-truncate">Approve</th>
+              <th class="col text-truncate">Reject</th>
             </tr>
           </thead>
           <tbody>
             {% for a in admins %}
-            <tr>
-              <td>{{ a.get_name }}</td>
-              <td>{{ a.mobile }}</td>
-              <td>{{ a.address }}</td>
-              <td><a class="btn btn-primary btn-sm w-100 h-100" href="{% url 'admin-staff-details' a.user_id %}"><i class="bi bi-eye"></i></a></td>
-              <td><a class="btn btn-success btn-sm w-100 h-100" href="{% url 'approve-staff' a.user_id  %}"><i class="bi bi-check"></i></a></td>
-              <td><a class="btn btn-danger btn-sm w-100 h-100 delete-btn" href="{% url 'staff-delete' a.user_id  %}"><i class="bi bi-x"></i></a></td>
+            <tr class="row">
+              <td class="col text-truncate">{{ a.get_name }}</td>
+              <td class="col text-truncate">{{ a.mobile }}</td>
+              <td class="col text-truncate">{{ a.address }}</td>
+              <td class="col text-truncate"><a class="btn btn-primary btn-sm w-100 h-100" href="{% url 'admin-staff-details' a.user_id %}"><i class="bi bi-eye"></i></a></td>
+              <td class="col text-truncate"><a class="btn btn-success btn-sm w-100 h-100" href="{% url 'approve-staff' a.user_id  %}"><i class="bi bi-check"></i></a></td>
+              <td class="col text-truncate"><a class="btn btn-danger btn-sm w-100 h-100 delete-btn" href="{% url 'staff-delete' a.user_id  %}"><i class="bi bi-x"></i></a></td>
+            </tr>
+            {% endfor %}
+            {% for p in pharmacist %}
+            <tr class="row">
+              <td class="col text-truncate">{{ p.get_name }}</td>
+              <td class="col text-truncate">{{ p.contact_phone }}</td>
+              <td class="col text-truncate">{{ p.address }}</td>
+              <td class="col text-truncate"><a class="btn btn-primary btn-sm w-100 h-100" href="{% url 'admin-staff-details' p.user_id %}"><i class="bi bi-eye"></i></a></td>
+              <td class="col text-truncate"><a class="btn btn-success btn-sm w-100 h-100" href="{% url 'approve-staff' p.user_id  %}"><i class="bi bi-check"></i></a></td>
+              <td class="col text-truncate"><a class="btn btn-danger btn-sm w-100 h-100 delete-btn" href="{% url 'staff-delete' p.user_id  %}"><i class="bi bi-x"></i></a></td>
             </tr>
             {% endfor %}
           </tbody>
